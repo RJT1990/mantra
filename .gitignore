@@ -1,0 +1,12 @@
+/mantra.egg-info
+/build
+/dist
+/venv
+/my_project
+db.sqlite3*
+myproject
+.cache/v/cache
+.pytest_cache
+tests/local/test_training_aws
+mantra/tests/data/test_tabular_data/raw/.extract
+mantra/tests/data/testdata/raw/.extract

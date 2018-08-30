@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Models &mdash; Atlas Documentation 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Atlas Documentation 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Training" href="training.html"/>
+        <link rel="prev" title="Datasets" href="datasets.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Atlas Documentation
+          
+
+          
+            
+            <img src="_static/logo-small.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#make-a-model">🤖 Make a Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-keras-on-mnist">🔢 Example: Keras on MNIST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sharing.html">Sharing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Atlas Documentation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Models</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/models.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+<a class="reference internal image-reference" href="_images/tensorflow.png"><img alt="_images/tensorflow.png" class="align-left" src="_images/tensorflow.png" style="height: 30px;" /></a>
+<a class="reference internal image-reference" href="_images/pytorch.png"><img alt="_images/pytorch.png" class="align-left" src="_images/pytorch.png" style="height: 30px;" /></a>
+<a class="reference internal image-reference" href="_images/keras.png"><img alt="_images/keras.png" class="align-left" src="_images/keras.png" style="height: 30px;" /></a>
+<div style="clear: both;"></div><p><strong>Atlas</strong> models allow you to take a model in an framework such as TensorFlow or PyTorch, and enables them to be easily trained, deployed, evaluated, and more. In these docs we are going to see how we make a model package.</p>
+<div class="section" id="make-a-model">
+<h2>🤖 Make a Model<a class="headerlink" href="#make-a-model" title="Permalink to this headline">¶</a></h2>
+<p>Go to the root of your project. To make a dataset use the <code class="code docutils literal"><span class="pre">makemodel</span></code> command. We can make a new model as follows:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model
+</pre></div>
+</div>
+<p>If we intend to use a particular framework, we can reference it upon creation:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework tensorflow
+</pre></div>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework keras
+</pre></div>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework pytorch
+</pre></div>
+</div>
+<p>Our new model folder will be located at <strong>myproject/models/my_model</strong>. Inside:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">__init__.py</span>
+<span class="go">model.py</span>
+<span class="go">README.md</span>
+<span class="go">requirements.txt</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">model.py</span></code> contains the core <code class="code docutils literal"><span class="pre">BaseModel</span></code> type class that wraps around your model</li>
+<li><code class="code docutils literal"><span class="pre">requirements.txt</span></code> is where you can record any Python requirements for your model</li>
+</ul>
+<p>We are now going to walk through some example models for the MNIST dataset for each framework.</p>
+</div>
+<div class="section" id="example-keras-on-mnist">
+<h2>🔢 Example: Keras on MNIST<a class="headerlink" href="#example-keras-on-mnist" title="Permalink to this headline">¶</a></h2>
+<p>In the previous chapter on Datasets, we made an MNIST dataset. We are now going to see how we can use this dataset to train a model.</p>
+<p>Let&#8217;s make a model using keras, we can make the project as follows:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework keras
+</pre></div>
+</div>
+<p>Now let&#8217;s open the <code class="code docutils literal"><span class="pre">model.py</span></code> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+
+<span class="kn">from</span> <span class="nn">atlasml.models.KerasModel</span> <span class="kn">import</span> <span class="n">KerasModel</span>
+
+<span class="k">class</span> <span class="nc">MyKerasModel</span><span class="p">(</span><span class="n">KerasModel</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
+</pre></div>
+</div>
+<p>Our model inherits from the <code class="code docutils literal"><span class="pre">KerasModel</span></code> class. This gives us access to some predefined methods and attributes for Keras, as well as Atlas integration that allows our model to be easily trained, monitored and so on.</p>
+<p>Let&#8217;s build a basic neural network classifier in the build_model section:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+
+<span class="kn">from</span> <span class="nn">atlasml.models.KerasModel</span> <span class="kn">import</span> <span class="n">KerasModel</span>
+
+<span class="k">class</span> <span class="nc">MyClassifier</span><span class="p">(</span><span class="n">KerasModel</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">),</span>
+          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">)</span>
+        <span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">model</span>
+</pre></div>
+</div>
+<p>Now we can train with one line of code locally or via the cloud:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas train my_model --dataset mnist_png --cloud
+</pre></div>
+</div>
+<p>MNIST is a well-known deep learning dataset containing handwritten numbers. We can download the tar.gz file <a class="reference external" href="https://github.com/myleott/mnist_png/blob/master/mnist_png.tar.gz">here</a>.</p>
+<p>Once you have downloaded the dataset, make a new data folder in your atlas project by running the following command, refering the path of the tar file:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata mnist_png --tar mnist_png.tar.gz
+</pre></div>
+</div>
+<p>The tar file contains 10 folders for each number, with png images enclosed. We want to extract the paired images and labels. First let&#8217;s quickly example the class variables in <code class="code docutils literal"><span class="pre">data.py</span></code>. We want labels so <code class="code docutils literal"><span class="pre">has_labels</span></code> should be set to True. Likewise, <code class="code docutils literal"><span class="pre">data_type</span></code> should be set to &#8216;png-images&#8217;; this is optional, but it gives us some extra methods for free in case we want to use them later.</p>
+<p>At any time we can run the following command to test our new dataset:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas <span class="nb">test</span> mnist_png
+</pre></div>
+</div>
+<p>This is optional but it performs some basic checks to see if anything is glaringly wrong. It can also be used to guide your development by telling you what to build next. If we run it on the current class, we are told:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">AssertionError: Your extract_inputs() method returns None.</span>
+
+<span class="go">This probably means you have not written an extract_inputs class method for your Dataset class.</span>
+
+<span class="go">This method should return an np.ndarray containing the input data X.</span>
+</pre></div>
+</div>
+<p>As the test suggests, we need to actually extract some data! So let&#8217;s do that. Below we&#8217;ve filled in the <code class="code docutils literal"><span class="pre">extract_inputs()</span></code> and <code class="code docutils literal"><span class="pre">extract_outputs()</span></code> methods to get the MNIST data. The path where your data is extracted is located at <code class="code docutils literal"><span class="pre">self.extract_dir</span></code>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MNIST</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;mnist_png&#39;</span>
+    <span class="n">tar_name</span> <span class="o">=</span> <span class="s1">&#39;mnist_png&#39;</span> <span class="c1"># e.g &#39;example_images&#39; for &#39;example_images.tar.gz&#39;</span>
+    <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;png-images&#39;</span> <span class="c1"># optional labelling of the datatype for free methods - see atlas docs</span>
+    <span class="n">has_labels</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">extract_folders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="n">number_folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_dir</span> <span class="o">+</span> <span class="n">folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
+
+        <span class="c1"># loop over each folder (which contains each label)</span>
+        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">number_folders</span><span class="p">:</span>
+            <span class="n">folder_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_format</span><span class="p">))</span>
+            <span class="n">image_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">scipy</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span> <span class="o">/</span> <span class="mf">127.5</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">folder_number</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">image_data</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">image_data</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">labels</span>
+
+    <span class="k">def</span> <span class="nf">extract_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extract_folders</span><span class="p">(</span><span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
+
+    <span class="k">def</span> <span class="nf">extract_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extract_folders</span><span class="p">(</span><span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>To test the dataset we can run the test command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas <span class="nb">test</span> mnist_png
+</pre></div>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">[+] All tests passed</span>
+</pre></div>
+</div>
+<p>We can also call a built-in <code class="code docutils literal"><span class="pre">sample</span></code> method in a Notebook or Python script, which samples from the <span class="math">\(X\)</span> matrix:</p>
+<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">data.mnist.data</span> <span class="k">import</span> <span class="n">MNIST</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mnist_png&#39;</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/Figure_1.png"><img alt="_images/Figure_1.png" src="_images/Figure_1.png" style="width: 225.0px; height: 168.75px;" /></a>
+<p>We can see that the images coming out of our extraction methods look reasonable!</p>
+<p>Now that we&#8217;ve built a dataset, we can build models that can be used with it. Let&#8217;s now turn to the modelling features of Atlas... ✨.</p>
+<ul class="simple">
+<li>🤖 <a class="reference external" href="models.html">Get started with Atlas models</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="training.html" class="btn btn-neutral float-right" title="Training" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="datasets.html" class="btn btn-neutral" title="Datasets" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robert Stojnic &amp; Ross Taylor.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

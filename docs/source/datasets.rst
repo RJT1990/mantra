@@ -1,0 +1,516 @@
+Datasets
+########
+
+.. image:: mnist.png
+   :height: 100px
+   :width: 100px
+   :align: left
+
+.. image:: celeba.png
+   :height: 100px
+   :width: 200px
+   :align: left
+
+.. image:: imagenet.png
+   :height: 100px
+   :width: 80px
+   :align: left
+
+.. raw:: html
+
+   <div style="clear: both;"></div>
+
+With **Mantra** it's easy to package data for deep learning. In these docs, we are going to see how we make a data package, and how we process it using the powerful :code:`Dataset` class.
+
+
+💾 Make a Dataset
+**********************
+
+Go to the root of your project. To make a dataset use the :code:`makedata` command. We can make an empty dataset as follows:
+
+.. code-block:: console
+
+   $ mantra makedata first_dataset
+
+Or if we already have a tar.gz file with some data, we can reference it as follows:
+
+.. code-block:: console
+
+   $ mantra makedata first_dataset --tar-path tar_path_here
+
+Our new data folder will be located at **myproject/data/first_dataset**. Inside:
+
+.. code-block:: console
+
+   raw/
+   __init__.py
+   data.py
+
+- :code:`data.py` contains the core :code:`Dataset` class that is used to process your data
+- :code:`raw/` contains the tar.gz file with the raw data
+
+If we don't need flat files, but want to import data through an API, we can use the no-tar flag:
+
+.. code-block:: console
+
+   $ mantra makedata first_dataset --no-tar
+
+We now need to extract the input and output vectors :math:`X, y` that are used to train models ...
+
+
+✨ Magic Data Templates
+**************************
+
+Many datasets are standardised, such as a folder of images or a csv file with columns of features and labels. Mantra provides magic templates so you don't have the write the entire class yourself.
+
+💁 Images
+===============
+
+If we have a tar file that contains a folder of images, we can use the :code:`images` template:
+
+.. code-block:: console
+
+   $ mantra makedata celeba --template 'images' --tar-path celebA.tar.gz --image-dim 128 128
+
+Above we are using the images template. This will create an :code:`ImageDataset` class using the tar file provided. We can also specify additional options for the template:
+
+  ==================   =================   ===============   ======================================
+  Parameter            Type                Example           Description
+  ==================   =================   ===============   ======================================
+  --image-dim          list                64 64             Desired image dimension (height, output)
+  ==================   =================   ===============   ======================================
+
+Once we have executed the command, we can open the :code:`data.py` file:
+
+.. code-block:: python
+
+  import numpy as np
+
+  from mantraml.data.Dataset import Dataset
+  from mantraml.data.ImageDataset import ImageDataset
+
+
+  class MyImageDataset(ImageDataset):
+
+      name = 'celeba'
+      tar_name = 'celebA'
+      data_type = 'images'
+      has_labels = False
+
+      def __init__(self, name, image_dim=(128, 128), **kwargs):
+          super().__init__(name=name, image_dim=image_dim, **kwargs)
+
+We can see that we are inheriting from :code:`ImageDataset`. We can also see our input dimensions have entered as a default argument. We can use :code:`sample` to eyeball the data:
+
+.. code-block:: python3
+
+   from data.celeba.data import MyImageDataset
+
+   dataset = MyImageDataset(name='celeba')
+   dataset.sample()
+
+.. image:: celebasample.png
+   :width: 300px
+   :height: 225px
+   :scale: 75%
+
+So the advantage of using a template is that we didn't have to write any code. We could, if we wish though, write on top of these templates for some further customisation if we needed it.
+
+
+📙 Tables
+===============
+
+If we have a tar file that contains a flat csv file, we can use the :code:`tabular` template to load and extract the label and features columns.
+
+.. code-block:: console
+
+   $ mantraml makedata table_data --template 'tabular' --tar-path mydata.tar.gz
+   $ --file-name 'my_flat_file.csv' --target 'target_column'
+   $ --features 'feature_1' 'feature_2'
+
+This will create an :code:`TabularDataset` class. We can also specify additional options for the template.
+
+  ==================   ===========   ==========================   ======================================
+  Parameter            Type           Example                      Description
+  ==================   ===========   ==========================   ======================================
+  --file-name          str           'my_flat_file.csv'           The name of the flat file inside the tar
+  --target             str           'target_column'              The column name to extract as the target
+  --features           list          'feature_1' 'feature_2'      The columns to extract as the features
+  --target-index       int           0                            The column index of the target
+  --features-index     list          1 2                          The column indices to extract as features
+  ==================   ===========   ==========================   ======================================
+
+The index options are there if we want to refer to the table by indices rather than column names; if we just want to use column names then we can ignore these options.
+
+Once we have executed the command, we can open the :code:`data.py` file:
+
+.. code-block:: python
+
+  import numpy as np
+
+  from mantraml.data.TabularDataset import TabularDataset
+
+
+  class MyDataset(TabularDataset):
+
+      name = 'table_data'
+      tar_name = 'mydata'
+      data_type = 'tabular'
+      has_labels = True
+
+      def __init__(self, name, file_name='my_flat_file.csv', target='target_column',
+      features=['feature_1', 'feature_2'], target_index=None, features_index=None, **kwargs):
+          super().__init__(name=name, file_name=file_name, target=target, features=features,
+          target_index=target_index, features_index=features_index, **kwargs)
+
+We can see that we are inheriting from :code:`TabularDataset`. We can also see our feature and target options are now default argument options. We can now feed this dataset directly in our deep learning models - no further code needed.
+
+
+📊 Custom Data Processing
+***************************
+
+Open up the :code:`data.py` file:
+
+.. code-block:: python
+
+   import numpy as np
+
+   from mantraml.data.Dataset import Dataset
+
+
+   class ExampleDataset(Dataset):
+
+       name = 'my_first_data'
+       tar_name = 'example_images' # e.g 'example_images' for 'example_images.tar.gz'
+       data_type = 'images' # optional labelling of the datatype for free methods
+       has_labels = True
+
+       def __init__(self, name, **kwargs):       
+           super().__init__(name=name, **kwargs)
+
+       def extract_inputs(self, training=True):
+           return 
+
+       def extract_outputs(self, training=True):
+           return 
+
+The :code:`Dataset` class contains methods for extracting and testing data. Above we have created a new class :code:`ExampleDataset(Dataset)` that inherits from it.
+
+Next we see some **class variables** which define model metadata, such as the dataset *name*, the name of the tar file where the raw data is located, a *data_type* string and a boolean describing whether the dataset has labels.
+
+Afterwards we see the :code:`__init__` method; inside we call the :code:`__init__` method of :code:`Dataset`. The main function of this method is to extract the data from the tar file to a directory.
+
+Finally we see some empty functions :code:`extract_inputs` and :code:`extract_outputs`. The role of these functions is to extract input and output vectors :math:`X, y` to train the models.
+
+🔢 Example: MNIST Dataset
+****************************
+
+MNIST is a well-known deep learning dataset containing handwritten numbers. We can download the tar.gz file `here <https://github.com/myleott/mnist_png/blob/master/mnist_png.tar.gz>`_.
+
+Once you have downloaded the dataset, make a new data folder in your Mantra project by running the following command, refering the path of the tar file: 
+
+.. code-block:: console
+
+   $ mantra makedata mnist_png --tar-path mnist_png.tar.gz
+
+The tar file contains 10 folders for each number, with png images enclosed. We want to extract the paired images and labels. First let's quickly example the class variables in :code:`data.py`. 
+
+- We want labels so :code:`has_labels` should be set to True. 
+- :code:`data_type` should be set to 'images' for some free image processing methods
+
+At any time we can run the following command to test our new dataset:
+
+.. code-block:: console
+
+   $ mantra test mnist_png
+
+This is optional but it performs some basic checks to see if anything is glaringly wrong. It can also be used to guide your development by telling you what to build next. If we run it on the current class, we are told:
+
+.. code-block:: console
+
+   AssertionError: Your extract_inputs() method returns None.
+
+   This probably means you have not written an extract_inputs class method for your Dataset class.
+
+   This method should return an np.ndarray containing the input data X.
+
+As the test suggests, we need to actually extract some data! So let's do that. Below we've filled in the :code:`extract_inputs()` and :code:`extract_outputs()` methods to get the MNIST data. The path where your data is extracted is located at :code:`self.data_path`.
+
+.. code-block:: python
+
+  import glob
+  import numpy as np
+  import os
+  import scipy.misc
+  from sklearn.preprocessing import LabelEncoder,OneHotEncoder 
+
+  from mantraml.data.Dataset import Dataset
+
+  class MNIST(Dataset):
+
+    name = 'mnist_png'
+    tar_name = 'mnist_png' # e.g 'example_images' for 'example_images.tar.gz'
+    data_type = 'images' # optional labelling of the datatype for free methods
+    has_labels = True
+
+    def __init__(self, name, **kwargs):       
+       super().__init__(name=name, **kwargs)
+
+    def extract_folders(self, training=True):
+     
+      number_folders = [f.path for f in os.scandir(self.data_path + folder) if f.is_dir()] 
+
+      for folder in number_folders:
+        folder_number = int(folder.split('/')[-1])
+
+        images = glob.glob(os.path.join(folder, '*%s' % self.file_format))
+
+        if training:
+            images = images[:int(len(images)*self.training_test_split)]
+        else:
+            images = images[int(len(images)*self.training_test_split):]
+
+        image_data = (np.array([scipy.misc.imread(image).astype(np.float) for image in images]) / 127.5) - 1.0
+        labels = np.ones(image_data.shape[0])*folder_number
+
+        if hasattr(self, 'X'):
+           self.X = np.concatenate((self.X, image_data))
+        else:
+           self.X = image_data
+
+        if hasattr(self, 'y'):
+           self.y = np.concatenate((self.y, labels))
+        else:
+           self.y = labels
+
+      enc = OneHotEncoder()
+      enc.fit(self.y.reshape(-1, 1))
+      self.y = enc.transform(self.y.reshape(-1, 1)).toarray()
+
+    def extract_inputs(self, training=True):
+      
+       if not hasattr(self, 'y') and not hasattr(self, 'X'):
+           self.extract_folders(training=training)
+
+       return self.X
+
+    def extract_outputs(self, training=True):
+      
+       if not hasattr(self, 'y') and not hasattr(self, 'X'):
+           self.extract_folders(training=training)
+
+       return self.y
+
+To test the dataset we can run the test command:
+
+.. code-block:: console
+
+   $ mantra test mnist_png
+
+.. code-block:: console
+
+   [+] All tests passed
+
+We can also call a built-in :code:`sample` method in a Notebook or Python script, which samples from the :math:`X` matrix:
+
+.. code-block:: python3
+
+   from data.mnist.data import MNIST
+
+   dataset = MNIST(name='mnist_png')
+   dataset.sample()
+
+.. image:: Figure_1.png
+   :width: 300px
+   :height: 225px
+   :scale: 75 %
+
+We can see that the images coming out of our extraction methods look reasonable!
+
+
+
+🙌 Meet the Classes
+**********************
+
+.. py:class:: Dataset(name, **kwargs)
+
+ The :code:`Dataset` class contains methods for extracting, transforming and loading data.
+
+ ====================  ===============================    ===========================================
+ Parameter             Type                               Description
+ ====================  ===============================    ===========================================
+ name                  str                                The name of the dataset folder
+ training_test_split   float (e.g. 0.75)                  Data proportion to use to train (not test)   
+ ====================  ===============================    ===========================================
+
+ **Attributes**
+
+ .. py:attribute:: data_path
+    
+  A str with the path where the data from your tar file is extracted. This is the location from which you'll load in your datasets, before processing them into features and labels.
+
+ .. py:attribute:: X
+    
+  An np.ndarray containing feature training data. Alternatively, if no train/test split, can represent the entire feature data.
+
+ .. py:attribute:: y
+    
+  An np.ndarray containing labelled training data. Alternatively, if no train/test split, can represent the entire labelled data. Some datasets may not have labels, so this may be None.
+
+ .. py:attribute:: X_test
+    
+  An np.ndarray containing feature test data. Alternatively, if no train/test split, can be None.
+
+ .. py:attribute:: y_test
+    
+  An np.ndarray containing labelled test data. Alternatively, if no train/test split, can be None.
+
+ **Methods**
+
+ .. py:method:: sample
+
+    Takes a sample from the dataset. If an image dataset, it will plot a random image from :code:`self.X`. For a regular dataset, it will return a random row of data. 
+
+ .. py:method:: test
+
+    Performs some checks on the class to ensure that data is formatted and calculated correctly.
+
+
+.. py:class:: ImageDataset(name, image_dim, **kwargs)
+
+ :code:`ImageDataset` contains methods for extracting, transforming and loading image data.
+
+ ====================   ===============================    ===========================================
+ Parameter              Type                               Description
+ ====================   ===============================    ===========================================
+ name                   str                                The name of the dataset folder
+ image_dim              tuple                              The desired image dimension, e.g. (64, 64)
+ training_test_split    float (e.g. 0.75)                  Data proportion to use to train (not test)   
+ ====================   ===============================    ===========================================
+
+ **Attributes**
+
+ .. py:attribute:: data_path
+    
+  A str with the path where the data from your tar file is extracted. This is the location from which you'll load in your datasets, before processing them into features and labels.
+
+ .. py:attribute:: file_format
+    
+  A str with the primary image format, e.g. '.jpg' or '.png'.
+
+ .. py:attribute:: image_dim
+    
+  A tuple with the dimension of the images, e.g. (64, 64).
+
+ .. py:attribute:: image_shape
+    
+  A tuple with the dimension and color dimension of the images, e.g. (64, 64, 4)
+
+ .. py:attribute:: n_color_channels
+    
+  A int with the number of image color channels, e.g. 4 for a .png image.
+
+ .. py:attribute:: X
+    
+  An np.ndarray containing feature training data. Alternatively, if no train/test split, can represent the entire feature data.
+
+ .. py:attribute:: y
+    
+  An np.ndarray containing labelled training data. Alternatively, if no train/test split, can represent the entire labelled data. Some datasets may not have labels, so this may be None.
+
+ .. py:attribute:: X_test
+    
+  An np.ndarray containing feature test data. Alternatively, if no train/test split, can be None.
+
+ .. py:attribute:: y_test
+    
+  An np.ndarray containing labelled test data. Alternatively, if no train/test split, can be None.
+
+ **Methods**
+
+ .. py:method:: sample
+
+    Takes a sample from the dataset. If an image dataset, it will plot a random image from :code:`self.X`. For a regular dataset, it will return a random row of data. 
+
+ .. py:method:: test
+
+    Performs some checks on the class to ensure that data is formatted and calculated correctly.
+
+
+
+
+.. py:class:: TabularDataset(name, file_name, target, features, target_index, features_index, **kwargs)
+
+ :code:`TabularDataset` contains methods for extracting, transforming and loading image data.
+
+ ====================   ===============================    ===========================================
+ Parameter              Type                               Description
+ ====================   ===============================    ===========================================
+ name                   str                                The name of the dataset folder
+ file_name              str                                The name of the flat file inside the tar
+ target                 str                                The column name to extract as the target
+ features               list of strs                       The columns to extract as the features
+ target_index           int                                The column index of the target
+ features_index         list of ints                       The column indices to extract as features
+ training_test_split    float (e.g. 0.75)                  Data proportion to use to train (not test)   
+ ====================   ===============================    ===========================================
+
+ **Attributes**
+
+ .. py:attribute:: data_path
+    
+  A str with the path where the data from your tar file is extracted. This is the location from which you'll load in your datasets, before processing them into features and labels.
+
+ .. py:attribute:: file_name
+    
+  A str representing name of the flat file inside the tar, e.g. 'mydata.csv'
+
+ .. py:attribute:: target
+    
+  A str representing the column name inside the DataFrame that represents the target (or label)
+
+ .. py:attribute:: features
+    
+  A list of strs representing the column names inside the DataFrame that represents the features
+
+ .. py:attribute:: target_index
+    
+  A int representing the column index inside the DataFrame that represents the target (or label). May be None if user referred to column names instead of indices.
+
+ .. py:attribute:: features_index
+    
+  A list of ints representing the column indices inside the DataFrame that represents the features. May be None if user referred to column names instead of indices.
+
+ .. py:attribute:: df_train
+    
+  An pd.DataFrame containing all the training data. Alternatively, if no train/test split, can represent the entire data.
+
+ .. py:attribute:: df_test
+    
+  An pd.DataFrame containing all the test data. Alternatively, if no train/test split, can be None.
+
+ .. py:attribute:: X
+    
+  An np.ndarray containing feature training data. Alternatively, if no train/test split, can represent the entire feature data.
+
+ .. py:attribute:: y
+    
+  An np.ndarray containing labelled training data. Alternatively, if no train/test split, can represent the entire labelled data. Some datasets may not have labels, so this may be None.
+
+ .. py:attribute:: X_test
+    
+  An np.ndarray containing feature test data. Alternatively, if no train/test split, can be None.
+
+ .. py:attribute:: y_test
+    
+  An np.ndarray containing labelled test data. Alternatively, if no train/test split, can be None.
+
+ **Methods**
+
+ .. py:method:: sample
+
+    Takes a sample from the dataset. If an image dataset, it will plot a random image from :code:`self.X`. For a regular dataset, it will return a random row of data. 
+
+ .. py:method:: test
+
+    Performs some checks on the class to ensure that data is formatted and calculated correctly.

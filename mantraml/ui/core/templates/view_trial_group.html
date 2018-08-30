@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load static %}
+{% block contents %}
+
+<div class="container content">
+
+  <!-- Repo title and header -->
+  <div class="row" style="padding-top:30px;">
+
+    <div class="col-md-2">
+      <div class="data-trial-summary">
+        <div class="data-trial-image"><img width=140 src="/static/{{ data.dataset_image }}"></div>
+      </div>
+    </div>
+
+    <div class="col-md-8 trial-header">
+      <div class="trial-section-header">
+        <img src="/static/{{ model.image }}"> <a href="/model/{{ model.folder_name }}">{{ model.name }} </a>
+        on 
+        <img src="/static/{{ data.dataset_image }}"> <a href="/data/{{ data.folder_name }}">{{ data.name }}</a></div>
+      
+      <div class="main-header">Trial Group {{ trial_group_hash |slice:':6' }}</div>
+      <div class="latest-trial"><i class="em em-female-scientist"></i> Latest trial: {{ latest_trial }}</div>
+    </div>
+    <div class="col-md-2">
+      <div class="repo-summary">
+        <div class="repo-summary-image"><img width=140 src="/static/{{ model.image }}"></div>
+      </div>
+    </div>
+  </div>
+
+      <div class="row content">
+        <div class="col-md-12">
+          <div class="content-box">
+            
+          <div class="content-code-full">
+
+            <div class="content-code-header"><ion-icon name="rocket"></ion-icon> Latest Trials</div>
+
+
+<div class="trial-group-contents">
+
+<div class="modal fade" id="deleteTrialModal" tabindex="-1" role="dialog" aria-labelledby="deleteTrialModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteTrialModalLabel">Are you sure you want to delete this trial?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="" method="post">
+
+
+    {% csrf_token %}
+    {{ form }}
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Delete</button>
+      </div>
+
+</form>
+
+    </div>
+  </div>
+</div>
+
+<table id="trialtable" class="table text-center">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Epochs</th>
+      <th scope="col">Trial</th>
+      <th scope="col">Time</th>
+      {% for hyperparm in hyperparms %}
+      <th scope="col">{{ hyperparm | capfirst }}</th>
+      {% endfor %}
+      {% for metric_name in metric_names %}
+      <th scope="col">{{ metric_name | capfirst }}</th>
+      {% endfor %}
+      {% if task_full_name %}
+      <th scope="col">Validation Loss <ion-icon data-toggle="tooltip" title="{{ task_full_name }}" name="information-circle-outline"></ion-icon></th>
+      {% endif %}
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+{% for trial_values in trials %}
+    <tr>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';"> {% if not trial_values.metadata.training_finished %}
+        <img width=15 src="/static/img/live.gif">
+        <script type="text/javascript">
+        setTimeout(function () { location.reload(true); }, 60000);
+       </script>
+       {% else %}
+       <i class="em em-white_check_mark"></i>
+        {% endif %}</td>
+
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.metadata.current_epoch }} / {{ trial_values.metadata.hyperparameters.epochs }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.trial_hash |slice:':6' }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.time }}</td>
+      {% for hv in trial_values.hyperparm_values %}
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ hv }}</td>
+      {% endfor %}
+      {% for mv in trial_values.metric_values %}
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ mv }}</td>
+      {% endfor %}
+      {% if task_full_name %}
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.metadata.validation_loss |floatformat:4 }}</td>
+      {% endif %}
+      <td><button data-id="{{ trial_values.trial_hash }}" type="button" class="open-deleteTrialDialog btn btn-primary" data-toggle="modal" data-target="#deleteTrialModal">
+  delete
+</button></td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+
+
+<script>
+  $(document).ready(function () {
+  $('#trialtable').DataTable( {
+        "order": [[ 3, "desc" ]]
+    } );
+  $('.dataTables_length').addClass('bs-select');
+});
+
+$(document).on("click", ".open-deleteTrialDialog", function () {
+     var mytrialId = $(this).data('id');
+     $(".modal-content #id_trial_hash").val( mytrialId );
+});
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+
+</script>
+
+</div>
+</div>
+
+
+
+          </div>
+        </div>
+      </div>
+</div>
+
+{% endblock %}

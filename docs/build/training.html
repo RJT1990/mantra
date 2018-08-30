@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Training &mdash; Atlas Documentation 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Atlas Documentation 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Sharing" href="sharing.html"/>
+        <link rel="prev" title="Models" href="models.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Atlas Documentation
+          
+
+          
+            
+            <img src="_static/logo-small.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Training</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#training-on-aws">🏃 Training on AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#training-on-your-own-machines-over-ssh">🏃 Training on your own machines over SSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meet-all-the-training-options">👀 Meet all the training options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sharing.html">Sharing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Atlas Documentation</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Training</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/training.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="training">
+<h1>Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h1>
+<p>Once you have encapsulated your datasets and models, you can easily train them on any infrastructure.</p>
+<div class="section" id="training-on-aws">
+<h2>🏃 Training on AWS<a class="headerlink" href="#training-on-aws" title="Permalink to this headline">¶</a></h2>
+<p>To train a model on AWS, first configure your AWS credentials</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas config aws
+</pre></div>
+</div>
+<p>You will be asked for your API keys, default zone, instance type and S3 bucket.</p>
+<p>We use S3 as the central storage backend for all of your files.</p>
+<p>To train <code class="code docutils literal"><span class="pre">mymodel</span></code> using <code class="code docutils literal"><span class="pre">mydataset</span></code> from the console:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas train --dataset mydataset mymodel
+
+<span class="gp">#</span> or in python:
+<span class="go">mymodel.train(mydata)</span>
+</pre></div>
+</div>
+<p>This will provision a new AWS EC2 instance to match your development environment, sync over the datasets and models (via S3) and run the training.</p>
+<p>The instance will be automatically shut down after 15 minutes of inactivity, and all files stored in S3.</p>
+<p>To re-use the instance pass the instance hash or name as a parameter:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas train --dataset mydataset mymodel --instance i-123456789
+
+<span class="gp">#</span> or in python
+<span class="go">mymodel.train(mydata, instance=&quot;i-123456789&quot;)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="training-on-your-own-machines-over-ssh">
+<h2>🏃 Training on your own machines over SSH<a class="headerlink" href="#training-on-your-own-machines-over-ssh" title="Permalink to this headline">¶</a></h2>
+<p>If you manage your own machines, you can use them for remote training.</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas config ssh
+</pre></div>
+</div>
+<p>You will be asked for the location of your private key, default instance and a host:directory where the files should be permanently stored.</p>
+<p>After that you can train your model by specifying the IP address of your machine:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas train --dataset mydataset mymodel --host &lt;ip address&gt;
+
+<span class="gp">#</span> or in python
+<span class="go">mymodel.train(mydata, host=&quot;&lt;ip address&gt;&quot;)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="meet-all-the-training-options">
+<h2>👀 Meet all the training options<a class="headerlink" href="#meet-all-the-training-options" title="Permalink to this headline">¶</a></h2>
+<p>All options are available through the commandline (<code class="code docutils literal"><span class="pre">atlas</span> <span class="pre">train</span></code>) and the python interface (<code class="code docutils literal"><span class="pre">Model.train()</span></code>).</p>
+<dl class="method">
+<dt id="Model.train">
+<code class="descclassname">Model.</code><code class="descname">train</code><span class="sig-paren">(</span><em>dataset</em>, <em>instance</em>, <em>host</em>, <em>batch_size</em>, <em>epochs</em>, <em>save_model</em>, <em>use_checkpoint</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Model.train" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Parameters</strong></p>
+<dl class="attribute">
+<dt id="Model.dataset">
+<code class="descname">dataset</code><a class="headerlink" href="#Model.dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dataset object used for training.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Model.instance">
+<code class="descname">instance</code><a class="headerlink" href="#Model.instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Cloud instance ID to be used. If no instance and host are specified, the training is local.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Model.host">
+<code class="descname">host</code><a class="headerlink" href="#Model.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>IP address of the host to use. The host is assumed to have installed the correct software dependencies.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Model.batch_size">
+<code class="descname">batch_size</code><a class="headerlink" href="#Model.batch_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The size of a training batch, in number of datapoints.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Model.epochs">
+<code class="descname">epochs</code><a class="headerlink" href="#Model.epochs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of epochs to use for training</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Model.save_model">
+<code class="descname">save_model</code><a class="headerlink" href="#Model.save_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>If to save the model or not.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Model.use_checkpoint">
+<code class="descname">use_checkpoint</code><a class="headerlink" href="#Model.use_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>If to save the checkpoints or not.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Model.kwargs">
+<code class="descname">kwargs</code><a class="headerlink" href="#Model.kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any other parameters to be passed to the train function. All of these will be automatically captured and attached to the training run. When using on a commandline use as <code class="code docutils literal"><span class="pre">--kwargs</span> <span class="pre">&quot;param1=10,param2=10&quot;</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sharing.html" class="btn btn-neutral float-right" title="Sharing" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="models.html" class="btn btn-neutral" title="Models" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robert Stojnic &amp; Ross Taylor.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

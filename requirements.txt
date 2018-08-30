@@ -1,0 +1,12 @@
+boto>=2.49.0
+django<2.1
+lazy-import>=0.2.2
+matplotlib>=2.2.2
+numpy>=1.14.1
+pandas>=0.23.3
+paramiko>=2.4.1
+pillow>=5.1.0
+pyyaml>=3.13
+scipy>=1.1.0
+pytest>=3.7.1
+boto3>=1.7.73
