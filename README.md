@@ -1,7 +1,5 @@
 <div align="center">
-    <img src="https://image.ibb.co/mZYxJU/mantranew.png">
-  
-  
+    <img src="docs/source/mantra_header.png">
 </div>
 
 -----------------------------------------
@@ -51,10 +49,25 @@ mantra train cnn_model --dataset cifar_10 --cloud
 ```console
 mantra ui
 ```
+<img src="docs/source/mantra_ui_2.png">
 
-## AWS Setup
+<img src="docs/source/mantra_ui_1.png"> 
 
-1. Press your name (e.g. "John Smith") in the menubar and click My Security Credentials.
+## Installation
+
+To install mantra, you can use pip:
+
+```
+pip install mantraml
+```
+
+Mantra is tested on Python 3.5+. 
+
+### AWS Dependencies
+
+You will need to install AWS CLI as a dependency. 
+
+1. Login to AWS through a browser, click your name in the menubar and click My Security Credentials.
 
 2. Create a new Access Key and make a note of the **Access Key ID** and **Secret Access Key**.
 
@@ -70,31 +83,8 @@ Once prompted, enter your AWS details and your default region (e.g. *us-east-1*)
 4. Now your credentials will be accessible by the **boto3** AWS SDK library, which will allow **Mantra** to be used to 
 provision cloud instances on your request.
 
-5. Once you start an Mantra project (see below) change your projects settings.py file and set the **AWS_KEY_NAME** and **AWS_KEY_PATH** fields - these will determine the credentials of any new instances you create through Mantra.
+5. Use *mantra cloud* from your mantra project root to configure your cloud settings.
 
-## Getting Started
-
-Clone the repository and then in the root of the project:
-
-```console
-python setup.py install
-```
-
-🚀 To launch your first Mantra project, execute the following to create a new project directory:
-
-```console
-mantra launch my_project 
-```
-
-🤖 If you want to create a new model, then execute the following from the root of your project directory:
-
-```console
-mantra makemodel my_new_model
-```
-
-💾 If you want to create a new dataset, then execute the following from the root of your project directory:
-
-```console
-mantra makedata my_new_dataset
+You should also ensure you are happy with the default instance settings in mantra - you can check this in the *settings.py* file in your project root.
 ```
 
