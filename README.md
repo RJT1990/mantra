@@ -1,6 +1,17 @@
-# Mantra
+<div align="center">
+  <img width="250px" height="250px" src="https://image.ibb.co/mfkuyU/kisspng_tibetan_buddhism_endless_knot_symbol_ashtamangala_cool_designs_5acbb219712152_0075819615232988414634.png">
+    <img src="https://image.ibb.co/mZYxJU/mantranew.png">
+  
+  
+</div>
 
-The Mantra Library
+-----------------------------------------
+
+# mantra
+
+
+## 
+
 
 ## AWS Setup
 
