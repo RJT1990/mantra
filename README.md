@@ -49,9 +49,7 @@ mantra train cnn_model --dataset cifar_10 --cloud
 ```console
 mantra ui
 ```
-<img src="docs/source/mantra_ui_2.png">
-
-<img src="docs/source/mantra_ui_1.png"> 
+<img src="docs/source/demo.gif">
 
 ## Installation
 
@@ -85,6 +83,8 @@ provision cloud instances on your request.
 
 5. Use *mantra cloud* from your mantra project root to configure your cloud settings.
 
-You should also ensure you are happy with the default instance settings in mantra - you can check this in the *settings.py* file in your project root.
-```
+You should also ensure you are happy with the default instance settings in mantra - you can check this in the *settings.py* file in your project root. 
 
+### Have Fun
+
+Please train responsibly.
