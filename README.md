@@ -83,6 +83,8 @@ provision cloud instances on your request.
 
 5. Use *mantra cloud* from your mantra project root to configure your cloud settings.
 
-You should also ensure you are happy with the default instance settings in mantra - you can check this in the *settings.py* file in your project root.
-```
+You should also ensure you are happy with the default instance settings in mantra - you can check this in the *settings.py* file in your project root. 
 
+### Have Fun
+
+Please train responsibly.
