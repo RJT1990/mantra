@@ -6,6 +6,12 @@
 
 # Mantra: Modular Deep Learning
 
+<div align="center">
+<img width="500" src="docs/source/demo2.gif">
+</div>
+<br><br>
+
+
 **Mantra** is a deep learning development kit that manages the various components in an deep learning project, and makes it much easier to do routine tasks like training in the cloud, model monitoring, model benchmarking and more. It works with your favourite deep learning libraries like TensorFlow, PyTorch and Keras. 
 
 You might like mantra if:
@@ -41,9 +47,8 @@ mantra cloud
 🤖 To train the example CNN model on CIFAR-10 with your cloud provider:
 
 ```console
-mantra train cnn_model --dataset cifar_10 --cloud 
+mantra train cifar_model --dataset cifar_10 --cloud 
 ```
-
 🚂 During training, you can spin up the Mantra UI:
 
 ```console
