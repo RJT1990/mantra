@@ -49,9 +49,7 @@ mantra train cnn_model --dataset cifar_10 --cloud
 ```console
 mantra ui
 ```
-<img src="docs/source/mantra_ui_2.png">
-
-<img src="docs/source/mantra_ui_1.png"> 
+<img src="docs/source/demo.gif">
 
 ## Installation
 
