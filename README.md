@@ -9,6 +9,7 @@
 <div align="center">
 <img width="500" src="docs/source/demo2.gif">
 </div>
+<br><br>
 
 
 **Mantra** is a deep learning development kit that manages the various components in an deep learning project, and makes it much easier to do routine tasks like training in the cloud, model monitoring, model benchmarking and more. It works with your favourite deep learning libraries like TensorFlow, PyTorch and Keras. 
