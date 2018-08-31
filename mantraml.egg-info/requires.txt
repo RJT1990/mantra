@@ -1,4 +1,0 @@
-numpy
-paramiko
-pillow
-lazy-import
