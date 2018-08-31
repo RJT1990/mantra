@@ -220,14 +220,16 @@ class MantraHashed(object):
             current_dir = path.split('/')[-1]
 
             # extracted folders are never stored
-            if 'extract/' in path or current_dir == 'extract':
+            if '.extract/' in path or current_dir == '.extract':
                 continue
 
             for file in files:
+                if file == 'hash':
+                    continue
                 file_path = '%s/%s' % (path, file)
                 hash_dict[file_path] = cls.create_file_hash_dict(file, file_path)
 
-            filtered_dirs = [directory for directory in dirs if directory != 'extract']
+            filtered_dirs = [directory for directory in dirs if directory != '.extract']
             hash_dict[path] = cls.create_tree_hash_dict(current_dir, path, filtered_dirs, files, hash_dict)
 
         return hash_dict[folder_dir]['hash'], hash_dict

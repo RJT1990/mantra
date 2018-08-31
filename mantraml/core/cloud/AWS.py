@@ -511,17 +511,11 @@ class AWS:
         except IndexError:
             print(colored(' \033[1m [X]', 'red') + colored(' Could not find EC2 Instances', 'red'))
 
-        instance_running = False
-
         if self.active_instance.state['Name'] != 'running':
             self.ec2.instances.filter(InstanceIds=[self.active_instance.id]).start()
-
-            while instance_running is False:
-                time.sleep(1)
-                instances = [instance for instance in self.ec2.instances.filter(InstanceIds=[self.active_instance.id])]
-                if instances[0].state['Name'] == 'running':
-                    instance_running = True
-                    time.sleep(1) 
+            self.active_instance.wait_until_running()
+            self.active_instance = list(self.ec2.instances.filter(InstanceIds=[self.active_instance.id]))[0]
+            time.sleep(2)
 
         self.public_dns = self.active_instance.public_dns_name
 

@@ -254,7 +254,6 @@ def view_model(request, model_name):
 
     return render(request, 'view_model.html', request_vars)
 
-
 def view_dataset(request, dataset_name):
     """
     This view shows the dataset module page
@@ -540,7 +539,7 @@ def view_dataset_task(request, dataset_name, task_name):
 
         trial['model_metadata'] = Mantra.find_model_metadata(trial['model_name'])
 
-    request_vars['task_trials'].sort(key=lambda item: item['time'], reverse=True)
+    request_vars['task_trials'].sort(key=lambda item: item['metadata']['validation_loss'], reverse=False)
 
     request_vars['task_name'] = task_name
     request_vars['task_metadata'] = Mantra.find_task_metadata(task_name)
