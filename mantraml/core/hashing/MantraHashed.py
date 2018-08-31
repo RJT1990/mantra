@@ -1,8 +1,10 @@
+import binascii
 import datetime
 import hashlib
 import os
 import shutil
 import stat
+import zlib
 
 BUF_SIZE = 65536  # read files in 64kb chunks
 
@@ -164,6 +166,39 @@ class MantraHashed(object):
         return tree_info
 
     @classmethod
+    def get_data_dependency_hash(cls, data_dir, dataset_class):
+        """
+        This method takes a dataset_class, with a files class variable, and works out the concatenated hash
+        from the files. We use this to get an hash of the dataset dependencies, so we can compare hashes
+        of these dependencies between environments (local and cloud) and know whether to transfer large
+        files or not (if they have changed).
+
+        Parameters
+        -----------
+        data_dir - str
+            The directory of the data folder
+
+        dataset_class - mantraml.Dataset type class
+            Containing a files class variable that we will calculate a concatenated hash for
+
+        Returns
+        ---------
+        str - SHA-256 hash of the data dependencies
+        """
+
+        file_hashes = []
+
+        for file in sorted(dataset_class.files):
+
+            if not os.path.isfile('%sraw/%s' % (data_dir, file)):
+                raise IOError('The following file that was referenced in your Dataset class does not exist: %s' % file)
+
+            tar_hash = MantraHashed.get_256_hash_from_file('%sraw/%s' % (data_dir, file))
+            file_hashes.append(tar_hash)
+
+        return MantraHashed.get_256_hash_from_string(''.join(file_hashes))
+
+    @classmethod
     def get_folder_hash(cls, folder_dir):
         """
         Gets the hash of a model/data folder. Uses a Git style Merkel tree
@@ -175,10 +210,10 @@ class MantraHashed(object):
 
         Returns
         ---------
-        str - SHA-256 hash of the model/data folder, ref_table - dict containing hashes of the files and trees
+        str - SHA-256 hash of the model/data folder, hash_dict - dict containing hashes of the files and trees
         """
 
-        ref_table = {}
+        hash_dict = {}
 
         for path, dirs, files in os.walk(folder_dir, topdown=False):
 
@@ -190,12 +225,12 @@ class MantraHashed(object):
 
             for file in files:
                 file_path = '%s/%s' % (path, file)
-                ref_table[file_path] = cls.create_file_hash_dict(file, file_path)
+                hash_dict[file_path] = cls.create_file_hash_dict(file, file_path)
 
             filtered_dirs = [directory for directory in dirs if directory != 'extract']
-            ref_table[path] = cls.create_tree_hash_dict(current_dir, path, filtered_dirs, files, ref_table)
+            hash_dict[path] = cls.create_tree_hash_dict(current_dir, path, filtered_dirs, files, hash_dict)
 
-        return ref_table[folder_dir]['hash'], ref_table
+        return hash_dict[folder_dir]['hash'], hash_dict
 
     @classmethod
     def save_artefact(cls, cwd, hash, objects, args, artefact_type='MODELS', **kwargs):
@@ -242,11 +277,14 @@ class MantraHashed(object):
                 os.mkdir(hash_path)
 
             if item_value['type'] == 'tree':
-                f = open(item_loc, "w")
-                f.write(item_value['content'])
+                f = open(item_loc, "wb")
+                f.write(zlib.compress(bytes(item_value['content'].encode('ascii'))))
                 f.close()
             else:
-                shutil.copyfile(item_key, item_loc)
+                content = zlib.compress(open(item_key, "rb").read())
+                f = open(item_loc, "wb")
+                f.write(content)
+                f.close()
 
         unix_ts = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
         f = open('%s/%s' % (cwd, '.mantra/%s' % artefact_type), "a")

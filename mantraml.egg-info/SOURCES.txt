@@ -88,6 +88,7 @@ mantraml/templates/projects/default/trials/__init__.py
 mantraml/templates/tasks/default/__init__.py
 mantraml/templates/tasks/default/task.py
 mantraml/tests/__init__.py
+mantraml/tests/test_cloud.py
 mantraml/tests/test_dataset.py
 mantraml/tests/data/__init__.py
 mantraml/tests/data/test_image_data/__init__.py

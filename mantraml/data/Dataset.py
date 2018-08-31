@@ -192,26 +192,6 @@ class Dataset:
             tar.extractall(path=self.raw_data_path)
             os.rename('%sraw/%s' % (self.data_dir, top_level_dir), '%sraw/%s' % (self.data_dir, '.extract'))
 
-    @classmethod
-    def get_data_folder_hash(cls, data_dir, files):
-        """
-        This method takes files, and works out the hash of the files collectively 
-
-        We use this for the cloud data upload to check if the dataset is synced between both locations
-        """
-
-        file_hashes = []
-
-        for file in sorted(files):
-
-            if not os.path.isfile('%sraw/%s' % (data_dir, file)):
-                raise IOError('The following file that was referenced in your Dataset class does not exist: %s' % file)
-
-            tar_hash = MantraHashed.get_256_hash_from_file('%sraw/%s' % (data_dir, file))
-            file_hashes.append(tar_hash)
-
-        return MantraHashed.get_256_hash_from_string(''.join(file_hashes))
-
     def extract_file_data(self):
         """
         This method extracts data from the files list, and checks hashes based on old extractions
