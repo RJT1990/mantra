@@ -2,12 +2,11 @@ from .Dataset import Dataset
 from .ImageDataset import ImageDataset
 from .TabularDataset import TabularDataset
 
-from mantraml.models.TFModel import TFModel
-from mantraml.models.KerasModel import KerasModel
+from mantraml.models import MantraModel
 from mantraml.tasks.Task import Task
 
 # Bade model and data for training
-BASE_MODEL_CLASSES = ['TFModel', 'KerasModel']
+BASE_MODEL_CLASSES = ['MantraModel']
 BASE_DATA_CLASSES = ['Dataset', 'TabularDataset', 'ImageDataset']
 BASE_TASK_CLASSES = ['Task']
 
@@ -60,7 +59,7 @@ def find_model_class(model_module):
         if obj_key in BASE_MODEL_CLASSES:
             continue
         elif hasattr(model_module.__dict__[obj_key], '__bases__'):
-            if model_module.__dict__[obj_key].__bases__[0] in [TFModel, KerasModel]:
+            if model_module.__dict__[obj_key].__bases__[0] in [MantraModel]:
                 model = model_module.__dict__[obj_key]
 
     return model

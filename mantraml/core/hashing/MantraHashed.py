@@ -223,19 +223,19 @@ class MantraHashed(object):
             if '.extract/' in path or current_dir == '.extract':
                 continue
 
-            for file in files:
-                if file == 'hash':
-                    continue
+            files_list = [file for file in files if file != 'hash']
+
+            for file in files_list:
                 file_path = '%s/%s' % (path, file)
                 hash_dict[file_path] = cls.create_file_hash_dict(file, file_path)
 
             filtered_dirs = [directory for directory in dirs if directory != '.extract']
-            hash_dict[path] = cls.create_tree_hash_dict(current_dir, path, filtered_dirs, files, hash_dict)
+            hash_dict[path] = cls.create_tree_hash_dict(current_dir, path, filtered_dirs, files_list, hash_dict)
 
         return hash_dict[folder_dir]['hash'], hash_dict
 
     @classmethod
-    def save_artefact(cls, cwd, hash, objects, args, artefact_type='MODELS', **kwargs):
+    def save_artefact(cls, cwd, hash, objects, trial, artefact_type='MODELS', **kwargs):
         """
         Saves the model/data objects to a hidden folder - in case the user wants to revert to that model/data at any point
 
@@ -250,8 +250,8 @@ class MantraHashed(object):
         objects - dict
             keys with file/tree paths, and values containing hash information
 
-        args - NameSpace
-            Additional arguments that the user entered through the training
+        trial - Trial object
+            The trial where the artefact was employed
 
         artefact_type - str
             Either MODELS or DATA (depending on the artefact)
@@ -292,11 +292,11 @@ class MantraHashed(object):
         f = open('%s/%s' % (cwd, '.mantra/%s' % artefact_type), "a")
 
         if artefact_type == 'MODELS':
-            f.write('%s %s %s %s\n' % (hash, unix_ts, args.model_name, 'trained on %s' % args.dataset))
+            f.write('%s %s %s %s\n' % (hash, unix_ts, trial.model_name, 'trained on %s' % trial.dataset_name))
         elif artefact_type == 'DATA':
-            f.write('%s %s %s %s\n' % (hash, unix_ts, args.dataset, 'used with model %s' % args.model_name))
+            f.write('%s %s %s %s\n' % (hash, unix_ts, trial.dataset_name, 'used with model %s' % trial.model_name))
         elif artefact_type == 'TASKS':
-            f.write('%s %s %s %s\n' % (hash, unix_ts, args.task, 'used with model %s trained on %s' % (args.model_name, args.dataset)))
+            f.write('%s %s %s %s\n' % (hash, unix_ts, trial.task_name, 'used with model %s trained on %s' % (trial.model_name, trial.dataset_name)))
         f.close()
 
         return True

@@ -17,7 +17,7 @@ logging.getLogger('botocore').setLevel(logging.CRITICAL)
 logging.getLogger('paramiko').setLevel(logging.CRITICAL)
 
 from mantraml.core.hashing.MantraHashed import MantraHashed
-from mantraml.models.consts import SHORT_HASH_INT, DEFAULT_BATCH_SIZE, DEFAULT_EPOCHS
+from mantraml.core.training.Trial import Trial
 
 from .consts import DEFAULT_SH_SCRIPT, DEFAULT_SH_SCRIPT_VERBOSE, DEFAULT_SH_TASK_SCRIPT, DEFAULT_SH_TASK_SCRIPT_VERBOSE
 from .consts import EXCLUDED_PROJECT_FILES, MANTRA_DEVELOPMENT_TAG_NAME
@@ -91,10 +91,10 @@ class AWS:
         void - sends files from S3 to local, or str if no execution
         """
 
-        path = '%s/trials/%s/' % (os.getcwd(), model.trial_folder_name)
+        path = '%s/trials/%s/' % (os.getcwd(), model.trial.trial_folder_name)
 
         # s3 bucket locations
-        s3_model_bucket_dir = 'trials/%s/' % model.trial_folder_name
+        s3_model_bucket_dir = 'trials/%s/' % model.trial.trial_folder_name
 
         aws_cmd = 'aws s3 --exact-timestamps sync --quiet %s s3://%s/%s' % (path, model.settings.S3_BUCKET_NAME, s3_model_bucket_dir)
         
@@ -141,81 +141,13 @@ class AWS:
 
         print(colored('\n \033[1m [+]', 'green') + colored(' Sync complete\n', 'white'))
 
-    @staticmethod
-    def configure_arguments(args, **kwargs):
-        """
-        Here we process the arguments and keyword arguments into a string that can be used for the command line
-        execution from the AWS instances; we also store into a combined dictionary that we can use to record the
-        hyperparameters for the trial
-
-        Parameters
-        -----------
-        args : dict
-            Optional arguments that were used for training
-
-        Returns
-        -----------
-        str for command line, dictionary of all arguments entered
-
-        E.g. '--cloud --dropout 0.5', {'cloud': True, 'dropout': 0.5}
-        """
-
-        arg_dict = {}
-        arg_str = ''
-
-        # First Process the Arguments
-
-        for arg_key, arg_value in args.__dict__.items():
-
-            converted_arg_value = arg_value
-
-            if arg_value and arg_key not in ['func', 'model_name', 'dataset', 'cloud']:
-                if arg_value is True:
-                    arg_str += ' --%s' % arg_key
-                elif isinstance(arg_value, list):
-                    arg_str += ' --%s %s' % (arg_key, ' '.join(arg_value))
-                elif arg_value not in [True, False]:
-                    if isinstance(arg_value, str):
-                        if '.' in arg_value and all([i.isnumeric() for i in arg_value.split('.',1)]):
-                            converted_arg_value = float(arg_value)
-                    
-                    arg_str += ' --%s %s' % (arg_key, arg_value)
-                    
-                arg_dict[arg_key] = converted_arg_value
-
-        # Secondly any Keyword (additional) arguments
-
-        for arg_key, arg_value in kwargs.items():
-
-            converted_arg_value = arg_value 
-            
-            if arg_value is True:
-                arg_str += ' --%s' % arg_key
-            elif isinstance(arg_value, list):
-                arg_str += ' --%s %s' % (arg_key, ' '.join(arg_value))
-            elif arg_value not in [True, False]:
-                if isinstance(arg_value, str):
-                    if '.' in arg_value and all([i.isnumeric() for i in arg_value.split('.',1)]):
-                        converted_arg_value = float(arg_value)
-
-                arg_str += ' --%s %s' % (arg_key, converted_arg_value)
-            
-            arg_dict[arg_key] = converted_arg_value
-
-        return arg_str, arg_dict
-
-    def configure_trial_metadata(self, args, arg_dict, execute=True):
+    def write_metadata(self, execute=True):
         """
         This method configures the trial metadata file. This file contains information on the training job, including the data, model and task used, 
         as well as things like hyperparameters, a training timestamp, and so on.
 
         Parameters
         -----------
-        args : Namespace
-            Optional arguments that were used for training
-
-        arg_dict : dict
-            Containing arguments that were used for training
 
         execute : bool
             If True, will write the file to a location; else will return a string (useful for testing)
@@ -225,60 +157,15 @@ class AWS:
         void - creates the metadata yaml and sends it to the instances; else returns the yaml file and log contents
         """
 
-        metadata = {}
-        metadata['model_name'] = args.model_name
-        metadata['data_name'] = args.dataset 
-        metadata['model_hash'] = self.model_hash
-        metadata['data_hash'] = self.data_hash
-
-        if args.task:
-            metadata['task_name'] = args.task
-            metadata['task_hash'] = self.task_hash
-        else:
-            metadata['task_name'] = 'none'
-            metadata['task_hash'] = 'none'
-
-        metadata['hyperparameters'] = arg_dict.copy()
-
-        for training_param in ['instance_ids', 'savebestonly', 'task', 'dev']:         
-            if training_param in metadata['hyperparameters']:
-                metadata[training_param] =  metadata['hyperparameters'][training_param]
-                metadata['hyperparameters'].pop(training_param)
-
-        if 'epochs' not in arg_dict:
-            metadata['hyperparameters']['epochs'] = DEFAULT_EPOCHS
-
-        if 'batch_size' not in arg_dict:
-            metadata['hyperparameters']['batch_size'] = DEFAULT_BATCH_SIZE
-
-        metadata['timestamp'] = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
-        metadata['trial_group_hash'] = MantraHashed.get_256_hash_from_string(metadata['model_hash'] + metadata['data_hash'] + metadata['task_hash'])
-        metadata['trial_hash'] = MantraHashed.get_256_hash_from_string(metadata['model_hash'] + metadata['data_hash'] + metadata['task_hash'] + str(metadata['timestamp']))
-
-        yaml_content = yaml.dump(metadata, default_flow_style=False)
-
         if execute:
-            self.client.exec_command('cd %s; echo "%s" > trial_metadata.yml' % (self.project_name, yaml_content))
-
-        # Write data to TRIALS file for record keeping
-
-        self.trial_folder_name = '%s_%s_%s_%s' % (metadata['timestamp'], metadata['model_name'], metadata['data_name'], metadata['trial_hash'][:SHORT_HASH_INT])
-        
-        file_contents = '%s %s %s %s %s %s %s %s %s %s\n' % (metadata['timestamp'], self.trial_folder_name, metadata['trial_hash'], 
-            metadata['trial_group_hash'],
-            metadata['model_name'],
-            metadata['model_hash'],
-            metadata['data_name'],
-            metadata['data_hash'],
-            metadata['task_name'],
-            metadata['task_hash'])
+            self.client.exec_command('cd %s; echo "%s" > trial_metadata.yml' % (self.trial.project_name, self.trial.yaml_content))
 
         if execute:
             f = open('%s/%s' % (os.getcwd(), '.mantra/TRIALS'), "a")
-            f.write(file_contents)
+            f.write(self.trial.log_file_contents)
             f.close()
         else:
-            return yaml_content, file_contents
+            return self.trial.yaml_content, self.trial.log_file_contents
 
     def create_instance(self):
         """
@@ -460,9 +347,9 @@ class AWS:
         
         if ('Epoch' in output) or force: # each time we have a new epoch of training, we send the files to local
             if send_weights:    
-                aws_cmd = 'aws s3 --quiet --exact-timestamps sync s3://%s/trials/%s trials/%s' % (self.settings.S3_BUCKET_NAME, self.trial_folder_name, self.trial_folder_name)
+                aws_cmd = 'aws s3 --quiet --exact-timestamps sync s3://%s/trials/%s trials/%s' % (self.settings.S3_BUCKET_NAME, self.trial.trial_folder_name, self.trial.trial_folder_name)
             else:
-                aws_cmd = "aws s3 --quiet --exact-timestamps sync s3://%s/trials/%s trials/%s --exclude 'checkpoint/*'" % (self.settings.S3_BUCKET_NAME, self.trial_folder_name, self.trial_folder_name)
+                aws_cmd = "aws s3 --quiet --exact-timestamps sync s3://%s/trials/%s trials/%s --exclude 'checkpoint/*'" % (self.settings.S3_BUCKET_NAME, self.trial.trial_folder_name, self.trial.trial_folder_name)
 
             if execute:
                 os.system(aws_cmd)
@@ -547,11 +434,10 @@ class AWS:
 
         if execute:
             stdin, stdout, stderr = self.client.exec_command(s3_command)
+            for line in stdout:
+                print(line.rstrip()) 
         else:
             return s3_command
-
-        for line in stdout:
-            print(line.rstrip()) 
 
         print(colored(' \033[1m [+]', 'green') + colored(' Data exported to instances', 'white'))
 
@@ -613,14 +499,18 @@ class AWS:
         """
         
         self.setup_aws_credentials()
-        self.version_artefacts(args, **kwargs)
-        self.export_data_to_s3(args)
+
+        # Trial Operations
+        self.trial = Trial(project_name=self.project_name, model_name=args.model_name, dataset_name=args.dataset, task_name=args.task, cloud=args.cloud, args=args, **kwargs)
+        self.trial.version_artefacts()
+        self.trial.configure_trial_metadata()
+
+        # AWS and S3 file management
+        self.send_sh_file_to_instances(args=args, arg_str=self.trial.arg_str)
+        self.write_metadata()
         self.export_project_files_to_instances()
         self.s3_to_servers(args)
-
-        arg_str, arg_dict = self.configure_arguments(args, **kwargs)
-        self.configure_trial_metadata(args=args, arg_dict=arg_dict)
-        self.send_sh_file_to_instances(args=args, arg_str=arg_str)
+        self.export_data_to_s3(args)
 
     def setup_aws_credentials(self, execute=True):
         """
@@ -681,88 +571,6 @@ class AWS:
             print(colored(' \033[1m [.]', 'white') + colored(' Now terminating the GPU instances', 'white'))
             self.active_instance.terminate()
             print(colored(' \033[1m [+]', 'green') + colored(' GPU instances terminated.', 'white'))
-
-    def version_artefact(self, args, artefact_type='MODELS', **kwargs):
-        """
-        This method versions an artefacts used in the training: data, models tasks. We store to the .mantra folder - it means that we retrieve
-        a hash for each artefact that we can record for the user in the UI; and also allows the user to retrieve old model
-        or dataset versions on their local at any time.
-
-        Parameters
-        -----------
-        args : dict
-            Optional arguments that were used for training
-
-        artefact_type : str
-            Specifies the type of DMT artefact (data-model-task)
-
-        Returns
-        -----------
-        str - string to display to user containing the hashed artefact
-        """
-
-        if artefact_type == 'MODELS':
-            folder_name = 'models'
-            artefact_name = args.model_name
-        elif artefact_type == 'DATA':
-            folder_name = 'data'
-            artefact_name = args.dataset
-        elif artefact_type == 'TASKS':
-            folder_name = 'tasks'
-            artefact_name = args.task
-
-        artefact_dir = '%s/%s/%s' % (os.getcwd(), folder_name, artefact_name)
-        artefact_hash, artefact_hash_dict = MantraHashed.get_folder_hash(folder_dir=artefact_dir)
-        
-        is_new_artefact = MantraHashed.save_artefact(
-            cwd=os.getcwd(), 
-            hash=artefact_hash, 
-            objects=artefact_hash_dict, 
-            args=args, 
-            artefact_type=artefact_type, **kwargs)
-        
-        if artefact_type == 'MODELS':
-            self.model_hash = artefact_hash
-            artefact_hash_text = colored(' \033[1m ...', 'white') + colored(' Model hash:        %s' % self.model_hash, 'blue')
-        elif artefact_type == 'DATA':
-            self.data_hash = artefact_hash
-            artefact_hash_text = colored(' \033[1m ...', 'white') + colored(' Data hash:         %s' % self.data_hash, 'blue')
-        elif artefact_type == 'TASKS':
-            self.task_hash = artefact_hash
-            artefact_hash_text = colored(' \033[1m ...', 'white') + colored(' Task hash:         %s' % self.task_hash, 'blue')
-
-        if is_new_artefact:
-            artefact_hash_text += colored(' (new)', 'white')
-
-        return artefact_hash_text
-
-    def version_artefacts(self, args, **kwargs):
-        """
-        This method versions the artefacts used in the training: data, models tasks. We store to the .mantra folder - it means that we retrieve
-        a hash for each artefact that we can record for the user in the UI; and also allows the user to retrieve old model
-        or dataset versions on their local at any time.
-
-        Parameters
-        -----------
-        args : dict
-            Optional arguments that were used for training
-
-        Returns
-        -----------
-        void - versions the artefacts 
-        """
-
-        model_hash_text = self.version_artefact(args=args, artefact_type='MODELS', **kwargs)
-        data_hash_text = self.version_artefact(args=args, artefact_type='DATA', **kwargs)
-        if args.task:
-            task_hash_text = self.version_artefact(args=args, artefact_type='TASKS', **kwargs)
-
-        print(colored(' \033[1m [+]', 'green') + colored(' Model, data and task artefacts versioned', 'white'))
-
-        print(model_hash_text)
-        print(data_hash_text)
-        if args.task:
-            print(task_hash_text)
 
 
 class S3ProgressPercentage:

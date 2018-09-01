@@ -1,21 +1,11 @@
 import os
 import shutil
-import importlib
-from termcolor import colored
-import sys
-
-from mantraml.models.TFModel import TFModel
-from mantraml.models.KerasModel import KerasModel
 
 from mantraml.data.Dataset import Dataset
 from mantraml.data.ImageDataset import ImageDataset
 from mantraml.data.TabularDataset import TabularDataset
-from mantraml.data.finders import find_dataset_class, find_model_class, find_task_class
 
-from mantraml.core.cloud import AWS
 from mantraml import __version__
-
-from .consts import CONFIG_VARIABLES
 
 def adjust_no_tar_data_folder(data_dir):
     """
@@ -209,77 +199,3 @@ def artefacts_create_folder(prog_name, project_dir, args):
             adjust_tar_data_folder(data_dir=component_dir, data_name=args.path, tar_path=args.tar_path)
 
         adjust_data_folder_for_data_type(args=args, data_dir=component_dir)
-
-def train_model(project_name, settings, args, **kwargs):
-    """
-    Trains a model - either cloud or locally - with the user's requested parameters
-
-    Parameters
-    -----------
-    project_name - str
-        The name of the Mantra project
-
-    settings - module
-        An Mantra settings module
-
-    args - Namespace from an ArgumentParser
-        Arguments from the command line
-
-    kwargs - keyword arguments
-        Additional unknown arguments
-
-    Returns
-    ---------
-    void - trains a machine learning model either locally or via the cloud
-    """
-
-    if args.cloud:
-
-        if any([not hasattr(settings, config_var) for config_var in CONFIG_VARIABLES]):
-            raise AttributeError(colored('You have not set up your cloud configuration yet. To do this run:\n', 'red') + colored(' mantra cloud', 'blue'))
-
-        if settings.CLOUD_PROVIDER == 'AWS':
-
-            # get dataset
-            sys.path.append(os.getcwd())
-            data_module = importlib.import_module("data.%s.data" % args.dataset)
-            dataset_class = find_dataset_class(data_module)
-
-            # cloud setup
-            cloud_instance = AWS(
-                settings=settings,
-                instance_ids=args.instance_ids,
-                project_name=project_name,
-                dataset_class=dataset_class,
-                dev=args.dev)
-            cloud_instance.setup(args=args, **kwargs)
-            cloud_instance.train(args=args)
-
-    else:
-        # Import data
-        sys.path.append(os.getcwd())
-        data_module = importlib.import_module("data.%s.data" % args.dataset)
-        dataset_class = find_dataset_class(data_module)
-        if dataset_class:
-            dataset = dataset_class(name=args.dataset, trial=True, **kwargs)
-
-            model_module = importlib.import_module("models.%s.model" % args.model_name)
-            model_class = find_model_class(model_module)
-                
-            task_class = None
-
-            if args.task:
-                task_module = importlib.import_module("tasks.%s.task" % args.task)
-                task_class = find_task_class(task_module)
-
-            if task_class is None:
-                task = None
-            else:
-                task = task_class(data=dataset)
-
-            if model_class:
-                model = model_class(args=args, 
-                    dataset=dataset, 
-                    settings=settings, trial=True, **kwargs)
-                model.task = task
-                model.run()

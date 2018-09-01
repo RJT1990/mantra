@@ -8,17 +8,17 @@ shutil = lazy_import.lazy_module("shutil")
 
 import datetime
 
-from mantraml.core.cloud import AWS
+from mantraml.core.cloud.AWS import AWS
 
 from .consts import METADATA_FILE_NAME, SHORT_HASH_INT, DEFAULT_EPOCHS, DEFAULT_BATCH_SIZE
 
 
-class BaseModel:
+class MantraModel:
     """
     This model class defines a Base model with integration for Mantra
     """
 
-    def __init__(self, args=None, settings=None, dataset=None, trial=False, **kwargs):
+    def __init__(self, dataset=None, task=None, **kwargs):
         """
         Parameters
         -----------
@@ -173,9 +173,9 @@ class BaseModel:
 
         return self._y_test
 
-    def configure_trial_metadata(self):
+    def sync_trial_metadata(self):
         """
-        Configure the metadata for a new trial 
+        Sync the metadata for a new trial 
 
         Returns
         -----------
@@ -184,8 +184,9 @@ class BaseModel:
 
         metadata_location = '%s/%s' % (os.getcwd(), METADATA_FILE_NAME)
         metadata = yaml.load(open(metadata_location, 'r'))
-        self.trial_folder_name = '%s_%s_%s_%s' % (metadata['timestamp'], metadata['model_name'], metadata['data_name'], metadata['trial_hash'][:SHORT_HASH_INT])
-        trial_location = os.getcwd() + '/trials/%s' % self.trial_folder_name
+
+        self.trial.trial_folder_name = '%s_%s_%s_%s' % (metadata['timestamp'], metadata['model_name'], metadata['data_name'], metadata['trial_hash'][:SHORT_HASH_INT])
+        trial_location = os.getcwd() + '/trials/%s' % self.trial.trial_folder_name
 
         if not os.path.isdir('%s/%s' % (os.getcwd(), 'trials')):
             os.mkdir('%s/%s' % (os.getcwd(), 'trials'))
@@ -193,88 +194,13 @@ class BaseModel:
         os.mkdir(trial_location)
         shutil.move(metadata_location, '%s/%s' % (trial_location, METADATA_FILE_NAME))
 
-    def build_model(self):
-        """
-        This is a wrapper function for building the model. This function contains architecture and other objects
-        that are used to create the computational graph (and/or model).
-
-        Returns
-        -----------
-        void - updates the instance with model variables
-        """
-
-        return
-
-    def end_of_epoch_update(self, epoch):
-        """
-        Update to apply at the end of the epoch
-        """
-
-        return
-          
-    def end_of_training_update(self):
-        """
-        Update to apply at the end of training
-        """
-
-        return
-
-    def format_data(self):
-        """
-        This is a wrapper function for obtaining the training data
-
-        Returns
-        -----------
-        list - containing the training data
-        """
-
-        return []
-
-    def define_logs(self):
-        """
-        Define terms to log here
-
-        Returns
-        ----------
-        void - updates parameters
-        """
-
-        return
-
-    def save_model_weights(self):
-        """
-        At the end of each epoch we save the model weights as a checkpoint. This functionality should occur here.
-
-        Returns
-        ----------
-        void - updates parameters
-        """
-
-        return
-
-    def gradient_update(self, iter):
-        """
-        Updates the parameters with a single gradient update
-
-        Parameters
-        ----------
-        iter - int
-            The iteration number
-
-        Returns
-        ----------
-        void - updates parameters
-        """
-
-        return
-
     def store_trial_data(self, epoch):
         """
         This function stores trial data - e.g. S3
         """
         
         # update trial metadata
-        trial_location = os.getcwd() + '/trials/%s' % self.trial_folder_name
+        trial_location = os.getcwd() + '/trials/%s' % self.trial.trial_folder_name
         metadata_location = '%s/%s' % (trial_location, METADATA_FILE_NAME)
         
         with open(metadata_location, 'r') as stream:
@@ -306,40 +232,6 @@ class BaseModel:
         yaml_file.write(new_yaml_content)
         yaml_file.close()
 
-        # send to S3
-        AWS.export_trials_to_s3(model=self)
-
-    def run(self):
-        """
-        Runs the training.
-        """
-        
-        # Build and initialize
-        self.build_model()
-
-        if self.trial:
-            self.define_logs()
-                
-        self.init_model()
-
-        # Ready data
-        self.batches_per_epoch = len(self.data) // self.n_batch
-            
-        # Results Dict
-        np.random.seed(int(time.time())) # random seed for training
-        
-        for epoch in range(self.n_epochs):
-            self.epoch_start_time = time.time()
-
-            for iter in range(self.batches_per_epoch):
-                self.gradient_update(iter)
-
-            self.end_of_epoch_update(epoch)
-
-            if self.trial:
-                self.save_model_weights()
-                self.store_trial_data(epoch)
-
-            print(colored('🤖 ', 'blue') + colored(' \033[1m Epoch [%d/%d] Complete' % ((epoch+1), self.n_epochs), 'green') + ' %.2f seconds' % (time.time() - self.epoch_start_time))
-
-        self.end_of_training_update()
+        if hasattr(self, 'cloudremote'):
+            if self.cloudremote:
+                AWS.export_trials_to_s3(model=self)

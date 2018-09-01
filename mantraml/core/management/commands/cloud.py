@@ -10,7 +10,6 @@ import mantraml
 import argparse
 
 from mantraml.core.management.commands.BaseCommand import BaseCommand
-from mantraml.core.cloud.AWS import AWS
 
 from .consts import CONFIG_VARIABLES
 

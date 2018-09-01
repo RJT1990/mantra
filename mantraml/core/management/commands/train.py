@@ -9,8 +9,8 @@ import mantraml
 import argparse
 
 from mantraml.core.management.commands.BaseCommand import BaseCommand
-from mantraml.core.management.commands.utils import artefacts_create_folder, train_model
-
+from mantraml.core.management.commands.utils import artefacts_create_folder
+from mantraml.core.training.Train import Train
 
 class TrainCmd(BaseCommand):
     def add_arguments(self, parser):
@@ -18,6 +18,8 @@ class TrainCmd(BaseCommand):
         parser.add_argument('--dev', action="store_true")
         parser.add_argument('--savebestonly', action="store_true")
         parser.add_argument('--verbose', action="store_true")
+        parser.add_argument('--cloudremote', action="store_true") # command flag when training occurs on a remote cloud machine (as opposed to local)
+
         parser.add_argument('--config')
         parser.add_argument('--dataset', type=str, required=True)
         parser.add_argument('--instance-ids', nargs="+")
@@ -61,6 +63,8 @@ class TrainCmd(BaseCommand):
             elif '--' not in value and '--' in old_value:
                 if value in ['True', 'False']:
                     extra_args[old_value.replace('--', '').replace('-', '_')] = bool(value)
+                elif value == 'None':
+                    extra_args[old_value.replace('--', '').replace('-', '_')] = None
                 else:
                     extra_args[old_value.replace('--', '').replace('-', '_')] = value
 
@@ -79,7 +83,8 @@ class TrainCmd(BaseCommand):
         settings = Dict2Obj(**runpy.run_path("%s/%s" % (os.getcwd(), 'settings.py')))
         project_name = os.getcwd().split('/')[-1]
         extra_args = self.parse_unknown(unknown)
-        train_model(project_name=project_name, settings=settings, args=args, **extra_args)
+
+        Train(project_name=project_name, settings=settings, args=args, **extra_args).begin()
 
 
 class Dict2Obj:

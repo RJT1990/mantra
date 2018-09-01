@@ -4,7 +4,14 @@ import pandas as pd
 import yaml
 
 from mantraml.core.cloud.AWS import AWS
+from mantraml.core.training.Trial import Trial
+
 import pytest
+
+class TrialMock:
+
+    def __init__(self):
+        self.trial_folder_name = 'my_trial_folder'
 
 
 class AWSNoInit(AWS):
@@ -16,7 +23,7 @@ class AWSNoInit(AWS):
         self.data_hash = 'data_hash'
         self.task_hash = 'task_hash'
         self.project_name = 'my_project'
-        self.trial_folder_name = 'my_trial_folder'
+        self.trial = TrialMock()
         self.public_dns = 'dns_address.cloudprovider.com'
 
 
@@ -64,122 +71,6 @@ def test_sync_data():
     assert(aws_cmd_trials == 'aws s3 --exact-timestamps sync s3://my_s3_bucket/trials trials')
     assert(aws_cmd_data == 'aws s3 --exact-timestamps sync s3://my_s3_bucket/data data')
     assert(aws_cmd_other is None)
-
-def test_configure_arguments():
-
-    class MockArgParser:
-
-        def __init__(self):
-            self.__dict__ = {'dropout': 0.5, 'cloud': True, 'epochs': 10}
-
-    args = MockArgParser()
-    arg_str, arg_dict = AWS.configure_arguments(args)
-
-    # cloud should not be parsed (not an additional argument to put in the cloud execution script)
-    assert(arg_str == ' --dropout 0.5 --epochs 10' or arg_str == ' --epochs 10 --dropout 0.5') 
-
-    assert('dropout' in arg_dict)
-    assert('epochs' in arg_dict)
-    assert(arg_dict['dropout'] == 0.5)
-    assert(arg_dict['epochs'] == 10)
-
-    arg_str, arg_dict = AWS.configure_arguments(args, **{'alpha': 0.1})
-
-    # cloud should not be parsed (not an additional argument to put in the cloud execution script)
-    assert(arg_str == ' --dropout 0.5 --epochs 10 --alpha 0.1' or arg_str == ' --epochs 10 --dropout 0.5 --alpha 0.1') 
-
-    assert('dropout' in arg_dict)
-    assert('epochs' in arg_dict)
-    assert('alpha' in arg_dict)
-    assert(arg_dict['dropout'] == 0.5)
-    assert(arg_dict['epochs'] == 10)
-    assert(arg_dict['alpha'] == 0.1)
-
-    arg_str, arg_dict = AWS.configure_arguments(args, **{'cloud-extra': True})
-
-    # cloud should not be parsed (not an additional argument to put in the cloud execution script)
-    assert(arg_str == ' --dropout 0.5 --epochs 10 --cloud-extra' or arg_str == ' --epochs 10 --dropout 0.5 --cloud-extra') 
-
-    assert('dropout' in arg_dict)
-    assert('epochs' in arg_dict)
-    assert('cloud-extra' in arg_dict)
-    assert(arg_dict['dropout'] == 0.5)
-    assert(arg_dict['epochs'] == 10)
-    assert(arg_dict['cloud-extra'] is True)
-
-def test_configure_trial_metadata():
-
-    class MockArgParser:
-
-        def __init__(self):
-            self.model_name = 'my_model'
-            self.dataset = 'my_dataset'
-            self.task = 'my_task'
-
-    arg_dict = {'epochs': 20, 'savebestonly': True, 'dropout': 0.5}
-    args = MockArgParser()
-    aws_instance = AWSNoInit()
-    yaml_contents, log_contents = aws_instance.configure_trial_metadata(args=args, arg_dict=arg_dict, execute=False)
-    log_contents = log_contents.split(" ")
-
-    # check that everything is stored correctly in the log
-    assert(len(log_contents) == 10)
-    assert(len(log_contents[0]) == 10) # the timestamp
-    assert(int(log_contents[0]) > 1535000000) # sanity check of timestamp
-    assert(len(log_contents[2]) == 64) # SHA-256 hash for the trial is 64 length
-    assert(len(log_contents[3]) == 64) # SHA-256 hash for the trial group is 64 length
-    assert(log_contents[4] == args.model_name) # Model name
-    assert(log_contents[5] == aws_instance.model_hash) # Model hash
-    assert(log_contents[6] == args.dataset) # Data name
-    assert(log_contents[7] == aws_instance.data_hash) # Data hash
-    assert(log_contents[8] == args.task) # Task name
-    assert(log_contents[9] == aws_instance.task_hash + '\n') # Task hash
-    assert(log_contents[1] == '%s_%s_%s_%s' % (log_contents[0], args.model_name, args.dataset, log_contents[2][:6]))
-
-    yaml_contents = yaml.load(yaml_contents)
-
-    assert(yaml_contents['model_hash'] == aws_instance.model_hash)
-    assert(yaml_contents['task_hash'] == aws_instance.task_hash)
-    assert(yaml_contents['task_name'] == args.task)
-    assert(yaml_contents['data_name'] == args.dataset)
-    assert(yaml_contents['data_hash'] == aws_instance.data_hash)
-    assert(yaml_contents['savebestonly'] == True)
-    assert(yaml_contents['timestamp'] == int(log_contents[0]))
-    assert(yaml_contents['trial_group_hash'] == log_contents[3])
-    assert(yaml_contents['model_name'] == args.model_name)
-    assert(yaml_contents['trial_hash'] == log_contents[2])
-
-    args.task = None
-
-    yaml_contents, log_contents = aws_instance.configure_trial_metadata(args=args, arg_dict=arg_dict, execute=False)
-    log_contents = log_contents.split(" ")
-
-    # check that everything is stored correctly in the log
-    assert(len(log_contents) == 10)
-    assert(len(log_contents[0]) == 10) # the timestamp
-    assert(int(log_contents[0]) > 1535000000) # sanity check of timestamp
-    assert(len(log_contents[2]) == 64) # SHA-256 hash for the trial is 64 length
-    assert(len(log_contents[3]) == 64) # SHA-256 hash for the trial group is 64 length
-    assert(log_contents[4] == args.model_name) # Model name
-    assert(log_contents[5] == aws_instance.model_hash) # Model hash
-    assert(log_contents[6] == args.dataset) # Data name
-    assert(log_contents[7] == aws_instance.data_hash) # Data hash
-    assert(log_contents[8] == 'none') # Task name
-    assert(log_contents[9] == 'none\n') # Task hash
-    assert(log_contents[1] == '%s_%s_%s_%s' % (log_contents[0], args.model_name, args.dataset, log_contents[2][:6]))
-
-    yaml_contents = yaml.load(yaml_contents)
-
-    assert(yaml_contents['model_hash'] == aws_instance.model_hash)
-    assert(yaml_contents['task_hash'] == 'none')
-    assert(yaml_contents['task_name'] == 'none')
-    assert(yaml_contents['data_name'] == args.dataset)
-    assert(yaml_contents['data_hash'] == aws_instance.data_hash)
-    assert(yaml_contents['savebestonly'] == True)
-    assert(yaml_contents['timestamp'] == int(log_contents[0]))
-    assert(yaml_contents['trial_group_hash'] == log_contents[3])
-    assert(yaml_contents['model_name'] == args.model_name)
-    assert(yaml_contents['trial_hash'] == log_contents[2])
 
 def test_export_project_files_to_instances():
 
@@ -267,7 +158,7 @@ def test_send_sh_file_to_instances():
     assert('source /home/ubuntu/anaconda3/bin/activate tensorflow_p36' in sh_script_lines[1].replace("  ", ""))
     assert('pip install -r requirements.txt --quiet --upgrade' in sh_script_lines[2].replace("  ", ""))
     assert('pip install mantraml --quiet' in sh_script_lines[3].replace("  ", ""))
-    assert('mantra train my_model --dataset my_dataset --task my_task --dropout 0.5 --epochs 10 --savebestonly' in sh_script_lines[4].replace("  ", ""))
+    assert('mantra train my_model --dataset my_dataset --task my_task --cloudremote --dropout 0.5 --epochs 10 --savebestonly' in sh_script_lines[4].replace("  ", ""))
 
 def test_setup_aws_credentials():
 
