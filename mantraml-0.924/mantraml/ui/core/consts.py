@@ -1,3 +1,0 @@
-IGNORED_FILES = ['__pycache__']
-NO_OF_ARTEFACTS = 5
-MANTRA_DEVELOPMENT_TAG_NAME = 'mantra dev'

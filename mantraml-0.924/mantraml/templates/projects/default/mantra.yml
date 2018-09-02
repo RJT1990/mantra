@@ -1,8 +1,0 @@
-project_name: 'default_name'
-
-# ML artifact location
-data_folder: 'data/'
-models_folder: 'models/'
-
-# Project priorities
-chosen_model: ''

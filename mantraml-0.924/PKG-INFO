@@ -1,9 +1,0 @@
-Metadata-Version: 1.2
-Name: mantraml
-Version: 0.924
-Summary: A high-level, rapid development framework for ML projects.
-Home-page: https://www.atlas.ml
-Maintainer: Ross Taylor and Robert Stojnic
-License: Apache 2.0
-Description: A high-level, rapid development framework for ML projects.
-Platform: UNKNOWN
