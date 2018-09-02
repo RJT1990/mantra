@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load static %}
+{% block contents %}
+
+
+
+      <div class="row title-row">
+        <div style="float: left;" class="col-lg">
+        <h4>Your Models</h4>
+        </div>
+        <div class="col-lg-4">
+
+          <div style="float: right;" class="btn-group btn-group-sm pull-right" role="group" aria-label="Basic example">
+           
+
+          </div>
+        </div>
+      </div>
+
+<div class="models-hold">
+<table id="modeltable" class="table text-center">
+  <thead>
+    <tr>
+      <th scope="col">Model</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+
+    </tr>
+  </thead>
+  <tbody>
+
+
+{% for model in models %}
+    <tr>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'"><div class="model-name"><img src="/static/{{ model.image }}"> <a href="/model/{{ model.folder_name }}">{{ model.name }}</a></div></td>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'">
+        {% for tag in model.tags %}
+      <span class="badge badge-primary">{{ tag }}</span>
+       {% endfor %}
+     </td>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'"><div class="framework"><img src="/static/img/{{ model.framework }}.png"></div></td>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'"><div class="date">{{ model.last_updated }}</div></td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+
+
+<script>
+  $(document).ready(function () {
+  $('#modeltable').DataTable( {
+        "order": [[ 2, "desc" ]]
+    } );
+  $('.dataTables_length').addClass('bs-select');
+});
+
+$(document).on("click", ".open-deleteTrialGroupDialog", function () {
+     var mytrialGroupId = $(this).data('id');
+     $(".modal-content #id_trial_group_hash").val( mytrialGroupId );
+});
+
+</script>
+</div>
+
+
+
+
+
+{% endblock contents %}

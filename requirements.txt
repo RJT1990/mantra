@@ -10,3 +10,4 @@ pyyaml>=3.13
 scipy>=1.1.0
 pytest>=3.7.1
 boto3>=1.7.73
+termcolor==1.1.0

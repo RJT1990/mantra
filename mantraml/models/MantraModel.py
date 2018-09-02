@@ -15,163 +15,57 @@ from .consts import METADATA_FILE_NAME, SHORT_HASH_INT, DEFAULT_EPOCHS, DEFAULT_
 
 class MantraModel:
     """
-    This model class defines a Base model with integration for Mantra
+    By inheriting from this MantraModel class, a deep learning model gets access to Mantra integration, including cloud integration, model monitoring
+    and more. The core methods below link the model with configuration and training metadata.
     """
 
-    def __init__(self, dataset=None, task=None, **kwargs):
+    def configure_core_arguments(self, args):
         """
+        This method adds core training attributes from an argument parser namespace (args) such as the number of epochs, the batch size, and more
+
         Parameters
         -----------
+        args - argument parser namespace
+            Containing training arguments such as batch size, number of epochs
 
-        args - command line args
-            Arguments from the Mantra command line 
-
-        settings - Python module
-            Containing user settings (including cloud options)
-
-        dataset - mantraml.Dataset type object 
-            A mantraml.Dataset like object that contains the data and data processing
-
-        trial - bool
-            If True, will conduct a trial and configure storage for it
+        Returns
+        -----------
+        void - update self with new attributes
         """
 
-        if not dataset:
-            err_msg = '''BaseModel did not receive a dataset argument.
-
-            A common reason for this is that your model class does not inherit properly from
-            the parent classes. Your model's __init__ function should have a line near the top
-            that looks like:
-
-            super().__init__(session=session, dataset=dataset, **kwargs) # TensorFlow model inheritance
-
-            This way the dataset gets passed to the BaseModel methods and can be processed properly.
-            '''
-
-            raise ValueError(err_msg)
-
+        if args.batch_size:
+            self.batch_size = args.batch_size
         else:
-            self.data = dataset
+            self.batch_size = DEFAULT_BATCH_SIZE
 
-        self.args = args # command line arguments
-        self.settings = settings
-        self.trial = trial
-
-        # Set any user commands
-        if self.args.batch_size:
-            self.n_batch = self.args.batch_size
+        if args.epochs:
+            self.epochs = args.epochs
         else:
-            self.n_batch = DEFAULT_BATCH_SIZE
+            self.epochs = DEFAULT_EPOCHS
 
-        if self.args.epochs:
-            self.n_epochs = self.args.epochs
-        else:
-            self.n_epochs = DEFAULT_EPOCHS
-
-        if self.args.savebestonly:
+        if args.savebestonly:
             self.save_best_only = True
         else:
             self.save_best_only = False
 
-        if self.trial:
-            self.configure_trial_metadata()
-
-        self._X = None
-        self._y = None
-        self._X_test = None
-        self._y_test = None
-
-    @property
-    def X(self):
+    def end_of_epoch_message(self, epoch, message):
         """
-        Retrives the feature data from either the self.task object, or 
-        if the task doesn't exist, the self.data object.
+        A cute method for printing a message at the end of an epoch
+
+        Parameters
+        -----------
+        epoch - int
+            The epoch number
+
+        message - str
+            A message to print at the end of the epoch
 
         Returns
-        --------
-        np.ndarray of feature data        
+        -----------
+        void - prints a message
         """
 
-        if self._X is not None:
-            return self._X
-
-        if hasattr(self, 'task'):
-            if self.task is not None:
-                self._X, self._y = self.task.get_training_data()
-                return self._X
-
-        self._X = self.data.X
-
-        return self._X
-
-    @property
-    def y(self):
-        """
-        Retrives the labels data from either the self.task object, or 
-        if the task doesn't exist, the self.data object.
-
-        Returns
-        --------
-        np.ndarray of label data        
-        """
-
-        if self._y is not None:
-            return self._y
-
-        if hasattr(self, 'task'):
-            if self.task is not None:
-                self._X, self._y = self.task.get_training_data()
-                return self._y
-
-        self._y = self.data.y
-
-        return self._y
-
-    @property
-    def X_test(self):
-        """
-        Retrives the feature data from either the self.task object, or 
-        if the task doesn't exist, the self.data object.
-
-        Returns
-        --------
-        np.ndarray of feature data        
-        """
-
-        if self._X_test is not None:
-            return self._X_test
-
-        if hasattr(self, 'task'):
-            if self.task is not None:
-                self._X_test, self._y_test = self.task.get_test_data()
-                return self._X_test
-
-        self._X_test = self.data.X
-
-        return self._X_test
-
-    @property
-    def y_test(self):
-        """
-        Retrives the labels data from either the self.task object, or 
-        if the task doesn't exist, the self.data object.
-
-        Returns
-        --------
-        np.ndarray of label data        
-        """
-
-        if self._y_test is not None:
-            return self._y_test
-
-        if hasattr(self, 'task'):
-            if self.task is not None:
-                self._X_test, self._y_test = self.task.get_test_data()
-                return self._y_test
-
-        self._y_test = self.data.y
-
-        return self._y_test
+        print(colored('🤖 ', 'blue') + colored(' \033[1m Epoch [%d/%d] Complete' % ((epoch+1), self.epochs), 'green') + ' %s' % message)
 
     def sync_trial_metadata(self):
         """
@@ -196,7 +90,16 @@ class MantraModel:
 
     def store_trial_data(self, epoch):
         """
-        This function stores trial data - e.g. S3
+        Stores trial data in the trial metadata file, and then, if cloud training, sends the trial data to S3 for storage
+
+        Parameters
+        -----------
+        epoch - int
+            The epoch number (zero indexed)
+
+        Returns
+        -----------
+        void - updates a training yml file and sends trial data to S3
         """
         
         # update trial metadata
@@ -206,7 +109,34 @@ class MantraModel:
         with open(metadata_location, 'r') as stream:
             yaml_content = yaml.load(stream)
 
-        if epoch + 1 == self.n_epochs:
+        new_yaml_content = self.update_trial_metadata(yaml_content, epoch)
+
+        yaml_file = open(metadata_location, 'w')
+        yaml_file.write(new_yaml_content)
+        yaml_file.close()
+
+        if hasattr(self, 'cloudremote'):
+            if self.cloudremote:
+                AWS.export_trials_to_s3(model=self)
+
+    def update_trial_metadata(self, yaml_content, epoch):
+        """
+        Updates the trial metadata yaml file with the latest trial information
+
+        Parameters
+        -----------
+        yaml_content - dict
+            Dictionary containing the existing yaml content
+
+        epoch - int
+            The epoch number (zero indexed)
+
+        Returns
+        -----------
+        void - updates a training yml file and sends trial data to S3
+        """
+
+        if epoch + 1 == self.epochs:
             yaml_content['training_finished'] = True
         else:
             yaml_content['training_finished'] = False
@@ -226,12 +156,6 @@ class MantraModel:
                 if hasattr(self.task, 'secondary_metrics'):
                     yaml_content['secondary_metrics'] = self.task.secondary_metrics_values
 
-        new_yaml_content = yaml.dump(yaml_content, default_flow_style=False)
+        return yaml.dump(yaml_content, default_flow_style=False)
 
-        yaml_file = open(metadata_location, 'w')
-        yaml_file.write(new_yaml_content)
-        yaml_file.close()
 
-        if hasattr(self, 'cloudremote'):
-            if self.cloudremote:
-                AWS.export_trials_to_s3(model=self)

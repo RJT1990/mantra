@@ -1,0 +1,14 @@
+{% extends 'base_flex.html' %}
+{% load staticfiles %}
+{% load static %}
+{% block contents %}
+
+<div class="content">
+<iframe src="http://localhost:6006/"></iframe>
+</div>
+
+<script type="text/javascript">
+setTimeout(function () { location.reload(true); }, 60000);
+</script>
+
+{% endblock %}

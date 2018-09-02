@@ -25,6 +25,7 @@ class AWSNoInit(AWS):
         self.project_name = 'my_project'
         self.trial = TrialMock()
         self.public_dns = 'dns_address.cloudprovider.com'
+        self.framework = 'none'
 
 
 def test_export_trials_to_s3():
@@ -37,6 +38,7 @@ def test_export_trials_to_s3():
         settings = Settings()
 
     model = MockModel()
+    model.trial = TrialMock()
     aws_cmd = AWS.export_trials_to_s3(model=model, execute=False)
 
     predicted_path = '%s/trials/%s/' % (os.getcwd(), model.trial_folder_name)

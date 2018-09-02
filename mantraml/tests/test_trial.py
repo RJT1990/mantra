@@ -13,7 +13,7 @@ def test_configure_arguments():
     class MockArgParser:
 
         def __init__(self):
-            self.__dict__ = {'dropout': 0.5, 'cloud': True, 'epochs': 10}
+            self.__dict__ = {'name': None, 'dropout': 0.5, 'cloud': True, 'epochs': 10}
 
     args = MockArgParser()
     arg_str, arg_dict = Trial.configure_arguments(args)
@@ -59,7 +59,7 @@ def test_configure_trial_metadata():
             self.model_name = 'my_model'
             self.dataset = 'my_dataset'
             self.task = 'my_task'
-
+            self.name = None
     args = MockArgParser()
     args.savebestonly = True
     args.epochs = 20
