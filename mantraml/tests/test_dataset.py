@@ -2,132 +2,119 @@ import os
 import numpy as np
 import pandas as pd
 
-from mantraml.data.Dataset import Dataset
-from mantraml.tests.data.testdata.data import ExampleDataset
-from mantraml.tests.data.test_tabular_data.data import MyDataset
-from mantraml.tests.data.test_image_data.data import MyImageDataset
+from mantraml.data import Dataset, cachedata
 
 import pytest
 
-@pytest.mark.skip(reason="Fix this after the simplifcation refactor")
+
+class MyDataset(Dataset):
+
+    files = []
+
+class MySecondDataset(Dataset):
+
+    files = []
+    data_type = 'images'
+
+    @cachedata
+    def X(self):
+        return np.array([1,2,3,4,5])
+
+
+def test_configure_core_arguments():
+
+    class MockArgParser:
+
+        def __init__(self):
+            self.features = ['column_a', 'column_b']
+            self.target = 'column_z'
+            self.feature_indices = [1, 2, 3]
+            self.target_index = 0
+
+    my_data = MyDataset()
+    my_data.configure_core_arguments(MockArgParser())
+
+    assert(my_data.features == ['column_a', 'column_b'])
+    assert(my_data.feature_indices == [1, 2, 3])
+    assert(my_data.target_index == 0)
+    assert(my_data.target == 'column_z')
+
 def test_dataset_init():
 
     dataset_name = 'testdata'
 
-    my_data = ExampleDataset(dataset_name)
-    assert(my_data.name == dataset_name)
-    assert(my_data.data_dir == os.getcwd() + '/data/%s/' % dataset_name)
-    assert(my_data.tar_dir == os.getcwd() + '/data/%s/raw/example_images.tar.gz' % dataset_name)
+    my_data = MyDataset()
 
-    # because the example dataset is png images
-    assert(my_data.n_color_channels == 4)
-    assert(my_data.file_format == '.png')
+    # Folder name and files
+    assert(my_data.files == [])
+    assert(my_data.folder_name == 'tests')
 
-@pytest.mark.skip(reason="Fix this after the simplifcation refactor")
+    # Set an image dataset attribute, and test the configure_file_attributes
+    # this should automatically fill files with the new dataset
+
+    my_data.image_dataset = 'images.tar.gz'
+    my_data.configure_files_attribute()
+    assert(my_data.files[0] == 'images.tar.gz')
+
+def test_configure_data_directory():
+
+    dataset_name = 'testdata'
+
+    my_data = MyDataset()
+    my_data.extract_file_dict = {}
+
+    my_data.configure_data_directory('/home/ubuntu/my_table.csv')
+    assert(my_data.data_outside_project)
+    assert(my_data.data_dir == '%s/.tempmantra/' % os.getcwd())
+    assert(my_data.extract_file_dict['/home/ubuntu/my_table.csv'] is False)
+
+    my_data.configure_data_directory('/home/ubuntu/my_files.tar.gz')
+    assert(my_data.data_outside_project)
+    assert(my_data.data_dir == '%s/.tempmantra/' % os.getcwd())
+    assert(my_data.extract_file_dict['/home/ubuntu/my_files.tar.gz'] is True)
+
+    my_data.configure_data_directory('my_table.csv')
+    assert(my_data.data_outside_project is False)
+    assert(my_data.data_dir == '%s/data/%s/' % (os.getcwd(), my_data.folder_name))
+    assert(my_data.extract_file_dict['my_table.csv'] is False)
+
+    my_data.configure_data_directory('my_files.tar.gz')
+    assert(my_data.data_outside_project is False)
+    assert(my_data.data_dir == '%s/data/%s/' % (os.getcwd(), my_data.folder_name))
+    assert(my_data.extract_file_dict['my_files.tar.gz'] is True)
+
+def test_normalize_images():
+
+    dataset_name = 'testdata'
+    my_data = MyDataset()
+
+    image = np.array([[0.432, 0.543, 0.234], [0.32432, 0.76765, 0.45435], [0.43243, 0.43432, 0.132131]])
+
+    de_normalized_image = my_data.denormalize_image(image=image, normalized=True)
+
+    assert(de_normalized_image.shape == image.shape)
+    assert(np.isclose(de_normalized_image[0][0], 182.58))
+    assert(np.isclose(de_normalized_image[0][1], 196.7325))
+
+    de_normalized_image = my_data.denormalize_image(image=image, normalized=False)
+
+    assert(de_normalized_image.shape == image.shape)
+    assert(de_normalized_image[0][0] == 0.432)
+    assert(de_normalized_image[0][1] == 0.543)
+
 def test_dataset_image_attributes():
 
     dataset_name = 'testdata'
 
-    my_data = ExampleDataset(dataset_name, image_size=256)
-    assert(my_data.image_size == 256)
-    assert(my_data.image_shape == (256, 256, 4))
+    my_data = MySecondDataset()
+    my_data.configure_files_data(execute=False, **{'image_dim': (256, 100), 'normalize': True})
+    assert(my_data.image_shape == (256, 100, 3))
+    assert(my_data.normalize)
 
-def test_n_examples():
-
-    dataset_name = 'testdata'
-
-    my_data = ExampleDataset(dataset_name, image_size=256)
-
-    assert(my_data.n_examples == 5) # the array size of the example dataset
-
-def test_path_locations():
+def test_dataset_len():
 
     dataset_name = 'testdata'
 
-    my_data = ExampleDataset(dataset_name, image_size=256)
-    data_dir =  os.getcwd() + '/data/%s/' % dataset_name
+    my_data = MySecondDataset()
 
-    assert(my_data.hash_location == '%s%s' % (data_dir, 'raw/hash'))
-    assert(my_data.data_path == '%s%s' % (data_dir, 'raw/.extract'))
-
-def test_tabular_dataset():
-
-    dataset_name = 'test_tabular_data'
-
-    my_data = MyDataset(dataset_name)
-
-    # the metadata settings in MyDataset class
-    assert(my_data.name == dataset_name)
-    assert(my_data.tar_name == 'dataset')
-    assert(my_data.data_type == 'tabular')
-    assert(my_data.has_labels == True)
-
-    # tabular data fields
-    assert(my_data.file_name == 'dataset.csv')
-    assert(my_data.target == 'team_1_score')
-    assert(my_data.features == ['d_ability_1', 'd_ability_3', 'is_february'])
-    assert(my_data.target_index == None)
-    assert(my_data.features_index == None)
-    assert(my_data.training_test_split == 0.75)
-
-    # tabular data...data
-    assert(isinstance(my_data.df_train, pd.DataFrame))
-    assert(isinstance(my_data.df_test, pd.DataFrame))
-    assert(my_data.df_train.shape[0] > my_data.df_test.shape[0])
-    assert(isinstance(my_data.X, np.ndarray))
-    assert(isinstance(my_data.y, np.ndarray))
-    assert(isinstance(my_data.X_test, np.ndarray))
-    assert(isinstance(my_data.y_test, np.ndarray))
-    assert(my_data.X.shape[0] == my_data.df_train.shape[0])
-    assert(my_data.X_test.shape[0] == my_data.df_test.shape[0])
-    assert(my_data.y.shape[0] == my_data.df_train.shape[0])
-    assert(my_data.y_test.shape[0] == my_data.df_test.shape[0])
-
-    assert(my_data.df_train.shape[0] > my_data.df_test.shape[0])
-
-@pytest.mark.skip(reason="Fix this after the simplifcation refactor")
-def test_image_dataset():
-
-    dataset_name = 'test_image_data'
-
-    my_data = MyImageDataset(dataset_name)
-    # the metadata settings in MyDataset class
-
-    assert(my_data.name == dataset_name)
-    assert(my_data.training_test_split == 0.75)
-
-    # tabular data...data
-    assert(isinstance(my_data.X, np.ndarray))
-    assert(isinstance(my_data.X_test, np.ndarray))
-
-    # dataset size (total number of images in the dataset here is 4) 
-    assert(my_data.X.shape[0] == 3)
-    assert(my_data.X_test.shape[0] == 1)
-
-    # image dimension and formatting
-    assert(my_data.X[0].shape == (128, 128, 4))
-    assert(my_data.X_test[0].shape == (128, 128, 4))
-
-    assert(my_data.X[0].shape == (128, 128, 4))
-    assert(my_data.X_test[0].shape == (128, 128, 4))
-
-    assert(my_data.image_dim == (128, 128))
-    assert(my_data.image_shape == (128, 128, 4))
-    assert(my_data.file_format == '.png')
-    assert(my_data.n_color_channels == 4)
-
-    # Let's test now if we put in a custom input dimension, and whether it resizes the image correctly
-    # We'll try a lower dimension; a higher dimension, and an uneven dimension
-
-    for image_dim in [(64, 64), (256, 256), (64, 89)]:
-
-        my_data = MyImageDataset(dataset_name, image_dim=image_dim)
-
-        assert(my_data.X[0].shape == (image_dim[0], image_dim[1], 4))
-        assert(my_data.X_test[0].shape == (image_dim[0], image_dim[1], 4))
-
-        assert(my_data.X[0].shape == (image_dim[0], image_dim[1], 4))
-        assert(my_data.X_test[0].shape == (image_dim[0], image_dim[1], 4))
-
-        assert(my_data.image_dim == image_dim)
-        assert(my_data.image_shape == (image_dim[0], image_dim[1], 4))
+    assert(len(my_data) == 5) # the array size of the example dataset

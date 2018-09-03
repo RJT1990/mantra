@@ -24,7 +24,10 @@ class TrainCmd(BaseCommand):
         parser.add_argument('--config')
         parser.add_argument('--dataset', type=str, required=True, help="The folder name of your dataset, e.g. cifar_10")
         parser.add_argument('--instance-ids', nargs="+", help="A list of instance_ids, e.g. i-f4f42g42g i-fefefwfwew")
-
+        parser.add_argument('--features', nargs="+", help="A list of feature column names; used for tabular datasets")
+        parser.add_argument('--target', nargs="+", help="A string representing the target name for tabular datasets")
+        parser.add_argument('--feature-indices', nargs="+", help="A list of feature column indices; used for tabular datasets")
+        parser.add_argument('--target-index', nargs="+", help="A string representing the target index for tabular datasets")
         # training arguments
         parser.add_argument('--task', type=str, required=False, help="The folder name of your task, e.g. classify_images")
         parser.add_argument('--batch-size', type=int, required=False, help="The batch size for training, e.g. 64")
@@ -84,7 +87,6 @@ class TrainCmd(BaseCommand):
         settings = Dict2Obj(**runpy.run_path("%s/%s" % (os.getcwd(), 'settings.py')))
         project_name = os.getcwd().split('/')[-1]
         extra_args = self.parse_unknown(unknown)
-
         Train(project_name=project_name, settings=settings, args=args, **extra_args).begin()
 
 

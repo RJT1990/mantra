@@ -1309,6 +1309,10 @@ body {
 
 /* Carousel Inner for Trial Groups */
 
+.small-dropdown-text {
+    font-size: 12px;
+}
+
 .carousel-inner img {
     border-radius: 50%;
     height: 130px;

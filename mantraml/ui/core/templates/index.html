@@ -75,17 +75,17 @@
       Private
     </div>
 
-    {% if dataset.dataset_type == 'images' %}
-    <img class="card-img-top" src="static/{{ dataset.dataset_image }}" alt="Card image cap">
-    {% elif dataset.dataset_type == 'tabular' %}
-    <img class="card-img-top" src="static/{{ dataset.dataset_image }}" alt="Card image cap">
+    {% if dataset.data_type == 'images' %}
+    <img class="card-img-top" src="static/{{ dataset.data_image }}" alt="Card image cap">
+    {% elif dataset.data_type == 'tabular' %}
+    <img class="card-img-top" src="static/{{ dataset.data_image }}" alt="Card image cap">
     {% endif %}
     <div class="card-body">
       <h6 class="card-title">{{ dataset.name }}</h6>
       
-      {% if dataset.dataset_type == 'images' %}
+      {% if dataset.data_type == 'images' %}
       <i class="em em-frame_with_picture"></i>
-      {% elif dataset.dataset_type == 'music' %}
+      {% elif dataset.data_type == 'music' %}
       <i class="em em-musical_score"></i>
       {% else %}
       <i class="em em-floppy_disk"></i>

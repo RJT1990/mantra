@@ -34,16 +34,16 @@
 
 {% for dataset in datasets %}
     <tr>
-      <td onclick="document.location = '/data/{{ dataset.folder_name }}'"><div class="model-name"><img src="/static/{{ dataset.dataset_image }}"> <a href="/data/{{ dataset.folder_name }}">{{ dataset.name }}</a></div></td>
+      <td onclick="document.location = '/data/{{ dataset.folder_name }}'"><div class="model-name"><img src="/static/{{ dataset.data_image }}"> <a href="/data/{{ dataset.folder_name }}">{{ dataset.name }}</a></div></td>
       <td onclick="document.location = '/data/{{ dataset.folder_name }}'">
         {% for tag in dataset.tags %}
       <span class="badge badge-primary">{{ tag }}</span>
        {% endfor %}
      </td>
       <td onclick="document.location = '/data/{{ dataset.folder_name }}'"><div class="framework">
-      {% if dataset.dataset_type == 'images' %}
+      {% if dataset.data_type == 'images' %}
       <i class="em em-frame_with_picture"></i>
-      {% elif dataset.dataset_type == 'music' %}
+      {% elif dataset.data_type == 'music' %}
       <i class="em em-musical_score"></i>
       {% else %}
       <i class="em em-floppy_disk"></i>

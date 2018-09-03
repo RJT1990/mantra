@@ -132,6 +132,8 @@ class Mantra:
 
         tar_location = '%sraw' % data_location
 
+        images = None
+
         for file in sorted(dataset_class.files):
 
             file_path = '%sraw/%s' % (data_location, file)
@@ -148,8 +150,8 @@ class Mantra:
                         files_at_top = True
                         break
 
-                if os.path.isdir(data_location + 'raw/extract'):
-                    shutil.rmtree(data_location + 'raw/extract')
+                if os.path.isdir(data_location + 'raw/.extract'):
+                    shutil.rmtree(data_location + 'raw/.extract')
 
                 if n is None:
                     members = members
@@ -164,6 +166,10 @@ class Mantra:
                     os.rename('%sraw/%s' % (data_location, top_level_dir), extract_loc)
 
                 images = ['%s/%s' % (extract_loc, image) for image in os.listdir(extract_loc)]
+
+
+            if not os.path.isdir(extract_loc):
+                os.mkdir(extract_loc)
 
             shutil.copy(file_path, extract_loc)
 
@@ -211,7 +217,8 @@ class Mantra:
         """
 
         extract_loc = '%sraw/%s' % (data_location, 'sample_extract')
-        file_to_extract = inspect.signature(dataset_class.__init__).parameters['file_name'].default
+
+        file_to_extract = dataset_class.data_file
         _ = cls.extract_data_files(dataset_name, dataset_class, data_location, sample_location, extract_loc, None)
 
         # define the core DataFrames
@@ -259,7 +266,6 @@ class Mantra:
         Finds/creates an image that has a sample of the data
         """
         data_location = '%s/data/%s/' % (settings.MANTRA_PROJECT_ROOT, dataset_name)
-
         sample_location = '%sraw/sample.jpg' % data_location
 
         if not os.path.exists(sample_location):
@@ -277,36 +283,39 @@ class Mantra:
         dataset_module = importlib.import_module("data.%s.data" % dataset_name)
         dataset_class = find_dataset_class(dataset_module)
 
-        if hasattr(dataset_class, 'dataset_type'):
-            metadata['dataset_image'] = 'img/default_model.jpg'
+        if hasattr(dataset_class, 'data_type'):
+            metadata['data_image'] = 'img/default_model.jpg'
 
-            if dataset_class.dataset_type == 'images':
-                metadata['dataset_type'] = 'images'
-                metadata['dataset_image'] = cls.find_image_dataset_sample(dataset_name, dataset_class)
-            elif dataset_class.dataset_type == 'music':
-                metadata['dataset_type'] = 'music'
-            elif dataset_class.dataset_type == 'tabular':
-                metadata['dataset_type'] = 'tabular'
-                metadata['dataset_image'] = cls.find_tabular_dataset_sample(dataset_name, dataset_class)
+            if dataset_class.data_type == 'images':
+                metadata['data_type'] = 'images'
+                metadata['data_image'] = cls.find_image_dataset_sample(dataset_name, dataset_class)
+            elif dataset_class.data_type == 'music':
+                metadata['data_type'] = 'music'
+            elif dataset_class.data_type == 'tabular':
+                metadata['data_type'] = 'tabular'
+                metadata['data_image'] = cls.find_tabular_dataset_sample(dataset_name, dataset_class)
             else:
-                metadata['dataset_type'] = 'base'
+                metadata['data_type'] = 'base'
 
         else:
-            metadata['dataset_type'] = 'base'
-            metadata['dataset_image'] = 'img/default_model.jpg'
+            metadata['data_type'] = 'base'
+            metadata['data_image'] = 'img/default_model.jpg'
 
-        if hasattr(dataset_class, 'dataset_name'):
-            metadata['name'] = dataset_class.dataset_name
+        if hasattr(dataset_class, 'data_image'):
+            metadata['data_image'] = 'data/%s/%s' % (dataset_name, dataset_class.data_image)
+
+        if hasattr(dataset_class, 'data_name'):
+            metadata['name'] = dataset_class.data_name
         else:
             metadata['name'] = dataset_name
 
-        if hasattr(dataset_class, 'dataset_tags'):
-            metadata['tags'] = dataset_class.dataset_tags
+        if hasattr(dataset_class, 'data_tags'):
+            metadata['tags'] = dataset_class.data_tags
         else:
             metadata['tags'] = []
 
-        if hasattr(dataset_class, 'dataset_notebook'):
-            notebook_path = '%s/data/%s/%s' % (settings.MANTRA_PROJECT_ROOT, dataset_name, dataset_class.dataset_notebook)
+        if hasattr(dataset_class, 'data_notebook'):
+            notebook_path = '%s/data/%s/%s' % (settings.MANTRA_PROJECT_ROOT, dataset_name, dataset_class.data_notebook)
             output = subprocess.Popen(["cat", notebook_path], stdout=subprocess.PIPE).stdout.read().decode('utf-8')
             output = json.dumps(output)
             metadata['notebook'] = output
@@ -324,7 +333,7 @@ class Mantra:
         """
 
         if task_name == 'none':
-            return {'name': None}
+            return {'name': None, 'evaluation_name': None}
 
         metadata = {}
 

@@ -5,27 +5,19 @@ import os
 import pandas as pd
 import scipy.misc
 
-from .Dataset import Dataset, datamethod
+from .Dataset import Dataset, cachedata
 
 
 class ImageDataset(Dataset):
     """
-    This class implements dataset processing methods for a tabular dataset
+    This class implements dataset processing methods for an image dataset
     """
-    dataset_type = 'images'
+
+    data_type = 'images'
     has_labels = False
     normalize = True
 
-    def __init__(self, **kwargs):       
-        """
-        This initialises an instance of an Image Dataset
-        """
-
-        # user specified training_test_split
-        
-        super().__init__(**kwargs)
-
-    @datamethod
+    @cachedata
     def X(self):
         """
         This method extracts inputs from the data. The output should be an np.ndarray that can be processed 

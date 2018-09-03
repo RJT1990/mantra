@@ -103,7 +103,8 @@ class Train:
             return
 
         dataset = dataset_class(name=self.dataset_name, trial=True, **self.kwargs)
-
+        dataset.configure_core_arguments(self.args)
+        
         # Obtain the model class
 
         model_module = importlib.import_module("models.%s.model" % self.model_name)
@@ -129,6 +130,7 @@ class Train:
         model.args = self.args
         model.settings = self.settings
         model.cloudremote = self.cloudremote
+        model.configure_core_arguments(self.args)
 
         if not self.cloudremote: # local training
             self.setup_local_training(model)

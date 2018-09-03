@@ -22,9 +22,12 @@ from core.code import CodeBase
 
 from .consts import MANTRA_DEVELOPMENT_TAG_NAME
 from .forms import DeleteTrialForm, DeleteTrialGroupForm, StartInstanceForm, StopInstanceForm, TerminateInstanceForm
-
+from .models import Cloud, Trial
 
 def index(request):
+    """
+    Landing page for the Mantra UI
+    """
     config = Mantra.get_config()
 
     context = {
@@ -37,76 +40,32 @@ def index(request):
 
 def cloud(request):
     """
-    Contains informations on instances that are currently running
+    Contains informations on instances that are currently running and allows the user to change the instance state
+    (starting, shutting down or terminating)
     """
 
     ec2 = boto3.resource('ec2')
 
-    # delete trial option - catch and process
     if request.method == 'POST':
-
-        if 'stop_instance_id' in request.POST.dict():
-            posted_form = StopInstanceForm(request.POST)
-            if posted_form.is_valid():
-                instance_id = posted_form.cleaned_data['stop_instance_id']
-                ec2.instances.filter(InstanceIds=[instance_id]).stop()
-        elif 'start_instance_id' in request.POST.dict():
-            posted_form = StartInstanceForm(request.POST)
-            if posted_form.is_valid():
-                instance_id = posted_form.cleaned_data['start_instance_id']
-                ec2.instances.filter(InstanceIds=[instance_id]).start()
-        else:
-            posted_form = TerminateInstanceForm(request.POST)
-            if posted_form.is_valid():
-                instance_id = posted_form.cleaned_data['terminate_instance_id']
-                ec2.instances.filter(InstanceIds=[instance_id]).terminate()
+        Cloud.change_instance_state(ec2_resource=ec2, POST=request.POST)
 
     start_instance_form = StartInstanceForm()
     stop_instance_form = StopInstanceForm()
     terminate_instance_form = TerminateInstanceForm()
+
     running_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-    
-    instance_data = []
-
-    for instance in running_instances:
-        instance_dict = {}
-
-        if instance.tags:
-            instance_dict['name'] = instance.tags[0]['Value']
-        else:
-            instance_dict['name'] = ''
-
-        instance_dict['type'] = instance.instance_type
-        instance_dict['id'] = instance.id
-        instance_dict['tags'] = []
-        instance_dict['state'] = instance.state['Name']
-        instance_dict['launch_time'] = instance.launch_time
-
-        # development instances are treated differently
-        if instance_dict['name'] != MANTRA_DEVELOPMENT_TAG_NAME:
-            instance_data.append(instance_dict)
-
     development_instances = ec2.instances.filter(Filters=[{'Name': 'tag:Name', 'Values': ['%s' % MANTRA_DEVELOPMENT_TAG_NAME]}])
 
-    for instance in development_instances:
-        instance_dict = {}
-
-        if instance.tags:
-            instance_dict['name'] = instance.tags[0]['Value']
-        else:
-            instance_dict['name'] = ''
-
-        instance_dict['type'] = instance.instance_type
-        instance_dict['id'] = instance.id
-        instance_dict['tags'] = ['development']
-        instance_dict['state'] = instance.state['Name']
-        instance_dict['launch_time'] = instance.launch_time
-        instance_data.append(instance_dict)
+    instance_data = Cloud.get_instance_metadata(running_instances, no_dev=True)
+    instance_data = instance_data + Cloud.get_instance_metadata(development_instances, no_dev=False)
 
     return render(request, "cloud.html", {'instance_data': instance_data, 'stop_instance_form': stop_instance_form, 
         'start_instance_form': start_instance_form, 'terminate_instance_form': terminate_instance_form})
 
 def models(request):
+    """
+    Lists the models that the user has in their project
+    """
     config = Mantra.get_config()
 
     context = {
@@ -117,6 +76,9 @@ def models(request):
     return render(request, "models.html", context)
 
 def datasets(request):
+    """
+    Lists the models that the user has in their project
+    """
     config = Mantra.get_config()
 
     context = {
@@ -127,6 +89,10 @@ def datasets(request):
     return render(request, "datasets.html", context)
 
 def trials(request):
+    """
+    Lists the trials that the user has run in their project
+    """
+
     config = Mantra.get_config()
 
     context = {
@@ -136,31 +102,14 @@ def trials(request):
     # delete trial option - catch and process
     if request.method == 'POST':
         form = DeleteTrialGroupForm(request.POST)
+
         if form.is_valid():
-
-            trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-            trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-            trial_group_hash = form.cleaned_data['trial_group_hash']
-            new_contents = [trial for trial in trial_contents if not trial[3] == trial_group_hash]
-            trial_folder_names = [trial[1] for trial in trial_contents if trial[3] == trial_group_hash]
-            new_information = '\n'.join([" ".join(content) for content in new_contents]) + '\n'
-
-            for trial_folder in trial_folder_names:
-                shutil.rmtree('%s/%s/%s' % (settings.MANTRA_PROJECT_ROOT, 'trials', trial_folder)) # delete the trial folder
-            
-            with open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, "w") as trial_file:
-                trial_file.write(new_information)
+            Trial.remove_group_hash_from_contents(settings=settings, trial_group_hash=form.cleaned_data['trial_group_hash'])
 
     form = DeleteTrialGroupForm()
 
     sys.path.append(settings.MANTRA_PROJECT_ROOT)
-
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
-    trial_group_hashs = list(set([model['trial_group_hash'] for model in trials]))
-    trial_group_members = {trial_group_hash: [trial for trial in trials if trial['trial_group_hash'] == trial_group_hash] for trial_group_hash in trial_group_hashs}
+    trial_group_members, _ = Trial.get_trial_group_members(settings=settings)
 
     with open("%s/.mantra/TRIAL_GROUP_NAMES" % settings.MANTRA_PROJECT_ROOT, "r") as trial_group_name_file:
 
@@ -188,7 +137,7 @@ def trials(request):
     'latest_media': Mantra.find_latest_trial_media(trial_group_value[0]['folder_name']),
     'data_full_name': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['name'],
     'task_full_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['name'],
-    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['dataset_image'],
+    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['data_image'],
     'n_trials': len(trial_group_value),
     'data_hash': trial_group_value[0]['data_hash']} for trial_group_hash, trial_group_value in trial_group_members.items()]
     context['trial_groups'].sort(key=lambda item: item['time'], reverse=True)
@@ -206,8 +155,7 @@ def view_model(request, model_name):
         form = DeleteTrialGroupForm(request.POST)
         if form.is_valid():
 
-            trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-            trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
+            trial_contents = Trial.get_trial_contents(settings=settings)
             trial_group_hash = form.cleaned_data['trial_group_hash']
             new_contents = [trial for trial in trial_contents if not trial[3] == trial_group_hash]
             trial_folder_names = [trial[1] for trial in trial_contents if trial[3] == trial_group_hash]
@@ -241,13 +189,7 @@ def view_model(request, model_name):
     request_vars['files'] = CodeBase.get_files('%s/models/%s'% (settings.MANTRA_PROJECT_ROOT, model_name))
     request_vars['directories'] = CodeBase.get_directories('%s/models/%s'% (settings.MANTRA_PROJECT_ROOT, model_name))
 
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
-    model_trials =  [trial for trial in trials if trial['model_name'] == model_name]
-    trial_group_hashs = list(set([model['trial_group_hash'] for model in model_trials]))
-    trial_group_members = {trial_group_hash: [trial for trial in model_trials if trial['trial_group_hash'] == trial_group_hash] for trial_group_hash in trial_group_hashs}
+    trial_group_members, _ = Trial.get_trial_group_members(settings=settings, model_filter=model_name)
 
     with open("%s/.mantra/TRIAL_GROUP_NAMES" % settings.MANTRA_PROJECT_ROOT, "r") as trial_group_name_file:
 
@@ -274,7 +216,7 @@ def view_model(request, model_name):
     'latest_media': Mantra.find_latest_trial_media(trial_group_value[0]['folder_name']),
     'data_full_name': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['name'],
     'task_full_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['name'],
-    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['dataset_image'],
+    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['data_image'],
     'n_trials': len(trial_group_value),
     'data_hash': trial_group_value[0]['data_hash']} for trial_group_hash, trial_group_value in trial_group_members.items()]
     request_vars['trial_groups'].sort(key=lambda item: item['time'], reverse=True)
@@ -292,8 +234,7 @@ def view_dataset(request, dataset_name):
         form = DeleteTrialGroupForm(request.POST)
         if form.is_valid():
 
-            trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-            trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
+            trial_contents = Trial.get_trial_contents(settings=settings)
             trial_group_hash = form.cleaned_data['trial_group_hash']
             new_contents = [trial for trial in trial_contents if not trial[3] == trial_group_hash]
             trial_folder_names = [trial[1] for trial in trial_contents if trial[3] == trial_group_hash]
@@ -327,13 +268,7 @@ def view_dataset(request, dataset_name):
     request_vars['files'] = CodeBase.get_files('%s/data/%s'% (settings.MANTRA_PROJECT_ROOT, dataset_name))
     request_vars['directories'] = CodeBase.get_directories('%s/data/%s'% (settings.MANTRA_PROJECT_ROOT, dataset_name))
 
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
-    model_trials =  [trial for trial in trials if trial['data_name'] == dataset_name]
-    trial_group_hashs = list(set([model['trial_group_hash'] for model in model_trials]))
-    trial_group_members = {trial_group_hash: [trial for trial in model_trials if trial['trial_group_hash'] == trial_group_hash] for trial_group_hash in trial_group_hashs}
+    trial_group_members, model_trials = Trial.get_trial_group_members(settings=settings, data_filter=dataset_name)
 
     tasks_used = [model_trial['task_name'] for model_trial in model_trials if model_trial['task_name'] != 'none']
     occur = Counter(tasks_used)
@@ -351,8 +286,10 @@ def view_dataset(request, dataset_name):
                 task_trial['trial_metadata'] = {}
 
         try:
-            request_vars['task_list'][eval_key]['best_loss'] = min([trial['trial_metadata']['validation_loss'] for trial in task_trials if 'validation_loss' in trial['trial_metadata']])
-            request_vars['task_list'][eval_key]['best_model_folder'] = [trial for trial in task_trials if trial['trial_metadata']['validation_loss'] == request_vars['task_list'][eval_key]['best_loss']][0]['model_name']
+            trials_with_validation_loss = [trial for trial in task_trials if 'validation_loss' in trial['trial_metadata']]
+
+            request_vars['task_list'][eval_key]['best_loss'] = min([trial['trial_metadata']['validation_loss'] for trial in trials_with_validation_loss])
+            request_vars['task_list'][eval_key]['best_model_folder'] = [trial for trial in trials_with_validation_loss if trial['trial_metadata']['validation_loss'] == request_vars['task_list'][eval_key]['best_loss']][0]['model_name']
             request_vars['task_list'][eval_key]['best_model_metadata'] = Mantra.find_model_metadata(request_vars['task_list'][eval_key]['best_model_folder'])
         except AttributeError:
             request_vars['task_list'][eval_key]['best_loss'] = None
@@ -396,7 +333,7 @@ def view_dataset(request, dataset_name):
     'latest_media': Mantra.find_latest_trial_media(trial_group_value[0]['folder_name']),
     'data_full_name': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['name'],
     'task_full_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['name'],
-    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['dataset_image'],
+    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['data_image'],
     'n_trials': len(trial_group_value),
     'data_hash': trial_group_value[0]['data_hash']} for trial_group_hash, trial_group_value in trial_group_members.items()]
     request_vars['trial_groups'].sort(key=lambda item: item['time'], reverse=True)
@@ -414,8 +351,7 @@ def view_dataset_codebase(request, dataset_name, path):
         form = DeleteTrialGroupForm(request.POST)
         if form.is_valid():
 
-            trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-            trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
+            trial_contents = Trial.get_trial_contents(settings=settings)
             trial_group_hash = form.cleaned_data['trial_group_hash']
             new_contents = [trial for trial in trial_contents if not trial[3] == trial_group_hash]
             trial_folder_names = [trial[1] for trial in trial_contents if trial[3] == trial_group_hash]
@@ -449,13 +385,7 @@ def view_dataset_codebase(request, dataset_name, path):
     request_vars['files'] = CodeBase.get_files('%s/data/%s'% (settings.MANTRA_PROJECT_ROOT, dataset_name))
     request_vars['directories'] = CodeBase.get_directories('%s/data/%s'% (settings.MANTRA_PROJECT_ROOT, dataset_name))
 
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
-    model_trials =  [trial for trial in trials if trial['data_name'] == dataset_name]
-    trial_group_hashs = list(set([model['trial_group_hash'] for model in model_trials]))
-    trial_group_members = {trial_group_hash: [trial for trial in model_trials if trial['trial_group_hash'] == trial_group_hash] for trial_group_hash in trial_group_hashs}
+    trial_group_members, model_trials = Trial.get_trial_group_members(settings=settings, data_filter=dataset_name)
 
     tasks_used = [model_trial['task_name'] for model_trial in model_trials if model_trial['task_name'] != 'none']
     occur = Counter(tasks_used)
@@ -517,7 +447,8 @@ def view_dataset_codebase(request, dataset_name, path):
     'latest_media': Mantra.find_latest_trial_media(trial_group_value[0]['folder_name']),
     'data_full_name': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['name'],
     'task_full_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['name'],
-    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['dataset_image'],
+    'evaluation_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['evaluation_name'],
+    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['data_image'],
     'n_trials': len(trial_group_value),
     'data_hash': trial_group_value[0]['data_hash']} for trial_group_hash, trial_group_value in trial_group_members.items()]
     request_vars['trial_groups'].sort(key=lambda item: item['time'], reverse=True)
@@ -561,8 +492,7 @@ def view_dataset_task(request, dataset_name, task_name):
         form = DeleteTrialGroupForm(request.POST)
         if form.is_valid():
 
-            trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-            trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
+            trial_contents = Trial.get_trial_contents(settings=settings)
             trial_group_hash = form.cleaned_data['trial_group_hash']
             new_contents = [trial for trial in trial_contents if not trial[3] == trial_group_hash]
             trial_folder_names = [trial[1] for trial in trial_contents if trial[3] == trial_group_hash]
@@ -596,30 +526,29 @@ def view_dataset_task(request, dataset_name, task_name):
     request_vars['files'] = CodeBase.get_files('%s/data/%s'% (settings.MANTRA_PROJECT_ROOT, dataset_name))
     request_vars['directories'] = CodeBase.get_directories('%s/data/%s'% (settings.MANTRA_PROJECT_ROOT, dataset_name))
 
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
-    model_trials =  [trial for trial in trials if trial['data_name'] == dataset_name]
-    trial_group_hashs = list(set([model['trial_group_hash'] for model in model_trials]))
-    trial_group_members = {trial_group_hash: [trial for trial in model_trials if trial['trial_group_hash'] == trial_group_hash] for trial_group_hash in trial_group_hashs}
+    trial_group_members, model_trials = Trial.get_trial_group_members(settings=settings, data_filter=dataset_name)
 
     task_trials = [trial for trial in model_trials if trial['task_name'] == task_name]
-    request_vars['task_trials'] = task_trials
 
-    for trial in request_vars['task_trials']:
+    trials_with_metadata = []
+
+    for trial in task_trials:
         trial.update({'time': datetime.datetime.utcfromtimestamp(int(str(trial['timestamp'])))})
         try:
             trial['metadata'] = yaml.load(open('%s/trials/%s/trial_metadata.yml' % (settings.MANTRA_PROJECT_ROOT, trial['folder_name']), 'r').read())
+            trial['model_metadata'] = Mantra.find_model_metadata(trial['model_name'])
+            if 'validation_loss' in trial['metadata']:
+                trials_with_metadata.append(trial)
+       
         except: # can't load yaml
-            trial['metadata'] = {}
+            continue
 
-        trial['model_metadata'] = Mantra.find_model_metadata(trial['model_name'])
-
+    request_vars['task_trials'] = trials_with_metadata
     request_vars['task_trials'].sort(key=lambda item: item['metadata']['validation_loss'], reverse=False)
 
     request_vars['task_name'] = task_name
     request_vars['task_metadata'] = Mantra.find_task_metadata(task_name)
+
 
     with open("%s/.mantra/TRIAL_GROUP_NAMES" % settings.MANTRA_PROJECT_ROOT, "r") as trial_group_name_file:
 
@@ -647,7 +576,8 @@ def view_dataset_task(request, dataset_name, task_name):
     'latest_media': Mantra.find_latest_trial_media(trial_group_value[0]['folder_name']),
     'data_full_name': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['name'],
     'task_full_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['name'],
-    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['dataset_image'],
+    'evaluation_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['evaluation_name'],
+    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['data_image'],
     'n_trials': len(trial_group_value),
     'data_hash': trial_group_value[0]['data_hash']} for trial_group_hash, trial_group_value in trial_group_members.items()]
     request_vars['trial_groups'].sort(key=lambda item: item['time'], reverse=True)
@@ -665,8 +595,7 @@ def view_model_codebase(request, model_name, path):
         form = DeleteTrialGroupForm(request.POST)
         if form.is_valid():
 
-            trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-            trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
+            trial_contents = Trial.get_trial_contents(settings=settings)
             trial_group_hash = form.cleaned_data['trial_group_hash']
             new_contents = [trial for trial in trial_contents if not trial[3] == trial_group_hash]
             trial_folder_names = [trial[1] for trial in trial_contents if trial[3] == trial_group_hash]
@@ -700,13 +629,7 @@ def view_model_codebase(request, model_name, path):
     request_vars['files'] = CodeBase.get_files('%s/models/%s'% (settings.MANTRA_PROJECT_ROOT, model_name))
     request_vars['directories'] = CodeBase.get_directories('%s/models/%s'% (settings.MANTRA_PROJECT_ROOT, model_name))
 
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
-    model_trials =  [trial for trial in trials if trial['model_name'] == model_name]
-    trial_group_hashs = list(set([model['trial_group_hash'] for model in model_trials]))
-    trial_group_members = {trial_group_hash: [trial for trial in model_trials if trial['trial_group_hash'] == trial_group_hash] for trial_group_hash in trial_group_hashs}
+    trial_group_members, model_trials = Trial.get_trial_group_members(settings=settings, data_filter=model_name)
 
     with open("%s/.mantra/TRIAL_GROUP_NAMES" % settings.MANTRA_PROJECT_ROOT, "r") as trial_group_name_file:
 
@@ -733,7 +656,8 @@ def view_model_codebase(request, model_name, path):
     'latest_media': Mantra.find_latest_trial_media(trial_group_value[0]['folder_name']),
     'data_full_name': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['name'],
     'task_full_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['name'],
-    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['dataset_image'],
+    'evaluation_name': Mantra.find_task_metadata(trial_group_value[0]['task_name'])['evaluation_name'],
+    'data_image': Mantra.find_dataset_metadata(trial_group_value[0]['data_name'])['data_image'],
     'n_trials': len(trial_group_value),
     'data_hash': trial_group_value[0]['data_hash']} for trial_group_hash, trial_group_value in trial_group_members.items()]
     request_vars['trial_groups'].sort(key=lambda item: item['time'], reverse=True)
@@ -774,10 +698,7 @@ def view_trial_group(request, trial_group_folder):
         form = DeleteTrialForm(request.POST)
         if form.is_valid():
 
-            trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-            trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-            trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-            trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
+            trials = Trial.get_trial_contents_as_dicts(settings=settings)
             group_trials =  [group_trial for group_trial in trials if group_trial['trial_group_hash'].startswith(trial_group_folder)]
 
             trial_hash = form.cleaned_data['trial_hash']
@@ -799,10 +720,7 @@ def view_trial_group(request, trial_group_folder):
                 with open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, "w") as trial_file:
                     trial_file.write(new_information)
 
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
+    trials = Trial.get_trial_contents_as_dicts(settings=settings)
     group_trials =  [group_trial for group_trial in trials if group_trial['trial_group_hash'].startswith(trial_group_folder)]
 
     form = DeleteTrialForm()
@@ -814,6 +732,7 @@ def view_trial_group(request, trial_group_folder):
         model_trials =  [trial for trial in trials if trial['trial_group_hash'] == group_trials[0]['trial_group_hash']]
         task_name = model_trials[0]['task_name']
         task_full_name = Mantra.find_task_metadata(task_name)['name']
+        evaluation_name = Mantra.find_task_metadata(task_name)['evaluation_name']
 
     request_vars = {}
 
@@ -832,6 +751,7 @@ def view_trial_group(request, trial_group_folder):
 
     request_vars['task_name'] = task_name
     request_vars['task_full_name'] = task_full_name
+    request_vars['evaluation_name'] = evaluation_name
     request_vars['trial_group_hash'] = model_trials[0]['trial_group_hash']
     request_vars['trials'] = model_trials
     request_vars['latest_trial'] = datetime.datetime.utcfromtimestamp(int(str(max([trial['timestamp'] for trial in model_trials]))))
@@ -861,9 +781,19 @@ def view_trial_group(request, trial_group_folder):
             hyperparm_list = []
             for hyperparm_no, hyperparm in enumerate(request_vars['hyperparms']):
                 if hyperparm in trial['metadata']['hyperparameters']:
-                    hyperparm_list.append(trial['metadata']['hyperparameters'][hyperparm])
+
+                    hyperparameter_value = trial['metadata']['hyperparameters'][hyperparm]
+
+                    if isinstance(hyperparameter_value, list):
+                        hyperparameter_value_type = 'list'
+                    elif isinstance(hyperparameter_value, float):
+                        hyperparameter_value_type = 'float'
+                    else:
+                        hyperparameter_value_type = 'str'
+
+                    hyperparm_list.append({'value': hyperparameter_value, 'type': hyperparameter_value_type})
                 else:
-                    hyperparm_list.append(None)
+                    hyperparm_list.append({})
 
             trial.update({'hyperparm_values': hyperparm_list})
         else:
@@ -898,10 +828,7 @@ def view_trial(request, trial_folder):
     This view shows an individual trial
     """
 
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
+    trials = Trial.get_trial_contents_as_dicts(settings=settings)
     model_trials =  [trial for trial in trials if trial_folder in trial['folder_name']]
 
     if not model_trials:
@@ -941,11 +868,7 @@ def view_trial_tensorboard(request, trial_folder):
     This view shows an individual trial with tensorboard
     """
 
-
-    trial_information = open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, 'r').read()
-    trial_contents = [line.split(" ") for line in trial_information.split("\n") if line]
-    trial_col_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
-    trials = [dict(zip(trial_col_names, content)) for content in trial_contents]
+    trials = Trial.get_trial_contents_as_dicts(settings=settings)
     model_trials =  [trial for trial in trials if trial_folder in trial['folder_name']]
 
     if not model_trials:

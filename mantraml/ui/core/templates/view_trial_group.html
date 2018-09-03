@@ -10,7 +10,7 @@
 
     <div class="col-md-2">
       <div class="data-trial-summary">
-        <div class="data-trial-image"><img width=140 src="/static/{{ data.dataset_image }}"></div>
+        <div class="data-trial-image"><img width=140 src="/static/{{ data.data_image }}"></div>
       </div>
     </div>
 
@@ -18,7 +18,7 @@
       <div class="trial-section-header">
         <img src="/static/{{ model.image }}"> <a href="/model/{{ model.folder_name }}">{{ model.name }} </a>
         on 
-        <img src="/static/{{ data.dataset_image }}"> <a href="/data/{{ data.folder_name }}">{{ data.name }}</a></div>
+        <img src="/static/{{ data.data_image }}"> <a href="/data/{{ data.folder_name }}">{{ data.name }}</a></div>
       
       <div class="main-header">{{ trial_group_name }}</div>
       <div class="latest-trial"><i class="em em-female-scientist"></i> Latest trial: {{ latest_trial }}</div>
@@ -81,7 +81,7 @@
       <th scope="col">{{ metric_name | capfirst }}</th>
       {% endfor %}
       {% if task_full_name %}
-      <th scope="col">Validation Loss <ion-icon data-toggle="tooltip" title="{{ task_full_name }}" name="information-circle-outline"></ion-icon></th>
+      <th scope="col">Evaluation Loss <ion-icon data-toggle="tooltip" title="{{ evaluation_name }}" name="information-circle-outline"></ion-icon></th>
       {% endif %}
       <th scope="col"></th>
     </tr>
@@ -104,10 +104,30 @@
       <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.trial_hash |slice:':6' }}</td>
       <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.time }}</td>
       {% for hv in trial_values.hyperparm_values %}
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ hv }}</td>
+      
+      {% if hv.type == 'list' %}
+      <td>
+<div class="btn-group">
+  <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    View List
+  </button>
+  <div class="dropdown-menu">
+    {% for hyperparameter_item in hv.value %}
+    <a class="dropdown-item small-dropdown-text" href="#">{{ hyperparameter_item }}</a>
+    {% endfor %}
+  </div>
+</div>
+      {% elif hv.type == 'float' %}
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">
+      {{ hv.value|floatformat:4 }}
+      {% else %}
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">
+      {{ hv.value }}
+      {% endif %}
+      </td>
       {% endfor %}
       {% for mv in trial_values.metric_values %}
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ mv }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ mv|floatformat:4 }}</td>
       {% endfor %}
       {% if task_full_name %}
       <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.metadata.validation_loss |floatformat:4 }}</td>

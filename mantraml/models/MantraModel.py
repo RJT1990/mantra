@@ -25,7 +25,7 @@ class MantraModel:
 
         Parameters
         -----------
-        args - argument parser namespace
+        args - Argument parser namespace
             Containing training arguments such as batch size, number of epochs
 
         Returns
@@ -33,17 +33,17 @@ class MantraModel:
         void - update self with new attributes
         """
 
-        if args.batch_size:
+        if args.batch_size is not None:
             self.batch_size = args.batch_size
         else:
             self.batch_size = DEFAULT_BATCH_SIZE
 
-        if args.epochs:
+        if args.epochs is not None:
             self.epochs = args.epochs
         else:
             self.epochs = DEFAULT_EPOCHS
 
-        if args.savebestonly:
+        if args.savebestonly is not None:
             self.save_best_only = True
         else:
             self.save_best_only = False

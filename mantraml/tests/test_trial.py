@@ -60,6 +60,7 @@ def test_configure_trial_metadata():
             self.dataset = 'my_dataset'
             self.task = 'my_task'
             self.name = None
+            
     args = MockArgParser()
     args.savebestonly = True
     args.epochs = 20
