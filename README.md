@@ -7,7 +7,7 @@
 # Mantra: Modular Deep Learning
 
 <div align="center">
-<img width="500" src="docs/source/demo2.gif">
+<img src="docs/source/demo.gif">
 </div>
 <br><br>
 
@@ -54,7 +54,6 @@ mantra train cifar_model --dataset cifar_10 --cloud
 ```console
 mantra ui
 ```
-<img src="docs/source/demo.gif">
 
 ## Installation
 
