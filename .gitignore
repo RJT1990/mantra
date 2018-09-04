@@ -13,3 +13,4 @@ mantraml/tests/data/testdata/raw/.extract
 __pycache__/
 *.pyc
 *.pyo
+tests/my_project

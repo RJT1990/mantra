@@ -11,7 +11,7 @@ import argparse
 
 from mantraml.core.management.commands.BaseCommand import BaseCommand
 
-from .consts import CONFIG_VARIABLES
+from mantraml.core.training.consts import CONFIG_VARIABLES
 
 CLOUD_PROVIDERS = ['aws']
 
