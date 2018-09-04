@@ -7,7 +7,7 @@
 
 <div align="center">
     
-[![CircleCI](https://circleci.com/gh/RJT1990/mantra/tree/master.svg?style=shield)](https://circleci.com/gh/RJT1990/mantra/tree/master)
+[![CircleCI](https://circleci.com/gh/RJT1990/mantra.svg?style=shield&circle-token=ef9ddee091dd77395273f8d59f6b6b5b091212c7)](https://circleci.com/gh/RJT1990/mantra)
 [![PyPI version](https://badge.fury.io/py/mantraml.svg)](https://badge.fury.io/py/mantraml)
 
 <img src="docs/source/demo.gif">
