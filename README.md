@@ -1,11 +1,14 @@
 <div align="center">
-    <img width="500" src="docs/source/logo.png">
+    <img width="500" src="docs/source/logo.png">    
 </div>
 
 -----------------------------------------
 
 
 <div align="center">
+    
+[![CircleCI](https://circleci.com/gh/RJT1990/mantra/tree/master.svg?style=shield)](https://circleci.com/gh/RJT1990/mantra/tree/master)
+    
 <img src="docs/source/demo.gif">
 </div>
 <br><br>
