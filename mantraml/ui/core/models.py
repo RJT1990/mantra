@@ -1,12 +1,16 @@
 import boto3
+from collections import Counter
+import datetime
+import os
 import shutil
+import yaml
 
 from django.db import models
 
 from .consts import MANTRA_DEVELOPMENT_TAG_NAME
+from .mantra import Mantra
 from .forms import StartInstanceForm, StopInstanceForm, TerminateInstanceForm
 
-# Create your models here.
 
 class Cloud:
 
@@ -191,3 +195,216 @@ class Trial:
         trial_group_dict = {trial_group_hash: [trial for trial in trials if trial['trial_group_hash'] == trial_group_hash] for trial_group_hash in trial_group_hashs}
 
         return trial_group_dict, trials
+
+    @classmethod
+    def get_trial_group_name_dict(cls, settings):
+        """
+        This method retrieves a dictionary with keys as trial group names, and values as string names for these ids. E.g.:
+
+        {'ae42j2ff42f2jeduj4': 'Dropout Experiments'}
+
+        This allows for trial groups to be named with human names, rather than dehumanising SHA-256 hashes.
+
+        Parameters
+        ------------
+        settings - django.settings file
+            Containing information like the MANTRA_PROJECT_ROOT constant
+
+        Returns
+        ------------
+        dict - key is a trial group hash, value is a name for the trial group e.g. "Learning Rate Tests"
+        """
+
+        with open("%s/.mantra/TRIAL_GROUP_NAMES" % settings.MANTRA_PROJECT_ROOT, "r") as trial_group_name_file:
+
+            yaml_content = yaml.load(trial_group_name_file)
+
+            if not yaml_content:
+                yaml_content = {}
+
+        return yaml_content
+
+    @staticmethod
+    def get_trial_group_name(trial_group_name_dict, trial_group_hash):
+        """
+        Parameters
+        ------------
+        trial_group_name_dict - dict
+            The dictionary containing as keys trial group hashes, and as values trial group names, e.g. "Dropout Experiments"
+
+        trial_group_hash - str
+            The string for the trial group hash, e.g. a93idjj4v2ojf42of24cew...
+        
+        Returns
+        ------------
+        str - the name of the trial group given the dictionary and the hash entered
+        """
+
+        try:
+            return trial_group_name_dict[trial_group_hash]
+        except KeyError:
+            return 'Trial Group ' + trial_group_hash[:6]
+
+    @classmethod
+    def get_trial_group_metadata(cls, settings, hash, trial_groups):
+        """
+        This method obtains trial group metadata from a list of trial group dictionaries
+
+        Parameters
+        ------------
+        settings - django.settings file
+            Containing information like the MANTRA_PROJECT_ROOT constant
+    
+        hash - str
+            The hash for the trial group
+
+        trial_groups - list
+            List of dicts, where each dict contains metadata on a trial
+
+        Returns
+        ------------
+        dict - containing metadata on the trial group
+        """
+
+        yaml_content = Trial.get_trial_group_name_dict(settings=settings)
+
+        latest_trial_time = datetime.datetime.utcfromtimestamp(int(str(max([trial['timestamp'] for trial in trial_groups]))))
+
+        trial_group_metadata = {}
+
+        if not trial_groups:
+            return trial_group_metadata
+        
+        example_trial = trial_groups[0]
+
+        for metadata_name in ['trial_group_hash', 'folder_name', 'model_name', 'model_hash', 'data_name', 'task_name', 'task_hash', 'data_hash']:
+            trial_group_metadata[metadata_name] = example_trial[metadata_name]
+
+        dataset_metadata = Mantra.find_dataset_metadata(example_trial['data_name'])
+        task_metadata = Mantra.find_task_metadata(example_trial['task_name'])
+
+        trial_group_metadata['time'] = latest_trial_time
+        trial_group_metadata['model_metadata'] = Mantra.find_model_metadata(trial_group_metadata['model_name'])
+        trial_group_metadata['trial_group_name'] = Trial.get_trial_group_name(yaml_content, example_trial['trial_group_hash'])
+        trial_group_metadata['latest_media'] = Mantra.find_latest_trial_media(trial_group_metadata['folder_name'])
+        trial_group_metadata['data_full_name'] = dataset_metadata['name']
+        trial_group_metadata['task_full_name'] = task_metadata['name']
+        trial_group_metadata['data_image'] = dataset_metadata['data_image']
+        trial_group_metadata['n_trials'] = len(trial_groups)
+
+        return trial_group_metadata
+
+    @classmethod
+    def get_all_trial_group_metadata(cls, settings, trial_group_members):
+        """
+        This method obtains trial group metadata from a dictionary containing core trial group metadata 
+
+        Parameters
+        ------------
+        settings - django.settings file
+            Containing information like the MANTRA_PROJECT_ROOT constant
+    
+        trial_group_members - dict
+            Keys are trial group hashes; values are list of trial dictionaries corresponding to that trial group
+
+        Returns
+        ------------
+        list of dicts - each containing metadata on the trial group
+        """
+
+        return [cls.get_trial_group_metadata(
+            settings=settings, 
+            hash=trial_group_hash, 
+            trial_groups=trial_groups) for trial_group_hash, trial_groups in trial_group_members.items()]
+
+
+class Artefact:
+
+    @classmethod
+    def all(cls, settings, artefacts_folder):
+        """
+        This method obtains a list of all artefacts in the artefact folder provided
+
+        Parameters
+        ------------
+        settings - django.settings file
+            Containing information like the MANTRA_PROJECT_ROOT constant
+    
+        artefacts_folder -
+            Path of the folder where the artefact folders are located
+
+        Returns
+        ------------
+        list of strs - the name of each artefact found in the artefacts_folder path
+        """
+
+        artefacts_dir = os.path.join(settings.MANTRA_PROJECT_ROOT, artefacts_folder)
+
+        if os.path.isdir(artefacts_dir):
+            artefacts_list = [o for o in os.listdir(artefacts_dir) if os.path.isdir(os.path.join(artefacts_dir, o))]
+        else:
+            artefacts_list = []
+
+        return artefacts_list
+
+
+class Task:
+
+    @classmethod
+    def calculate_task_metadata(cls, settings, trials):
+        """
+        This method produces a dictionary of tasks, with keys as the task names, which contain dictionaries of metadata such as the model  
+        with the best loss.
+
+        Parameters
+        ------------
+        
+        settings - django.settings file
+            Containing information like the MANTRA_PROJECT_ROOT constant
+    
+        trials - list of dicts
+            Each dictionary containing trial metadata
+
+        Returns
+        ------------
+        dict - keys as task names, values as dictionaries containing metadata on each task
+        """
+
+        tasks_used = [trial['task_name'] for trial in trials if trial['task_name'] != 'none']
+        occur = Counter(tasks_used)
+        task_dict = dict(occur) # e.g. {'task_1': 6} - is a way for us to count the number of trials for each task
+
+        for task_name, n_trials in task_dict.items():
+            task_dict[task_name] = {'n_trials': n_trials}
+            task_dict[task_name].update(Mantra.find_task_metadata(task_name))
+
+            task_trials = [trial for trial in trials if trial['task_name'] == task_name]
+
+            for task_trial in task_trials:
+                try:
+                    task_trial['trial_metadata'] = yaml.load(open('%s/trials/%s/trial_metadata.yml' % (settings.MANTRA_PROJECT_ROOT, task_trial['folder_name']), 'r').read())
+                except: # can't load yaml
+                    task_trial['trial_metadata'] = {}
+
+            try:
+                trials_with_validation_loss = [trial for trial in task_trials if 'validation_loss' in trial['trial_metadata']]
+
+                task_dict[task_name]['best_loss'] = min([trial['trial_metadata']['validation_loss'] for trial in trials_with_validation_loss])
+                task_dict[task_name]['best_model_folder'] = [trial for trial in trials_with_validation_loss if trial['trial_metadata']['validation_loss'] == task_dict[task_name]['best_loss']][0]['model_name']
+                task_dict[task_name]['best_model_metadata'] = Mantra.find_model_metadata(task_dict[task_name]['best_model_folder'])
+            except AttributeError:
+                task_dict[task_name]['best_loss'] = None
+                task_dict[task_name]['best_model_folder'] = None
+                if task_dict[task_name]['best_model_folder'] is not None:
+                    task_dict[task_name]['best_model_metadata'] = Mantra.find_model_metadata(task_dict[task_name]['best_model_folder'])  
+                else:
+                    task_dict[task_name]['best_model_metadata'] = None 
+            except ValueError:
+                task_dict[task_name]['best_loss'] = None
+                task_dict[task_name]['best_model_folder'] = None
+                if task_dict[task_name]['best_model_folder'] is not None:
+                    task_dict[task_name]['best_model_metadata'] = Mantra.find_model_metadata(task_dict[task_name]['best_model_folder'])  
+                else:
+                    task_dict[task_name]['best_model_metadata'] = None
+
+        return task_dict

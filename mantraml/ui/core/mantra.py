@@ -22,8 +22,6 @@ from mantraml.data.finders import find_dataset_class, find_model_class, find_tas
 from mantraml.data.Dataset import Dataset
 from mantraml.data.ImageDataset import ImageDataset
 from mantraml.data.TabularDataset import TabularDataset
-from mantraml.models.TFModel import TFModel
-from mantraml.models.KerasModel import KerasModel
 
 
 from .consts import IGNORED_FILES, NO_OF_ARTEFACTS

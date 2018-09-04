@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 import subprocess
+import sys
 
 
 class CodeBase:
@@ -10,6 +11,45 @@ class CodeBase:
     @staticmethod
     def format_timestamp_data(timestamp):
         return datetime.datetime.fromtimestamp(timestamp).strftime('%d %B %Y %I:%M %p').lstrip("0").replace(" 0", " ")
+
+    @classmethod
+    def get_code_data(cls, blob_path, path):
+        """
+        This method gets information on the files, directories and more from a path given
+
+        Parameters
+        -----------
+        blob_path - str
+            The full path where the code is located, including project name and data folder
+
+        path - str
+            The local path where the code is located
+
+        Returns
+        -----------
+        dict - contains information on the files, directories and more in the path
+        """
+
+        codebase_data = {}
+
+        codebase_data['file_contents'], codebase_data['is_folder'], codebase_data['file_type'] = cls.show_file(blob_path)
+        codebase_data['file_lines'] = len(codebase_data['file_contents'].split('\n'))
+        codebase_data['file_size'] = sys.getsizeof(codebase_data['file_contents'])
+
+        # Project readme
+        codebase_data['directories'], codebase_data['files'] = None, None
+
+        if codebase_data['is_folder']:
+            codebase_data['directories'] = cls.get_directories(blob_path)
+            codebase_data['files'] = cls.get_files(blob_path)
+            codebase_data['file_extension'] = ''
+        else:
+            codebase_data['file_extension'] = path.split('.')[-1]
+
+        codebase_data['path_list'] = CodeBase.get_path_list('/%s' % path)
+        codebase_data['path'] = path
+
+        return codebase_data
 
     @classmethod
     def get_directories(cls, cwd):

@@ -182,7 +182,7 @@
               src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
             </script>
             <div class="text-display">
-            <div class="notebook" style="width:90%; float: right; padding-right: 20px">
+            <div class="notebook-one" style="width:90%; float: right; padding-right: 20px">
             </div>
             </div>
 
@@ -190,8 +190,8 @@
             <script>
               var orig_content = {{ file_contents |safe }};
               var json_obj = JSON.parse(orig_content);
-              var notebook = nb.parse(json_obj);
-              document.getElementsByClassName("notebook")[0].appendChild(notebook.render());
+              var notebookone = nb.parse(json_obj);
+              document.getElementsByClassName("notebook-one")[0].appendChild(notebookone.render());
             </script>
 
             {% else %}

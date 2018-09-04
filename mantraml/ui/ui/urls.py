@@ -16,8 +16,6 @@ urlpatterns = [
     path('trial/<trial_folder>/', views.view_trial, name='view_trial'),
     path('trial/<trial_folder>/tensorboard', views.view_trial_tensorboard, name='view_trial_tensorboard'),
     path('trials/<trial_group_folder>/', views.view_trial_group, name='view_trial_group'),
-    path('console_post/', views.console_post),
-    path('console/', views.console, name="console"),
     re_path(r'^model/(?P<model_name>\w+)/tree/(?P<path>.*)$', views.view_model_codebase),
     re_path(r'^data/(?P<dataset_name>\w+)/tree/(?P<path>.*)$', views.view_dataset_codebase),
 ]
