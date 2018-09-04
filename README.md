@@ -48,14 +48,16 @@ mantra launch my_project
 ```console
 cd my_project; mantra cloud 
 ```
-🤖 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Here are some example models you can train:
+🤖 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Put them in your models/ and data/ folders inside my_project.
+
+🤖 Here are some example models you can train:
 
 ```console
 mantra train relativistic_gan --dataset decks --cloud --dev
 ```
 
 ```console
-mantra train log_reg --dataset epl_data --target home_win --features feature_1 feature_2 feature_3
+mantra train log_reg --dataset epl_data --task binary_crossent --target home_win --features feature_1 feature_2 feature_3 
 ```
 
 🚂 During training, you can spin up the Mantra UI:
