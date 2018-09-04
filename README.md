@@ -50,12 +50,9 @@ mantra cloud
 ```
 🤖 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Here are some example models you can train:
 
-**A Relativistic GAN**
-
 ```console
 mantra train relativistic_gan --dataset decks --cloud --dev
 ```
-**Logistic Regression**
 
 ```console
 mantra train log_reg --dataset epl_data --target home_win --features feature_1 feature_2 feature_3
