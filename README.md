@@ -73,8 +73,9 @@ To install mantra, you can use pip:
 ```
 pip install mantraml
 ```
+You should also have TensorFlow or PyTorch installed depending on which framework you intend to use.
 
-Mantra is tested on Python 3.5+. 
+Mantra is tested on Python 3.5+. It is not currently supported on Windows, but we'll look to get support in the near future.
 
 ### AWS Dependencies
 
