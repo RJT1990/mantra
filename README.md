@@ -24,7 +24,7 @@ You might like mantra if:
 - You need boring devops tasks like cloud integration and file syncing between cloud/local taken care for you.
 - You need a way to easily compare and evaluate your model against benchmark tasks, e.g. accuracy on CIFAR-10.
 
-Read the docs <a href="">here</a>. This is an **very early** alpha release: give us your huddled masses of issues and pull requests! This month (September), we will be working towards a stable release.
+Docs are on their way in the next few days! This is an **very early** alpha release: give us your huddled masses of issues and pull requests! This month (September), we will be working towards a stable release.
 
 ## Design Principles
 
@@ -48,11 +48,19 @@ mantra launch my_project
 ```console
 mantra cloud 
 ```
-🤖 To train the example CNN model on CIFAR-10 with your cloud provider:
+🤖 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Here are some example models you can train:
+
+**A Relativistic GAN**
 
 ```console
-mantra train cifar_model --dataset cifar_10 --cloud 
+mantra train relativistic_gan --dataset decks --cloud --dev
 ```
+**Logistic Regression**
+
+```console
+mantra train log_reg --dataset epl_data --target home_win --features feature_1 feature_2 feature_3
+```
+
 🚂 During training, you can spin up the Mantra UI:
 
 ```console
