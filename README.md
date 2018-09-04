@@ -8,7 +8,8 @@
 <div align="center">
     
 [![CircleCI](https://circleci.com/gh/RJT1990/mantra/tree/master.svg?style=shield)](https://circleci.com/gh/RJT1990/mantra/tree/master)
-    
+[![PyPI version](https://badge.fury.io/py/mantraml.svg)](https://badge.fury.io/py/mantraml)
+
 <img src="docs/source/demo.gif">
 </div>
 <br><br>
