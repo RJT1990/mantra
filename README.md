@@ -57,7 +57,7 @@ mantra train relativistic_gan --dataset decks --cloud --dev
 ```
 
 ```console
-mantra train log_reg --dataset epl_data --task binary_crossent --target home_win --features feature_1 feature_2 feature_3 
+mantra train log_reg --dataset epl_data --target home_win --features feature_1 feature_2 feature_3 
 ```
 
 🚂 During training, you can spin up the Mantra UI:
