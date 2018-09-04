@@ -46,8 +46,7 @@ mantra launch my_project
 ☁ Configure your cloud settings and API keys:
 
 ```console
-cd myproject
-mantra cloud 
+cd my_project; mantra cloud 
 ```
 🤖 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Here are some example models you can train:
 
