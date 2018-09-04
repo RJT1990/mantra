@@ -1,18 +1,22 @@
 <div align="center">
-    <img width="500" src="docs/source/logo.png">
+    <img width="500" src="docs/source/logo.png">    
 </div>
 
 -----------------------------------------
 
-# Mantra: Modular Deep Learning
 
 <div align="center">
+    
+[![CircleCI](https://circleci.com/gh/RJT1990/mantra.svg?style=shield&circle-token=ef9ddee091dd77395273f8d59f6b6b5b091212c7)](https://circleci.com/gh/RJT1990/mantra)
+[![PyPI version](https://badge.fury.io/py/mantraml.svg)](https://badge.fury.io/py/mantraml)
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/mantraml/Lobby)
+
 <img src="docs/source/demo.gif">
 </div>
 <br><br>
 
 
-**Mantra** is a deep learning development kit that manages the various components in an deep learning project, and makes it much easier to do routine tasks like training in the cloud, model monitoring, model benchmarking and more. It works with your favourite deep learning libraries like TensorFlow, PyTorch and Keras. 
+**Mantra is a deep learning development kit** that manages the various components in an deep learning project, and makes it much easier to do routine tasks like training in the cloud, model monitoring, model benchmarking and more. It works with your favourite deep learning libraries like TensorFlow, PyTorch and Keras. 
 
 You might like mantra if:
 
@@ -20,7 +24,7 @@ You might like mantra if:
 - You need boring devops tasks like cloud integration and file syncing between cloud/local taken care for you.
 - You need a way to easily compare and evaluate your model against benchmark tasks, e.g. accuracy on CIFAR-10.
 
-Read the docs <a href="">here</a>. This is an alpha release: give us your huddled masses of issues and pull requests!
+Docs are on their way in the next few days! This is an **very early** alpha release: give us your huddled masses of issues and pull requests! This month (September), we will be working towards a stable release.
 
 ## Design Principles
 
@@ -42,13 +46,20 @@ mantra launch my_project
 ☁ Configure your cloud settings and API keys:
 
 ```console
-mantra cloud 
+cd my_project; mantra cloud 
 ```
-🤖 To train the example CNN model on CIFAR-10 with your cloud provider:
+💾 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Put the relativistic_gan model folder at my_project/models/relativistic_gan. Put the decks folder at my_project/data/decks.
+
+🤖 Here are some example models you can train:
 
 ```console
-mantra train cifar_model --dataset cifar_10 --cloud 
+mantra train relativistic_gan --dataset decks --cloud --dev --image-dim 256 256
 ```
+
+```console
+mantra train log_reg --dataset epl_data --target home_win --features feature_1 feature_2 feature_3 
+```
+
 🚂 During training, you can spin up the Mantra UI:
 
 ```console
@@ -62,8 +73,9 @@ To install mantra, you can use pip:
 ```
 pip install mantraml
 ```
+You should also have TensorFlow or PyTorch installed depending on which framework you intend to use.
 
-Mantra is tested on Python 3.5+. 
+Mantra is tested on Python 3.5+. It is not currently supported on Windows, but we'll look to get support in the near future.
 
 ### AWS Dependencies
 
