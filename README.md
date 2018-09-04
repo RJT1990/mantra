@@ -48,7 +48,7 @@ mantra launch my_project
 ```console
 cd my_project; mantra cloud 
 ```
-🤖 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Put them in your models/ and data/ folders inside my_project.
+Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Put them in your models/ and data/ folders inside my_project.
 
 🤖 Here are some example models you can train:
 
