@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="docs/source/mantra_header.png">
+    <img src="docs/source/logo.png">
 </div>
 
 -----------------------------------------
