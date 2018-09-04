@@ -4,7 +4,6 @@
 
 -----------------------------------------
 
-# Mantra: Modular Deep Learning
 
 <div align="center">
 <img src="docs/source/demo.gif">
