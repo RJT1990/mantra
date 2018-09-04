@@ -24,9 +24,7 @@ You might like mantra if:
 - You need boring devops tasks like cloud integration and file syncing between cloud/local taken care for you.
 - You need a way to easily compare and evaluate your model against benchmark tasks, e.g. accuracy on CIFAR-10.
 
-Read the docs <a href="">here</a>. 
-
-This is an **very early** alpha release: give us your huddled masses of issues and pull requests! This month (September), we will be working towards a stable release.
+Read the docs <a href="">here</a>. This is an **very early** alpha release: give us your huddled masses of issues and pull requests! This month (September), we will be working towards a stable release.
 
 ## Design Principles
 
