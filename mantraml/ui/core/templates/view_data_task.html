@@ -80,6 +80,10 @@
         <div class="col-md-12">
           <div class="content-box">
               
+            <script type="text/javascript" async
+              src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+            </script>
+              
             {% if readme_exists %}
             {{ readme_content|markdownify|safe }}
             {% else %}
@@ -175,9 +179,7 @@
             <script type="text/javascript" src="/static/js/prism.min.js"></script>
             <script type="text/javascript" src="/static/js/es5-shim.min.js"></script>
             <script type="text/javascript" src="/static/js/ansi_up.min.js"></script>
-            <script type="text/javascript" async
-              src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-            </script>
+
             <div class="notebook-display">
             <div class="notebook" style="width:90%; float: right; padding-right: 20px">
             </div>
@@ -241,8 +243,8 @@
 
 {% for trial_values in task_trials %}
     <tr>
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ forloop.counter }}</td>
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';"> {% if not trial_values.metadata.training_finished %}
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ forloop.counter }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';"> {% if not trial_values.metadata.training_finished %}
         <img width=15 src="/static/img/live.gif">
         <script type="text/javascript">
         setTimeout(function () { location.reload(true); }, 60000);
@@ -250,15 +252,15 @@
        {% else %}
        <i class="em em-white_check_mark"></i>
         {% endif %}</td>
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">
         <img src="/static/{{ trial_values.model_metadata.image }}"> <a href="/model/{{ trial_values.model_metadata.folder_name }}">{{ trial_values.model_metadata.name }}</a>
       </td>
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.model_hash |slice:':6' }}</td>
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.trial_hash |slice:':6' }}</td>
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.time }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.model_hash |slice:':6' }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.trial_hash |slice:':6' }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.time }}</td>
 
       {% if task_name %}
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.metadata.validation_loss |floatformat:4 }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}/tensorboard';">{{ trial_values.metadata.validation_loss |floatformat:4 }}</td>
       {% endif %}
 
     </tr>

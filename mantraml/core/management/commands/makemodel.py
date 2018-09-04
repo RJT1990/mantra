@@ -8,7 +8,6 @@ class MakeModelCmd(BaseCommand):
         parser.add_argument('path', type=str)  # catch-all
 
         parser.add_argument('--template', type=str, required=False)
-        parser.add_argument('--framework', type=str, required=False)
 
         return parser
 

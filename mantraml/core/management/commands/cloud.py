@@ -71,7 +71,7 @@ class CloudCmd(BaseCommand):
             new_lines.append("AWS_SECURITY_GROUP = %s\n" % aws_security_group)
             new_lines.append("S3_AVAILABILITY_ZONE = '%s'\n" % aws_default_s3_region)
             new_lines.append("AWS_ACCESS_KEY_ID = '%s'\n" % aws_access_key_id)
-            new_lines.append("AWS_SECRET_ACCESS_KEY = '%s'\n" % aws_secret_access_key)
+            new_lines.append("AWS_SECRET_ACCESS_KEY = '%s'\n" % aws_secret_access_key.replace(" ", ""))
             new_lines.append("AWS_DEFAULT_REGION = '%s'" % aws_default_region)
 
             with open(settings_path, "w") as settings_file:
@@ -88,7 +88,7 @@ class CloudCmd(BaseCommand):
             with open(config_path, "w") as config:
                 config.write(config_file)
 
-            print(colored("\n \033[1m Great, that's all set up. Make sure you have the AWS CLI installed as a dependency.\n\n", 'blue'))
+            print(colored("\n \033[1m Great, that's all set up. Make sure you have the AWS CLI installed as that is a necessary dependency.\n\n", 'blue'))
 
 
 class Dict2Obj:

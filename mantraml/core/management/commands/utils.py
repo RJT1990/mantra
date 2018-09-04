@@ -62,8 +62,9 @@ def adjust_tar_data_folder(data_dir, data_name, tar_path):
     shutil.copyfile(tar_path, '%s/%s/%s' % (data_dir, 'raw', tar_file_name))
 
     with open(data_dir + '/data.py','r+') as config:
-        contents = config.read() 
+        contents = config.read()
         new_contents = contents.replace("files = ['example_dataset.tar.gz']", "files = ['%s']" % tar_file_name)
+        new_contents = contents.replace("files = ['example_dataset.csv']", "files = ['%s']" % tar_file_name)
         config.seek(0) 
         config.write(new_contents)
         config.truncate()
@@ -112,17 +113,17 @@ def adjust_data_folder_for_data_type(args, data_dir):
             new_contents = config.read() 
 
             if args.file_name:
-                new_contents = new_contents.replace("data_file = 'example_dataset.csv'", " data_file = '%s'" % args.file_name)
+                new_contents = new_contents.replace("data_file = 'example_dataset.csv'", "data_file = '%s'" % args.file_name)
             
             if args.target:
-                new_contents = new_contents.replace("target=None", "target='%s'" % args.target)
+                new_contents = new_contents + "\n    target = '%s'" % args.target
             elif args.target_index:
-                new_contents = new_contents.replace("target_index=None", "target_index=%s" % args.target)
+                new_contents = new_contents + "\n    target_index = %s" % args.target_index
 
             if args.features:
-                new_contents = new_contents.replace("features=None", "features=%s" % args.features)
-            elif args.features_index:
-                new_contents = new_contents.replace("features_index=None", "features_index=%s" % args.features_index)
+                new_contents = new_contents + "\n    features = %s" % args.features
+            elif args.feature_indices:
+                new_contents = new_contents + "\n    feature_indices = %s" % args.feature_indices
 
             config.seek(0) 
             config.write(new_contents)
@@ -173,12 +174,6 @@ def artefacts_create_folder(prog_name, project_dir, args):
     if template_folder == 'models':
 
         default_template_path = '%s/templates/%s/%s/base' % (library_path, template_folder, template_name)
-
-        if args.framework:
-            if args.framework in ['tensorflow', 'keras', 'pytorch']:
-                default_template_path = '%s/templates/%s/%s/%s' % (library_path, template_folder, args.framework, template_name)
-            else:
-                raise ValueError('The framework name you entered - %s - was not recognised' % args.framework)
 
     component_dir = '%s/%s/%s' % (project_dir, template_folder, args.path)
 

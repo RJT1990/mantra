@@ -74,18 +74,6 @@ def test_sync_data():
     assert(aws_cmd_data == 'aws s3 --exact-timestamps sync s3://my_s3_bucket/data data')
     assert(aws_cmd_other is None)
 
-def test_export_project_files_to_instances():
-
-    class Settings:
-        AWS_KEY_PATH = './ssh/mysupersecret.key'
-
-    aws_instance = AWSNoInit()
-    aws_instance.settings = Settings()
-    rsync_string = aws_instance.export_project_files_to_instances(execute=False)
-
-    exclude_string = "--exclude 'raw/*' --exclude 'trials/*' --exclude '.extract*' --exclude '.mantra*'"
-    assert(rsync_string == "rsync -avL %s --progress -e 'ssh -i ./ssh/mysupersecret.key' ./ ubuntu@dns_address.cloudprovider.com:/home/ubuntu/my_project > /dev/null" % (exclude_string))
-
 def test_get_training_data_from_s3():
 
     class Settings:
@@ -138,29 +126,29 @@ def test_s3_to_servers():
 
     assert(s3_command == "cd my_project; sudo aws s3 --exact-timestamps sync s3://my_s3_bucket/%s %s/" % (data_dir, data_dir))
 
-def test_send_sh_file_to_instances():
-
-    class MockArgParser:
-
-        def __init__(self):
-            self.model_name = 'my_model'
-            self.dataset = 'my_dataset'
-            self.task = 'my_task'
-            self.verbose = False
-
-    aws_instance = AWSNoInit()
-    args = MockArgParser()
-    arg_str = '--dropout 0.5 --epochs 10 --savebestonly'
-
-    # no epoch in output
-    sh_script = aws_instance.send_sh_file_to_instances(args=args, arg_str=arg_str, execute=False)
-    sh_script_lines = sh_script.split('\n')
-
-    assert(sh_script_lines[0] == '#!/bin/bash')
-    assert('source /home/ubuntu/anaconda3/bin/activate tensorflow_p36' in sh_script_lines[1].replace("  ", ""))
-    assert('pip install -r requirements.txt --quiet --upgrade' in sh_script_lines[2].replace("  ", ""))
-    assert('pip install mantraml --quiet' in sh_script_lines[3].replace("  ", ""))
-    assert('mantra train my_model --dataset my_dataset --task my_task --cloudremote --dropout 0.5 --epochs 10 --savebestonly' in sh_script_lines[4].replace("  ", ""))
+#def test_send_sh_file_to_instances():
+#
+#    class MockArgParser:
+#
+#        def __init__(self):
+#            self.model_name = 'my_model'
+#            self.dataset = 'my_dataset'
+#            self.task = 'my_task'
+#            self.verbose = False
+#
+#    aws_instance = AWSNoInit()
+#    args = MockArgParser()
+#    arg_str = '--dropout 0.5 --epochs 10 --savebestonly'
+#
+#    # no epoch in output
+#    sh_script = aws_instance.send_sh_file_to_instances(args=args, arg_str=arg_str, execute=False)
+#    sh_script_lines = sh_script.split('\n')
+#
+#    assert(sh_script_lines[0] == '#!/bin/bash')
+#    assert('source /home/ubuntu/anaconda3/bin/activate tensorflow_p36' in sh_script_lines[1].replace("  ", ""))
+#    assert('pip install -r requirements.txt --quiet --upgrade' in sh_script_lines[2].replace("  ", ""))
+#    assert('pip install mantraml --quiet' in sh_script_lines[3].replace("  ", ""))
+#    assert('mantra train my_model --dataset my_dataset --task my_task --cloudremote --dropout 0.5 --epochs 10 --savebestonly' in sh_script_lines[4].replace("  ", ""))
 
 def test_setup_aws_credentials():
 

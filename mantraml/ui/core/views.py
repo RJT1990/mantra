@@ -419,7 +419,7 @@ def view_trial_group(request, trial_group_folder):
         if 'secondary_metrics' in trial['metadata']:
             metric_name_list = metric_name_list + list(trial['metadata']['secondary_metrics'].keys())
 
-    occur = Counter([hyperparm for hyperparm in hyperparameter_list if hyperparm != 'epochs'])
+    occur = Counter([hyperparm for hyperparm in hyperparameter_list if hyperparm not in ['epochs', 'image_dim']])
     context['hyperparms'] = [i[0] for i in occur.most_common(5)]
     context['metric_names'] = list(set(metric_name_list))
 

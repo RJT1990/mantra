@@ -75,15 +75,15 @@ class Trial:
         """
 
         if arg_value is True:
-            arg_str += ' --%s' % arg_key
+            arg_str += ' --%s' % arg_key.replace("_", "-")
         elif isinstance(arg_value, list):
-            arg_str += ' --%s %s' % (arg_key, ' '.join(arg_value))
+            arg_str += ' --%s %s' % (arg_key.replace("_", "-"), ' '.join(arg_value))
         elif arg_value not in [True, False]:
             if isinstance(arg_value, str):
                 if '.' in arg_value and all([i.isnumeric() for i in arg_value.split('.',1)]):
                     arg_value = float(arg_value)
             
-            arg_str += ' --%s %s' % (arg_key, arg_value)
+            arg_str += ' --%s %s' % (arg_key.replace("_", "-"), arg_value)
 
         return arg_str, arg_value
 

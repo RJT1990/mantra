@@ -195,6 +195,7 @@ class AWS:
             **additional_args)
         self.instances = self.ec2.instances.filter(InstanceIds=[instance_ids[0].id])
 
+        time.sleep(2)
         instance = [instance for instance in self.instances][0]
         instance.wait_until_running()
 
@@ -295,7 +296,7 @@ class AWS:
 
         print(colored('\n \033[1m [+]', 'green') + colored(' Data exported to S3', 'white'))
 
-    def export_project_files_to_instances(self, execute=True):
+    def export_project_files_to_instances(self):
         """
         This method exports the Mantra project files from your local directory straight to the instances. 
 
@@ -318,12 +319,10 @@ class AWS:
         exclude_string = ' '.join(["--exclude %s" % ex_folder for ex_folder in EXCLUDED_PROJECT_FILES])
         rsync_string = "rsync -avL %s --progress -e 'ssh -i %s' %s ubuntu@%s:/home/ubuntu/%s > /dev/null" % (exclude_string, 
             self.settings.AWS_KEY_PATH, './', self.public_dns, self.project_name)
-        
-        if execute:
-            os.system(rsync_string)
-            print(colored(' \033[1m [+]', 'green') + colored(' Project files moved to instances', 'white'))
-        else:
-            return rsync_string
+
+        os.system(rsync_string)
+
+        print(colored(' \033[1m [+]', 'green') + colored(' Project files moved to instances', 'white'))
 
     def get_training_data_from_s3(self, output, send_weights=False, force=False, execute=True):
         """
@@ -445,7 +444,7 @@ class AWS:
 
         print(colored(' \033[1m [+]', 'green') + colored(' Data exported to instances', 'white'))
 
-    def send_sh_file_to_instances(self, args, arg_str, execute=True):
+    def send_sh_file_to_instances(self, args, arg_str):
         """
         This configures the .sh file that we use to run training on the instance. The SH file contains virtual environment activation,
         pip installation of Python libraries, installing mantraml, and then training.
@@ -475,17 +474,14 @@ class AWS:
             if args.task is not None:
                 sh_script = DEFAULT_SH_TASK_SCRIPT_VERBOSE % (environment, args.model_name, args.dataset, args.task, arg_str)
             else:
-                sh_script = DEFAULT_SH_SCRIPT_VERBOSE % (environment, args.model_name, args.dataset, arg_str)
+                sh_script = DEFAULT_SH_SCRIPT_VERBOSE % (environment, args.model_name, args.dataset, arg_str[1:])
         else:
             if args.task is not None:
                 sh_script = DEFAULT_SH_TASK_SCRIPT % (environment, args.model_name, args.dataset, args.task, arg_str)
             else:
-                sh_script = DEFAULT_SH_SCRIPT % (environment, args.model_name, args.dataset, arg_str)
+                sh_script = DEFAULT_SH_SCRIPT % (environment, args.model_name, args.dataset, arg_str[1:])
 
-        if execute:
-            stdin, stdout, stderr = self.client.exec_command('cd %s; echo "%s" > script.sh' % (self.project_name, sh_script))
-        else:
-            return sh_script
+        stdin, stdout, stderr = self.client.exec_command('cd %s; echo "%s" > script.sh' % (self.project_name, sh_script))
 
         if args.verbose:
             for line in stdout:
@@ -515,9 +511,9 @@ class AWS:
         self.trial.configure_trial_metadata()
 
         # AWS and S3 file management
+        self.export_project_files_to_instances()
         self.send_sh_file_to_instances(args=args, arg_str=self.trial.arg_str)
         self.write_metadata()
-        self.export_project_files_to_instances()
         self.s3_to_servers(args)
         self.export_data_to_s3(args)
 

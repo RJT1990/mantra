@@ -185,6 +185,10 @@ class Dataset:
         if args.target_index is not None:
             self.target_index = args.target_index
 
+        if args.image_dim is not None:
+            self.image_dim = tuple([int(el) for el in tuple(args.image_dim)])
+            self.image_shape = (self.image_dim[0], self.image_dim[1], self.n_color_channels)
+
     def configure_data_directory(self, file):
         """
         Configures the data directory to use for the Dataset

@@ -19,6 +19,10 @@ class MantraModel:
     and more. The core methods below link the model with configuration and training metadata.
     """
 
+    # default training arguments
+    batch_size = 64
+    epochs = 200
+
     def configure_core_arguments(self, args):
         """
         This method adds core training attributes from an argument parser namespace (args) such as the number of epochs, the batch size, and more

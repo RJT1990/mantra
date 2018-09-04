@@ -73,6 +73,10 @@
         <div class="col-md-12">
           <div class="content-box">
               
+            <script type="text/javascript" async
+              src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+            </script>
+
             {% if readme_exists %}
             {{ readme_content|markdownify|safe }}
             {% else %}
@@ -179,9 +183,6 @@
             <script type="text/javascript" src="/static/js/prism.min.js"></script>
             <script type="text/javascript" src="/static/js/es5-shim.min.js"></script>
             <script type="text/javascript" src="/static/js/ansi_up.min.js"></script>
-            <script type="text/javascript" async
-              src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-            </script>
             <div class="notebook-display">
             <div class="notebook" style="width:90%; float: right; padding-right: 20px">
             </div>

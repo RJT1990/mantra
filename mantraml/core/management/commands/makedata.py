@@ -20,7 +20,7 @@ class MakeDataCmd(BaseCommand):
         parser.add_argument('--target', type=str, required=False)
         parser.add_argument('--features', type=str, nargs='+', required=False)
         parser.add_argument('--target-index', type=int, required=False)
-        parser.add_argument('--features-index', type=int, nargs='+', required=False)
+        parser.add_argument('--feature-indices', type=int, nargs='+', required=False)
 
         parser.add_argument('path', type=str)
         return parser
@@ -29,4 +29,5 @@ class MakeDataCmd(BaseCommand):
         """
         Creates a new artefact folder for a data package
         """
+        
         artefacts_create_folder(prog_name="makedata", project_dir=os.getcwd(), args=args)

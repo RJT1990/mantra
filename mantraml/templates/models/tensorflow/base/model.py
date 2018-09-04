@@ -22,7 +22,7 @@ class MyModel(MantraModel):
         """
         Put any code for your model here.
 
-        You will need to use Mantra TensorFlow callbacks to get the results linked with Mantra; see the docs. It's just a few lines
+        You will need to use TensorFlow callbacks to get the results linked with Mantra; see the docs. It's just a few lines
         of code you need to add - no big changes to what you'd usually write.
         """
         

@@ -1,10 +1,11 @@
 import tensorflow as tf
+# import torch
 
 from mantraml.models import MantraModel
 
 
 class MyModel(MantraModel):
-    model_name = "My TensorFlow Model"
+    model_name = "My Model"
     model_image = "default.jpg"
     model_notebook = 'notebook.ipynb'
     model_tags = ['new']
@@ -22,7 +23,7 @@ class MyModel(MantraModel):
         """
         Put any code for your model here.
 
-        You will need to use Mantra TensorFlow callbacks to get the results linked with Mantra; see the docs. It's just a few lines
+        You will need to use callbacks to get the results linked with Mantra; see the docs. It's just a few lines
         of code you need to add - no big changes to what you'd usually write.
         """
         
