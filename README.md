@@ -38,9 +38,13 @@ mantra launch my_project
 ```console
 cd my_project; mantra cloud 
 ```
-💾 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples). Put the relativistic_gan model folder at my_project/models/relativistic_gan. Put the decks folder at my_project/data/decks.
+💾 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples):
+ 
+```console
+mantra import https://github.com/RJT1990/mantra-examples.git
+``` 
 
-🤖 Here are some example models you can train:
+🤖 Here are the example models you can train:
 
 ```console
 mantra train relativistic_gan --dataset decks --cloud --dev --image-dim 256 256

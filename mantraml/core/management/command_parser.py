@@ -1,6 +1,7 @@
 import argparse
 
 from mantraml.core.management.commands.cloud import CloudCmd
+from mantraml.core.management.commands.importcmd import ImportCmd
 from mantraml.core.management.commands.makedata import MakeDataCmd
 from mantraml.core.management.commands.makemodel import MakeModelCmd
 from mantraml.core.management.commands.maketask import MakeTaskCmd
@@ -30,6 +31,7 @@ def cmd_line():
         "sync": SyncCmd(),
         "testdata": TestDataCmd(),
         "train": TrainCmd(),
+        "import": ImportCmd(),
     }
     subparsers = parser.add_subparsers(help='sub-command help')
 
