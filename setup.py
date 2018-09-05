@@ -11,7 +11,7 @@ DESCRIPTION = "A high-level, rapid development framework for ML projects."
 setup(
     name=PACKAGE_NAME,
     maintainer=AUTHOR,
-    version='0.935',
+    version='0.960',
     packages=[PACKAGE_NAME, 'mantraml.core', 'mantraml.core.cloud', 'mantraml.core.hashing', 'mantraml.core.management', 'mantraml.core.management.commands', 'mantraml.data', 'mantraml.models', 
     'mantraml.tasks', 'mantraml.tests'],
     include_package_data=True,
