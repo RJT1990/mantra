@@ -30,6 +30,7 @@ def test_configure_core_arguments():
             self.target = 'column_z'
             self.feature_indices = [1, 2, 3]
             self.target_index = 0
+            self.image_dim = [128, 128]
 
     my_data = MyDataset()
     my_data.configure_core_arguments(MockArgParser())
