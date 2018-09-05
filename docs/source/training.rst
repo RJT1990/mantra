@@ -78,9 +78,8 @@ This will create a development instance that isn't terminated when training comp
 You can see what mantra GPU instances are running on the cloud tab of the UI:
 
 .. image:: cloud_panel.png
-   :width: 800px
+   :width: 575px
    :align: left
-   :scale: 70%
 
 .. raw:: html
 

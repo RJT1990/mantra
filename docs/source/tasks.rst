@@ -99,9 +99,8 @@ Using the UI we can visualize the performance of different models against tasks.
 Below we can see a leaderboard for our task:
 
  .. image:: tasks.png
-   :width: 800px
+   :width: 575px
    :align: left
-   :scale: 70%
 
 .. raw:: html
 

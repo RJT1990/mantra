@@ -121,7 +121,6 @@ We can see that we are inheriting from :code:`ImageDataset`. We can also see our
 .. image:: celebasample.png
    :width: 300px
    :height: 225px
-   :scale: 75%
 
 So the advantage of using a template is that we didn't have to write any code. We could, if we wish though, write on top of these templates for some further customisation if we needed it.
 
@@ -220,9 +219,8 @@ Load up the UI and click on a model:
    $ mantra ui
 
 .. image:: data_project.png
-   :width: 800px
+   :width: 575px
    :align: left
-   :scale: 70%
 
 .. raw:: html
 

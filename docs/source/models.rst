@@ -80,9 +80,8 @@ Model Building in Keras
 ******************************
 
 .. image:: keras.png
-   :width: 400px
+   :width: 200px
    :align: left
-   :scale: 50%
 
 .. raw:: html
 
@@ -192,9 +191,8 @@ Model Building in TensorFlow
 ******************************
 
 .. image:: tensorflow.png
-   :width: 400px
+   :width: 200px
    :align: left
-   :scale: 50%
 
 .. raw:: html
 
@@ -231,9 +229,8 @@ Model Building in PyTorch
 ******************************
 
 .. image:: pytorch.png
-   :width: 400px
+   :width: 200px
    :align: left
-   :scale: 50%
 
 .. raw:: html
 
@@ -276,9 +273,8 @@ Load up the UI and click on a model:
    $ mantra ui
 
 .. image:: model_project.png
-   :width: 800px
+   :width: 575px
    :align: left
-   :scale: 70%
 
 .. raw:: html
 
