@@ -1,224 +1,343 @@
-Models
+Making Models with Mantra
 ########
 
-.. image:: tensorflow.png
-   :height: 30px
-   :align: left
 
-.. image:: pytorch.png
-   :height: 30px
-   :align: left
-
-.. image:: keras.png
-   :height: 30px
-   :align: left
-
-.. raw:: html
-
-   <div style="clear: both;"></div>
-
-**Atlas** models allow you to take a model in an framework such as TensorFlow or PyTorch, and enables them to be easily trained, deployed, evaluated, and more. In these docs we are going to see how we make a model package.
+**Mantra** models allow you to take a model in an framework such as TensorFlow or PyTorch, and with a few modifications, allows them to be easily trained, deployed, evaluated and more. In these docs we are going to see how we make a model package.
 
 
 🤖 Make a Model
 **********************
 
-Go to the root of your project. To make a dataset use the :code:`makemodel` command. We can make a new model as follows:
+Go to the root of your project. To make a new model we can use the :code:`makemodel` command:
 
 .. code-block:: console
 
-   $ atlas makemodel my_model
+   $ mantra makemodel my_model
 
-If we intend to use a particular framework, we can reference it upon creation:
-
-.. code-block:: console
-
-   $ atlas makemodel my_model --framework tensorflow
+If we intend to use a particular deep learning framework, we can reference a template:
 
 .. code-block:: console
 
-   $ atlas makemodel my_model --framework keras
+   $ mantra makemodel my_model --template tensorflow
 
 .. code-block:: console
 
-   $ atlas makemodel my_model --framework pytorch
+   $ mantra makemodel my_model --template keras
+
+.. code-block:: console
+
+   $ mantra makemodel my_model --template pytorch
 
 Our new model folder will be located at **myproject/models/my_model**. Inside:
 
 .. code-block:: console
 
    __init__.py
+    default.jpg
    model.py
+   notebook.ipynb
    README.md
-   requirements.txt
 
-- :code:`model.py` contains the core :code:`BaseModel` type class that wraps around your model
-- :code:`requirements.txt` is where you can record any Python requirements for your model
+- :code:`model.py` contains your core model logic
+- :code:`notebook.ipynb` is a notebook which you can use for prototyping
+- :code:`README.md` is where you can describe the model (useful for sharing the model with others)
 
-We are now going to walk through some example models for the MNIST dataset for each framework.
+Let's have a look at the :code:`model.py` file and see what the template contains:
 
-🔢 Example: Keras on MNIST
-******************************
-
-In the previous chapter on Datasets, we made an MNIST dataset. We are now going to see how we can use this dataset to train a model.
-
-Let's make a model using keras, we can make the project as follows:
-
-.. code-block:: console
-
-   $ atlas makemodel my_model --framework keras
-
-Now let's open the :code:`model.py` file:
 
 .. code-block:: python
 
-  import tensorflow as tf
+  from mantraml.models import MantraModel
 
-  from atlasml.models.KerasModel import KerasModel
+  class MyModel(MantraModel):
+      model_name = "My Model"
+      model_image = "default.jpg"
+      model_notebook = 'notebook.ipynb'
+      model_tags = ['new']
 
-  class MyKerasModel(KerasModel):
+      def __init__(self, data=None, task=None, **kwargs):
+          self.data = dask
+          self.task = task
 
-      def __init__(self, args=None, dataset=None, settings=None, **kwargs):
-          super().__init__(args=args, dataset=dataset, settings=settings, **kwargs)
-
-      def build_model(self):
+      def run(self):
           return
 
-Our model inherits from the :code:`KerasModel` class. This gives us access to some predefined methods and attributes for Keras, as well as Atlas integration that allows our model to be easily trained, monitored and so on.
+      def predict(self, X):
+          return
 
-Let's build a basic neural network classifier in the build_model section:
+The first thing we observe is that we inherit from :code:`MantraModel`. This is a simple step - if you have existing machine learning code in a class then you can just inherit from MantraModel to gain access to most of the Mantra integration.
 
-.. code-block:: python
+The second thing we observe is we just need to pass in a data and task argument when initializing the class - this is what allows Mantra models to be composable with different datasets and evaluation criteria.
 
-  import tensorflow as tf
+The third thing we observe is the :code:`run` and :code:`predict` methods. All you need to do is to trigger your training code from the :code:`run` method. When Mantra trains the model, it will call this method first and the rest is history. For optional evaluation, you just need to write a :code:`predict` method.
 
-  from atlasml.models.KerasModel import KerasModel
+This is the core design pattern of Mantra models. 
 
-  class MyClassifier(KerasModel):
-
-      def __init__(self, args=None, dataset=None, settings=None, **kwargs):
-          super().__init__(args=args, dataset=dataset, settings=settings, **kwargs)
-
-      def build_model(self):
-
-          model = tf.keras.models.Sequential([
-            tf.keras.layers.Flatten(),
-            tf.keras.layers.Dense(512, activation=tf.nn.relu),
-            tf.keras.layers.Dropout(0.2),
-            tf.keras.layers.Dense(10, activation=tf.nn.softmax)
-          ])
-
-          return model
-
-Now we can train with one line of code locally or via the cloud:
-
-.. code-block:: console
-
-   $ atlas train my_model --dataset mnist_png --cloud
+Now let's see some examples for each framework: Keras, Base TensorFlow and PyTorch.
 
 
-MNIST is a well-known deep learning dataset containing handwritten numbers. We can download the tar.gz file `here <https://github.com/myleott/mnist_png/blob/master/mnist_png.tar.gz>`_.
+Model Building in Keras
+******************************
 
-Once you have downloaded the dataset, make a new data folder in your atlas project by running the following command, refering the path of the tar file: 
+.. image:: keras.png
+   :width: 400px
+   :align: left
+   :scale: 50%
 
-.. code-block:: console
+.. raw:: html
 
-   $ atlas makedata mnist_png --tar mnist_png.tar.gz
+ <div style="clear: both;"></div>
 
-The tar file contains 10 folders for each number, with png images enclosed. We want to extract the paired images and labels. First let's quickly example the class variables in :code:`data.py`. We want labels so :code:`has_labels` should be set to True. Likewise, :code:`data_type` should be set to 'png-images'; this is optional, but it gives us some extra methods for free in case we want to use them later.
-
-At any time we can run the following command to test our new dataset:
-
-.. code-block:: console
-
-   $ atlas test mnist_png
-
-This is optional but it performs some basic checks to see if anything is glaringly wrong. It can also be used to guide your development by telling you what to build next. If we run it on the current class, we are told:
-
-.. code-block:: console
-
-   AssertionError: Your extract_inputs() method returns None.
-
-   This probably means you have not written an extract_inputs class method for your Dataset class.
-
-   This method should return an np.ndarray containing the input data X.
-
-As the test suggests, we need to actually extract some data! So let's do that. Below we've filled in the :code:`extract_inputs()` and :code:`extract_outputs()` methods to get the MNIST data. The path where your data is extracted is located at :code:`self.extract_dir`.
+Here is an example of a deep CNN using Keras:
 
 .. code-block:: python
 
-   class MNIST(Dataset):
+  import tensorflow
+  from tensorflow.keras.models import Sequential
+  from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
+  from tensorflow.keras.layers import Conv2D, MaxPooling2D
 
-       name = 'mnist_png'
-       tar_name = 'mnist_png' # e.g 'example_images' for 'example_images.tar.gz'
-       data_type = 'png-images' # optional labelling of the datatype for free methods - see atlas docs
-       has_labels = True
+  from mantraml.models import MantraModel
+  from mantraml.models.keras.callbacks import TensorBoard, StoreTrial, EvaluateTask, ModelCheckpoint
 
-       def __init__(self, name, **kwargs):       
-           super().__init__(name=name, **kwargs)
 
-       def extract_folders(self, training=True):
-         
-           number_folders = [f.path for f in os.scandir(self.extract_dir + folder) if f.is_dir()] 
+  class DeepCNN(MantraModel):
+      model_name = "Deep Convolutional Model"
+      model_image = "default.jpg"
+      model_notebook = 'notebook.ipynb'
+      model_tags = ['cnn', 'classification']
 
-           # loop over each folder (which contains each label)
-           for folder in number_folders:
-               folder_number = int(folder.split('/')[-1])
-               images = glob.glob(os.path.join(folder, '*%s' % self.file_format))
-               image_data = (np.array([scipy.misc.imread(image).astype(np.float) for image in images]) / 127.5) - 1.0
-               labels = np.ones(image_data.shape[0])*folder_number
+      def __init__(self, data=None, task=None, **kwargs):
+          self.data = data
+          self.task = task
 
-               if hasattr(self, 'X'):
-                   self.X = np.concatenate((self.X, image_data))
-               else:
-                   self.X = image_data
+          self.dropout = kwargs.get('dropout', 0.25)
+          self.optimizer = kwargs.get('optimizer', 'adam')
+          self.loss = kwargs.get('loss', 'categorical_crossentropy')
+          self.metrics = kwargs.get('metrics', ['accuracy'])
+     
+          if self.task:
+            self.X = self.task.X_train
+            self.y = self.task.y_train
+          else:
+            self.X = self.data.X
+            self.y = self.data.y
 
-               if hasattr(self, 'y'):
-                   self.y = np.concatenate((self.y, labels))
-               else:
-                   self.y = labels
+      def run(self):
+          num_classes = self.data.X.shape[1]
 
-       def extract_inputs(self, training=True):
+          model = Sequential()
+          model.add(Conv2D(32, (3, 3), padding='same', input_shape=self.data.X.shape[1:]))
+          model.add(Activation('relu'))
+          model.add(Conv2D(32, (3, 3)))
+          model.add(Activation('relu'))
+          model.add(MaxPooling2D(pool_size=(2, 2)))
+          model.add(Dropout(self.dropout))
+
+          model.add(Conv2D(64, (3, 3), padding='same'))
+          model.add(Activation('relu'))
+          model.add(Conv2D(64, (3, 3)))
+          model.add(Activation('relu'))
+          model.add(MaxPooling2D(pool_size=(2, 2)))
+          model.add(Dropout(self.dropout))
+
+          model.add(Flatten())
+          model.add(Dense(512))
+          model.add(Activation('relu'))
+          model.add(Dropout(self.dropout))
+          model.add(Dense(num_classes))
+          model.add(Activation('softmax'))
+
+          model.compile(loss=self.loss, optimizer=self.optimizer, metrics=self.metrics)
+
+          self.model = model
           
-           if not hasattr(self, 'y') and not hasattr(self, 'X'):
-               self.extract_folders(training=training)
+          tb_callback = TensorBoard(mantra_model=self, write_graph=True, write_images=True)
+          exp_callback = StoreTrial(mantra_model=self)
+          eval_callback = EvaluateTask(mantra_model=self)
+          checkpoint_callback = ModelCheckpoint(mantra_model=self)
 
-           return self.X
+          callbacks = [tb_callback, eval_callback, checkpoint_callback, exp_callback]
 
-       def extract_outputs(self):
-          
-           if not hasattr(self, 'y') and not hasattr(self, 'X'):
-               self.extract_folders(training=training)
+          self.model.fit(self.X, self.y, epochs=self.n_epochs, batch_size=self.n_batch, 
+              callbacks=callbacks)
 
-           return self.y
+      def predict(self, X):
+          return self.model.predict(X)
 
-To test the dataset we can run the test command:
+Let's briefly analyse this code:
+
+- We've inherited from :code:`MantraModel`
+- We've specified our data :code:`self.X` and :code:`self.y`
+- We've written our model logic in :code:`run`
+
+There's one final thing to note. Keras reports results to you through callbacks. To get nice results reported to us through the Mantra UI, we simply need to add some or all of the following callbacks:
+
+.. code-block:: python
+
+  tb_callback = TensorBoard(mantra_model=self, write_graph=True, write_images=True)
+  exp_callback = StoreTrial(mantra_model=self)
+  eval_callback = EvaluateTask(mantra_model=self)
+  checkpoint_callback = ModelCheckpoint(mantra_model=self)
+
+This will configure things so your logs, media, and weights are managed and versioned correctly; and that you can monitor and evaluate results through the UI.
+
+And that's it, your model is Mantra ready! 
+
+For more more Keras model examples, check out the `Mantra examples repository 
+<http://www.github.com/RJT1990/mantra-examples>`_.
+
+
+Model Building in TensorFlow
+******************************
+
+.. image:: tensorflow.png
+   :width: 400px
+   :align: left
+   :scale: 50%
+
+.. raw:: html
+
+ <div style="clear: both;"></div>
+
+The class structure is the same as the Keras example. But now we use the following callbacks:
+
+.. code-block:: python
+
+  from mantraml.models.tensorflow.summary import FileWriter
+  from mantraml.models.tensorflow.callbacks import ModelCheckpoint, EvaluateTask, StoreTrial, SavePlot
+
+To configure your TensorFlow code for Mantra, use the mantra :code:`FileWriter` instead of the TensorFlow :code:`FileWriter`. For example:
+
+.. code-block:: python
+
+  self.writer = FileWriter(mantra_model=self)
+
+Then at the end of each epoch of training, use the following callbacks:
+
+.. code-block:: python
+
+    ModelCheckpoint(mantra_model=self, session=self.session)
+    if self.task:
+        EvaluateTask(mantra_model=self)
+    StoreTrial(mantra_model=self, epoch=epoch)
+
+Just as with Keras callbacks, this will configure things so your logs, media, and weights are managed and versioned correctly; and that you can monitor and evaluate results through the UI.
+
+For TensorFlow model examples, check out the `Mantra examples repository 
+<http://www.github.com/RJT1990/mantra-examples>`_.
+
+Model Building in PyTorch
+******************************
+
+.. image:: pytorch.png
+   :width: 400px
+   :align: left
+   :scale: 50%
+
+.. raw:: html
+
+ <div style="clear: both;"></div>
+
+The class structure is the same as the previous examples. But now we use the following callbacks:
+
+.. code-block:: python
+
+  from mantraml.models.pytorch.summary import SummaryWriter
+  from mantraml.models.pytorch.callbacks import ModelCheckpoint, EvaluateTask, StoreTrial, SavePlot
+
+Mantra works with TensorBoardX for PyTorch. Use the mantra :code:`SummaryWriter` instead of the TensorBoardX :code:`SummaryWriter`:
+
+.. code-block:: python
+
+  self.writer = SummaryWriter(mantra_model=self)
+
+Then at the end of each epoch of training, use the following callbacks:
+
+.. code-block:: python
+
+    ModelCheckpoint(mantra_model=self, session=self.session)
+    if self.task:
+        EvaluateTask(mantra_model=self)
+    StoreTrial(mantra_model=self, epoch=epoch)
+
+
+For PyTorch model examples, check out the `Mantra examples repository 
+<http://www.github.com/RJT1990/mantra-examples>`_.
+
+
+🖼 Visualizing Your Model Projects
+******************************
+
+Load up the UI and click on a model:
 
 .. code-block:: console
 
-   $ atlas test mnist_png
+   $ mantra ui
+
+.. image:: model_project.png
+   :width: 800px
+   :align: left
+   :scale: 70%
+
+.. raw:: html
+
+ <div style="clear: both;"></div>
+
+In order to customise how the UI looks for your model you can add metadata to your model classes:
+
+.. code-block:: python
+
+  class DeepCNN(MantraModel):
+      
+      # The Name of the Model
+      model_name = "Relativistic GAN"
+
+      # The Model Image
+      model_image = "default.jpg"
+
+      # Link to a Notebook
+      model_notebook = 'notebook.ipynb'
+
+      # Tags for the Model
+      model_tags = ['cnn', 'classification']
+
+      # ArXiv Link
+      model_arxiv_id = '1807.00734'
+
+      # Custom Paper PDF (instead of an ArXiv PDF)
+      model_pdf = 'my_paper.pdf'
+
+Then when you share the model with your collaborators, they won't just get code - they'll get a whole project they can visualize and interact with: including notebooks, the paper the model was based on, and more!
+
+
+✨ Magic Hyperparameters
+******************************
+
+Write some custom hyperparameters in your :code:`__init__` function: 
+
+.. code-block:: python
+
+  def __init__(self, data=None, task=None, **kwargs):
+    self.dropout = kwargs.get('dropout', 0.25)
+    self.optimizer = kwargs.get('my_optimizer', 'adam')
+
+    ...
+
+When you train you can automatically reference these hyperparmeters without writing command parser code, i.e. this works out of the box:
 
 .. code-block:: console
 
-   [+] All tests passed
+   $ mantra train my_model --dataset my_dat --dropout 0.5 --my-optimizer 'adam'
 
-We can also call a built-in :code:`sample` method in a Notebook or Python script, which samples from the :math:`X` matrix:
+Note that there are two core hyperparameters that are supported by default: :code:`self.batch_size` and :code:`self.epochs`. These can be adjusted through the command line: 
 
-.. code-block:: python3
+.. code-block:: console
 
-   from data.mnist.data import MNIST
-
-   dataset = MNIST(name='mnist_png')
-   dataset.sample()
-
-.. image:: Figure_1.png
-   :width: 300px
-   :height: 225px
-   :scale: 75%
-
-We can see that the images coming out of our extraction methods look reasonable!
-
-Now that we've built a dataset, we can build models that can be used with it. Let's now turn to the modelling features of Atlas... ✨. 
+   $ mantra train my_model --dataset my_dat --epochs 100 --batch-size 32
 
 
-- 🤖 `Get started with Atlas models <models.html>`_  
+
+
+
+

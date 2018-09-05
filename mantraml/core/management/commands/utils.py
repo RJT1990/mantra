@@ -64,7 +64,7 @@ def adjust_tar_data_folder(data_dir, data_name, tar_path):
     with open(data_dir + '/data.py','r+') as config:
         contents = config.read()
         new_contents = contents.replace("files = ['example_dataset.tar.gz']", "files = ['%s']" % tar_file_name)
-        new_contents = contents.replace("files = ['example_dataset.csv']", "files = ['%s']" % tar_file_name)
+        new_contents = new_contents.replace("files = ['example_dataset.csv']", "files = ['%s']" % tar_file_name)
         config.seek(0) 
         config.write(new_contents)
         config.truncate()

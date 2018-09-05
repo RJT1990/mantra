@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Atlas : A Deep Learning Development Kit &mdash; Atlas Documentation 0.1 documentation</title>
+  <title>Mantra : A Deep Learning Development Kit &mdash; Mantra 0.960 documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
 
   
-    <link rel="top" title="Atlas Documentation 0.1 documentation" href="#"/>
-        <link rel="next" title="Datasets" href="datasets.html"/> 
+    <link rel="top" title="Mantra 0.960 documentation" href="#"/>
+        <link rel="next" title="Making Models with Mantra" href="models.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -49,12 +49,12 @@
           
 
           
-            <a href="#" class="icon icon-home"> Atlas Documentation
+            <a href="#" class="icon icon-home"> Mantra
           
 
           
             
-            <img src="_static/logo-small.png" class="logo" />
+            <img src="_static/logo.png" class="logo" />
           
           </a>
 
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                3.5
+                0.960
               </div>
             
           
@@ -84,10 +84,10 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="training.html">Training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sharing.html">Sharing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Making Models with Mantra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Packaging Datasets with Mantra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">Defining Tasks with Mantra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Models with Mantra</a></li>
 </ul>
 
             
@@ -101,7 +101,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">Atlas Documentation</a>
+        <a href="#">Mantra</a>
       </nav>
 
 
@@ -118,7 +118,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="#">Docs</a> &raquo;</li>
       
-    <li>Atlas : A Deep Learning Development Kit</li>
+    <li>Mantra : A Deep Learning Development Kit</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -132,46 +132,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="atlas-a-deep-learning-development-kit">
-<h1>Atlas : A Deep Learning Development Kit<a class="headerlink" href="#atlas-a-deep-learning-development-kit" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="_images/panda.png"><img alt="_images/panda.png" class="align-left" src="_images/panda.png" style="width: 140.0px; height: 100.0px;" /></a>
-<p><strong>Atlas</strong> is an open-source framework for building deep learning software. We turn your deep learning models into portable objects that can be seamlessly trained, evaluated, deployed, and more in a single step.</p>
-<p>With Atlas, you can focus your time on creating models rather than annoying engineering tasks. So ... let&#8217;s get started!</p>
+  <div class="section" id="mantra-a-deep-learning-development-kit">
+<h1>Mantra : A Deep Learning Development Kit<a class="headerlink" href="#mantra-a-deep-learning-development-kit" title="Permalink to this headline">¶</a></h1>
+<a class="reference internal image-reference" href="_images/demo.gif"><img alt="_images/demo.gif" class="align-center" src="_images/demo.gif" style="width: 600.0px; height: 367.0px;" /></a>
+<p><strong>Mantra</strong> is a deep learning development kit that manages the various components in an deep learning project, and makes it much easier to do routine tasks like training in the cloud, model monitoring, model benchmarking and more. It works with your favourite deep learning libraries like TensorFlow, PyTorch and Keras.</p>
+<p>You might like mantra if:</p>
+<ul class="simple">
+<li>You need to structure deep learning projects: versioning, monitoring and storage.</li>
+<li>You need devops tasks like cloud integration and file syncing taken care for you.</li>
+<li>You need to evaluate your model against benchmark tasks, e.g. CIFAR-10 accuracy.</li>
+</ul>
 <div class="section" id="installation">
 <h2>🌍 Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>Atlas is a Python 3 library. You can install via pip:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install atlasml
+<p>Mantra is a Python that you can install via pip:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install mantraml
 </pre></div>
 </div>
+<p>It is currently tested on Python 3.5-7.</p>
+<p>Additional dependencies you need to install are TensorFlow or PyTorch depending on which framework you want to use. If you want to use the TensorBoard feature of Mantra with PyTorch then you should also install TensorboardX.</p>
 </div>
-<div class="section" id="introducing-the-ml-object">
-<h2>👍 Introducing the ML object<a class="headerlink" href="#introducing-the-ml-object" title="Permalink to this headline">¶</a></h2>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p>ML object is a key concept introduced in Atlas. ML object:</p>
-<ol class="last arabic simple">
-<li>Represents a key ML artifacts, such as a dataset or model</li>
-<li>Consists of code, linked data files and metadata</li>
-<li>Takes a single step to track, train, evaluate, monitor, package and share</li>
-</ol>
-</div>
-<p>The goal of ML objects is to cover the whole lifecycle of datasets and models. Atlas is currently in alpha so some parts of the lifecycle might be missing, but will be coming soon!</p>
-</div>
-<div class="section" id="quick-start-with-notebooks">
-<h2>🚀 Quick start with notebooks<a class="headerlink" href="#quick-start-with-notebooks" title="Permalink to this headline">¶</a></h2>
-<p>TODO (what could be a good use case here?)</p>
-</div>
-<div class="section" id="quick-start-with-a-python-project">
-<h2>🚀 Quick start with a Python project<a class="headerlink" href="#quick-start-with-a-python-project" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-started">
+<h2>🚀 Get Started<a class="headerlink" href="#get-started" title="Permalink to this headline">¶</a></h2>
 <p>Find a directory where you want to create a project and run:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas launch my_project_name
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra launch my_project_name
 </pre></div>
 </div>
 <p>This will create a <strong>my_project_name</strong> directory with a folder structure like this:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">data/</span>
 <span class="go">models/</span>
+<span class="go">tasks/</span>
+<span class="go">trials/</span>
 <span class="go">__init__.py</span>
-<span class="go">atlas.yml</span>
+<span class="go">mantra.yml</span>
 <span class="go">README.md</span>
 <span class="go">settings.py</span>
 </pre></div>
@@ -179,15 +171,21 @@
 <ul class="simple">
 <li>The <code class="code docutils literal"><span class="pre">data/</span></code> folder contains your datasets</li>
 <li>The <code class="code docutils literal"><span class="pre">models/</span></code> folder contains your models</li>
-<li>The <code class="code docutils literal"><span class="pre">atlas.yml</span></code> file contains project metadata</li>
+<li>The <code class="code docutils literal"><span class="pre">tasks/</span></code> folder contains your tasks</li>
+<li>The <code class="code docutils literal"><span class="pre">trials/</span></code> folder contains trial data (data when you train a model)</li>
+<li>The <code class="code docutils literal"><span class="pre">mantra.yml</span></code> file contains project metadata</li>
 <li>The <code class="code docutils literal"><span class="pre">settings.py</span></code> file contains project settings</li>
 </ul>
-<p>Now we have a project! But what does this mean, I hear you cry? Let&#8217;s delve in and see what kind of deep learning magic Atlas can do... ✨.</p>
+<p>Now we have a project! To view the current project through the Mantra UI, execute the following from your project root:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra ui
+</pre></div>
+</div>
+<p>Now that you are ready, it&#8217;s time to learn how Mantra models and datasets work!</p>
 <ul class="simple">
-<li>💾 <a class="reference external" href="datasets.html">Get started with Atlas datasets</a></li>
-<li>🤖 <a class="reference external" href="models.html">Get started with Atlas models</a></li>
-<li>🏃 <a class="reference external" href="training.html">Get started with training</a></li>
-<li>🎁 <a class="reference external" href="sharing.html">Get started with sharing</a></li>
+<li>🤖 <a class="reference external" href="models.html">Get started with Mantra models</a></li>
+<li>💾 <a class="reference external" href="datasets.html">Get started with Mantra datasets</a></li>
+<li>🏃 <a class="reference external" href="tasks.html">Get started with Mantra tasks</a></li>
+<li>🎁 <a class="reference external" href="training.html">Get started with Mantra training</a></li>
 </ul>
 <div class="toctree-wrapper compound">
 </div>
@@ -201,7 +199,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="datasets.html" class="btn btn-neutral float-right" title="Datasets" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="models.html" class="btn btn-neutral float-right" title="Making Models with Mantra" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -233,7 +231,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.960',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Models &mdash; Atlas Documentation 0.1 documentation</title>
+  <title>Making Models with Mantra &mdash; Mantra 0.960 documentation</title>
   
 
   
@@ -30,9 +30,9 @@
   
 
   
-    <link rel="top" title="Atlas Documentation 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Training" href="training.html"/>
-        <link rel="prev" title="Datasets" href="datasets.html"/> 
+    <link rel="top" title="Mantra 0.960 documentation" href="index.html"/>
+        <link rel="next" title="Packaging Datasets with Mantra" href="datasets.html"/>
+        <link rel="prev" title="Mantra : A Deep Learning Development Kit" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -50,12 +50,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Atlas Documentation
+            <a href="index.html" class="icon icon-home"> Mantra
           
 
           
             
-            <img src="_static/logo-small.png" class="logo" />
+            <img src="_static/logo.png" class="logo" />
           
           </a>
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                3.5
+                0.960
               </div>
             
           
@@ -85,14 +85,18 @@
             
             
                 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Models</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Making Models with Mantra</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#make-a-model">🤖 Make a Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-keras-on-mnist">🔢 Example: Keras on MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-building-in-keras">Model Building in Keras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-building-in-tensorflow">Model Building in TensorFlow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-building-in-pytorch">Model Building in PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualizing-your-model-projects">🖼 Visualizing Your Model Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#magic-hyperparameters">✨ Magic Hyperparameters</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="training.html">Training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sharing.html">Sharing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Packaging Datasets with Mantra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">Defining Tasks with Mantra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Models with Mantra</a></li>
 </ul>
 
             
@@ -106,7 +110,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">Atlas Documentation</a>
+        <a href="index.html">Mantra</a>
       </nav>
 
 
@@ -123,7 +127,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Models</li>
+    <li>Making Models with Mantra</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -137,174 +141,251 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="models">
-<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="_images/tensorflow.png"><img alt="_images/tensorflow.png" class="align-left" src="_images/tensorflow.png" style="height: 30px;" /></a>
-<a class="reference internal image-reference" href="_images/pytorch.png"><img alt="_images/pytorch.png" class="align-left" src="_images/pytorch.png" style="height: 30px;" /></a>
-<a class="reference internal image-reference" href="_images/keras.png"><img alt="_images/keras.png" class="align-left" src="_images/keras.png" style="height: 30px;" /></a>
-<div style="clear: both;"></div><p><strong>Atlas</strong> models allow you to take a model in an framework such as TensorFlow or PyTorch, and enables them to be easily trained, deployed, evaluated, and more. In these docs we are going to see how we make a model package.</p>
+  <div class="section" id="making-models-with-mantra">
+<h1>Making Models with Mantra<a class="headerlink" href="#making-models-with-mantra" title="Permalink to this headline">¶</a></h1>
+<p><strong>Mantra</strong> models allow you to take a model in an framework such as TensorFlow or PyTorch, and with a few modifications, allows them to be easily trained, deployed, evaluated and more. In these docs we are going to see how we make a model package.</p>
 <div class="section" id="make-a-model">
 <h2>🤖 Make a Model<a class="headerlink" href="#make-a-model" title="Permalink to this headline">¶</a></h2>
-<p>Go to the root of your project. To make a dataset use the <code class="code docutils literal"><span class="pre">makemodel</span></code> command. We can make a new model as follows:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model
+<p>Go to the root of your project. To make a new model we can use the <code class="code docutils literal"><span class="pre">makemodel</span></code> command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makemodel my_model
 </pre></div>
 </div>
-<p>If we intend to use a particular framework, we can reference it upon creation:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework tensorflow
+<p>If we intend to use a particular deep learning framework, we can reference a template:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makemodel my_model --template tensorflow
 </pre></div>
 </div>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework keras
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makemodel my_model --template keras
 </pre></div>
 </div>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework pytorch
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makemodel my_model --template pytorch
 </pre></div>
 </div>
 <p>Our new model folder will be located at <strong>myproject/models/my_model</strong>. Inside:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">__init__.py</span>
+<span class="go"> default.jpg</span>
 <span class="go">model.py</span>
+<span class="go">notebook.ipynb</span>
 <span class="go">README.md</span>
-<span class="go">requirements.txt</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">model.py</span></code> contains the core <code class="code docutils literal"><span class="pre">BaseModel</span></code> type class that wraps around your model</li>
-<li><code class="code docutils literal"><span class="pre">requirements.txt</span></code> is where you can record any Python requirements for your model</li>
+<li><code class="code docutils literal"><span class="pre">model.py</span></code> contains your core model logic</li>
+<li><code class="code docutils literal"><span class="pre">notebook.ipynb</span></code> is a notebook which you can use for prototyping</li>
+<li><code class="code docutils literal"><span class="pre">README.md</span></code> is where you can describe the model (useful for sharing the model with others)</li>
 </ul>
-<p>We are now going to walk through some example models for the MNIST dataset for each framework.</p>
-</div>
-<div class="section" id="example-keras-on-mnist">
-<h2>🔢 Example: Keras on MNIST<a class="headerlink" href="#example-keras-on-mnist" title="Permalink to this headline">¶</a></h2>
-<p>In the previous chapter on Datasets, we made an MNIST dataset. We are now going to see how we can use this dataset to train a model.</p>
-<p>Let&#8217;s make a model using keras, we can make the project as follows:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makemodel my_model --framework keras
-</pre></div>
-</div>
-<p>Now let&#8217;s open the <code class="code docutils literal"><span class="pre">model.py</span></code> file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+<p>Let&#8217;s have a look at the <code class="code docutils literal"><span class="pre">model.py</span></code> file and see what the template contains:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mantraml.models</span> <span class="kn">import</span> <span class="n">MantraModel</span>
 
-<span class="kn">from</span> <span class="nn">atlasml.models.KerasModel</span> <span class="kn">import</span> <span class="n">KerasModel</span>
+<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">MantraModel</span><span class="p">):</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;My Model&quot;</span>
+    <span class="n">model_image</span> <span class="o">=</span> <span class="s2">&quot;default.jpg&quot;</span>
+    <span class="n">model_notebook</span> <span class="o">=</span> <span class="s1">&#39;notebook.ipynb&#39;</span>
+    <span class="n">model_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">]</span>
 
-<span class="k">class</span> <span class="nc">MyKerasModel</span><span class="p">(</span><span class="n">KerasModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="k">return</span>
 </pre></div>
 </div>
-<p>Our model inherits from the <code class="code docutils literal"><span class="pre">KerasModel</span></code> class. This gives us access to some predefined methods and attributes for Keras, as well as Atlas integration that allows our model to be easily trained, monitored and so on.</p>
-<p>Let&#8217;s build a basic neural network classifier in the build_model section:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>
+<p>The first thing we observe is that we inherit from <code class="code docutils literal"><span class="pre">MantraModel</span></code>. This is a simple step - if you have existing machine learning code in a class then you can just inherit from MantraModel to gain access to most of the Mantra integration.</p>
+<p>The second thing we observe is we just need to pass in a data and task argument when initializing the class - this is what allows Mantra models to be composable with different datasets and evaluation criteria.</p>
+<p>The third thing we observe is the <code class="code docutils literal"><span class="pre">run</span></code> and <code class="code docutils literal"><span class="pre">predict</span></code> methods. All you need to do is to trigger your training code from the <code class="code docutils literal"><span class="pre">run</span></code> method. When Mantra trains the model, it will call this method first and the rest is history. For optional evaluation, you just need to write a <code class="code docutils literal"><span class="pre">predict</span></code> method.</p>
+<p>This is the core design pattern of Mantra models.</p>
+<p>Now let&#8217;s see some examples for each framework: Keras, Base TensorFlow and PyTorch.</p>
+</div>
+<div class="section" id="model-building-in-keras">
+<h2>Model Building in Keras<a class="headerlink" href="#model-building-in-keras" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/keras.png"><img alt="_images/keras.png" class="align-left" src="_images/keras.png" style="width: 200.0px; height: 174.0px;" /></a>
+<div style="clear: both;"></div><p>Here is an example of a deep CNN using Keras:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Activation</span><span class="p">,</span> <span class="n">Flatten</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">MaxPooling2D</span>
 
-<span class="kn">from</span> <span class="nn">atlasml.models.KerasModel</span> <span class="kn">import</span> <span class="n">KerasModel</span>
+<span class="kn">from</span> <span class="nn">mantraml.models</span> <span class="kn">import</span> <span class="n">MantraModel</span>
+<span class="kn">from</span> <span class="nn">mantraml.models.keras.callbacks</span> <span class="kn">import</span> <span class="n">TensorBoard</span><span class="p">,</span> <span class="n">StoreTrial</span><span class="p">,</span> <span class="n">EvaluateTask</span><span class="p">,</span> <span class="n">ModelCheckpoint</span>
 
-<span class="k">class</span> <span class="nc">MyClassifier</span><span class="p">(</span><span class="n">KerasModel</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">DeepCNN</span><span class="p">(</span><span class="n">MantraModel</span><span class="p">):</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;Deep Convolutional Model&quot;</span>
+    <span class="n">model_image</span> <span class="o">=</span> <span class="s2">&quot;default.jpg&quot;</span>
+    <span class="n">model_notebook</span> <span class="o">=</span> <span class="s1">&#39;notebook.ipynb&#39;</span>
+    <span class="n">model_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cnn&#39;</span><span class="p">,</span> <span class="s1">&#39;classification&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
 
-        <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
-          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
-          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">),</span>
-          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
-          <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">)</span>
-        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dropout&#39;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;optimizer&#39;</span><span class="p">,</span> <span class="s1">&#39;adam&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span> <span class="s1">&#39;categorical_crossentropy&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metrics&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">model</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">X_train</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">y_train</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">X</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">num_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">))</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">))</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">512</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">num_classes</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Activation</span><span class="p">(</span><span class="s1">&#39;softmax&#39;</span><span class="p">))</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+        <span class="n">tb_callback</span> <span class="o">=</span> <span class="n">TensorBoard</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">write_images</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">exp_callback</span> <span class="o">=</span> <span class="n">StoreTrial</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">eval_callback</span> <span class="o">=</span> <span class="n">EvaluateTask</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">checkpoint_callback</span> <span class="o">=</span> <span class="n">ModelCheckpoint</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span><span class="n">tb_callback</span><span class="p">,</span> <span class="n">eval_callback</span><span class="p">,</span> <span class="n">checkpoint_callback</span><span class="p">,</span> <span class="n">exp_callback</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_batch</span><span class="p">,</span>
+            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now we can train with one line of code locally or via the cloud:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas train my_model --dataset mnist_png --cloud
-</pre></div>
-</div>
-<p>MNIST is a well-known deep learning dataset containing handwritten numbers. We can download the tar.gz file <a class="reference external" href="https://github.com/myleott/mnist_png/blob/master/mnist_png.tar.gz">here</a>.</p>
-<p>Once you have downloaded the dataset, make a new data folder in your atlas project by running the following command, refering the path of the tar file:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata mnist_png --tar mnist_png.tar.gz
-</pre></div>
-</div>
-<p>The tar file contains 10 folders for each number, with png images enclosed. We want to extract the paired images and labels. First let&#8217;s quickly example the class variables in <code class="code docutils literal"><span class="pre">data.py</span></code>. We want labels so <code class="code docutils literal"><span class="pre">has_labels</span></code> should be set to True. Likewise, <code class="code docutils literal"><span class="pre">data_type</span></code> should be set to &#8216;png-images&#8217;; this is optional, but it gives us some extra methods for free in case we want to use them later.</p>
-<p>At any time we can run the following command to test our new dataset:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas <span class="nb">test</span> mnist_png
-</pre></div>
-</div>
-<p>This is optional but it performs some basic checks to see if anything is glaringly wrong. It can also be used to guide your development by telling you what to build next. If we run it on the current class, we are told:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">AssertionError: Your extract_inputs() method returns None.</span>
-
-<span class="go">This probably means you have not written an extract_inputs class method for your Dataset class.</span>
-
-<span class="go">This method should return an np.ndarray containing the input data X.</span>
-</pre></div>
-</div>
-<p>As the test suggests, we need to actually extract some data! So let&#8217;s do that. Below we&#8217;ve filled in the <code class="code docutils literal"><span class="pre">extract_inputs()</span></code> and <code class="code docutils literal"><span class="pre">extract_outputs()</span></code> methods to get the MNIST data. The path where your data is extracted is located at <code class="code docutils literal"><span class="pre">self.extract_dir</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MNIST</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;mnist_png&#39;</span>
-    <span class="n">tar_name</span> <span class="o">=</span> <span class="s1">&#39;mnist_png&#39;</span> <span class="c1"># e.g &#39;example_images&#39; for &#39;example_images.tar.gz&#39;</span>
-    <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;png-images&#39;</span> <span class="c1"># optional labelling of the datatype for free methods - see atlas docs</span>
-    <span class="n">has_labels</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">extract_folders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-
-        <span class="n">number_folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_dir</span> <span class="o">+</span> <span class="n">folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
-
-        <span class="c1"># loop over each folder (which contains each label)</span>
-        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">number_folders</span><span class="p">:</span>
-            <span class="n">folder_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">images</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_format</span><span class="p">))</span>
-            <span class="n">image_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">scipy</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span> <span class="o">/</span> <span class="mf">127.5</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">folder_number</span>
-
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">image_data</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">image_data</span>
-
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">labels</span>
-
-    <span class="k">def</span> <span class="nf">extract_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">extract_folders</span><span class="p">(</span><span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
-
-    <span class="k">def</span> <span class="nf">extract_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">extract_folders</span><span class="p">(</span><span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
-</pre></div>
-</div>
-<p>To test the dataset we can run the test command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas <span class="nb">test</span> mnist_png
-</pre></div>
-</div>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">[+] All tests passed</span>
-</pre></div>
-</div>
-<p>We can also call a built-in <code class="code docutils literal"><span class="pre">sample</span></code> method in a Notebook or Python script, which samples from the <span class="math">\(X\)</span> matrix:</p>
-<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">data.mnist.data</span> <span class="k">import</span> <span class="n">MNIST</span>
-
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mnist_png&#39;</span><span class="p">)</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-</pre></div>
-</div>
-<a class="reference internal image-reference" href="_images/Figure_1.png"><img alt="_images/Figure_1.png" src="_images/Figure_1.png" style="width: 225.0px; height: 168.75px;" /></a>
-<p>We can see that the images coming out of our extraction methods look reasonable!</p>
-<p>Now that we&#8217;ve built a dataset, we can build models that can be used with it. Let&#8217;s now turn to the modelling features of Atlas... ✨.</p>
+<p>Let&#8217;s briefly analyse this code:</p>
 <ul class="simple">
-<li>🤖 <a class="reference external" href="models.html">Get started with Atlas models</a></li>
+<li>We&#8217;ve inherited from <code class="code docutils literal"><span class="pre">MantraModel</span></code></li>
+<li>We&#8217;ve specified our data <code class="code docutils literal"><span class="pre">self.X</span></code> and <code class="code docutils literal"><span class="pre">self.y</span></code></li>
+<li>We&#8217;ve written our model logic in <code class="code docutils literal"><span class="pre">run</span></code></li>
 </ul>
+<p>There&#8217;s one final thing to note. Keras reports results to you through callbacks. To get nice results reported to us through the Mantra UI, we simply need to add some or all of the following callbacks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">tb_callback</span> <span class="o">=</span> <span class="n">TensorBoard</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">write_images</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">exp_callback</span> <span class="o">=</span> <span class="n">StoreTrial</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+<span class="n">eval_callback</span> <span class="o">=</span> <span class="n">EvaluateTask</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+<span class="n">checkpoint_callback</span> <span class="o">=</span> <span class="n">ModelCheckpoint</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will configure things so your logs, media, and weights are managed and versioned correctly; and that you can monitor and evaluate results through the UI.</p>
+<p>And that&#8217;s it, your model is Mantra ready!</p>
+<p>For more more Keras model examples, check out the <a class="reference external" href="http://www.github.com/RJT1990/mantra-examples">Mantra examples repository</a>.</p>
+</div>
+<div class="section" id="model-building-in-tensorflow">
+<h2>Model Building in TensorFlow<a class="headerlink" href="#model-building-in-tensorflow" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/tensorflow.png"><img alt="_images/tensorflow.png" class="align-left" src="_images/tensorflow.png" style="width: 200.0px; height: 49.0px;" /></a>
+<div style="clear: both;"></div><p>The class structure is the same as the Keras example. But now we use the following callbacks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mantraml.models.tensorflow.summary</span> <span class="kn">import</span> <span class="n">FileWriter</span>
+<span class="kn">from</span> <span class="nn">mantraml.models.tensorflow.callbacks</span> <span class="kn">import</span> <span class="n">ModelCheckpoint</span><span class="p">,</span> <span class="n">EvaluateTask</span><span class="p">,</span> <span class="n">StoreTrial</span><span class="p">,</span> <span class="n">SavePlot</span>
+</pre></div>
+</div>
+<p>To configure your TensorFlow code for Mantra, use the mantra <code class="code docutils literal"><span class="pre">FileWriter</span></code> instead of the TensorFlow <code class="code docutils literal"><span class="pre">FileWriter</span></code>. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">FileWriter</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then at the end of each epoch of training, use the following callbacks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ModelCheckpoint</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">:</span>
+    <span class="n">EvaluateTask</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+<span class="n">StoreTrial</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Just as with Keras callbacks, this will configure things so your logs, media, and weights are managed and versioned correctly; and that you can monitor and evaluate results through the UI.</p>
+<p>For TensorFlow model examples, check out the <a class="reference external" href="http://www.github.com/RJT1990/mantra-examples">Mantra examples repository</a>.</p>
+</div>
+<div class="section" id="model-building-in-pytorch">
+<h2>Model Building in PyTorch<a class="headerlink" href="#model-building-in-pytorch" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/pytorch.png"><img alt="_images/pytorch.png" class="align-left" src="_images/pytorch.png" style="width: 200.0px; height: 107.0px;" /></a>
+<div style="clear: both;"></div><p>The class structure is the same as the previous examples. But now we use the following callbacks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mantraml.models.pytorch.summary</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">mantraml.models.pytorch.callbacks</span> <span class="kn">import</span> <span class="n">ModelCheckpoint</span><span class="p">,</span> <span class="n">EvaluateTask</span><span class="p">,</span> <span class="n">StoreTrial</span><span class="p">,</span> <span class="n">SavePlot</span>
+</pre></div>
+</div>
+<p>Mantra works with TensorBoardX for PyTorch. Use the mantra <code class="code docutils literal"><span class="pre">SummaryWriter</span></code> instead of the TensorBoardX <code class="code docutils literal"><span class="pre">SummaryWriter</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then at the end of each epoch of training, use the following callbacks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ModelCheckpoint</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">:</span>
+    <span class="n">EvaluateTask</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+<span class="n">StoreTrial</span><span class="p">(</span><span class="n">mantra_model</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For PyTorch model examples, check out the <a class="reference external" href="http://www.github.com/RJT1990/mantra-examples">Mantra examples repository</a>.</p>
+</div>
+<div class="section" id="visualizing-your-model-projects">
+<h2>🖼 Visualizing Your Model Projects<a class="headerlink" href="#visualizing-your-model-projects" title="Permalink to this headline">¶</a></h2>
+<p>Load up the UI and click on a model:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra ui
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/model_project.png"><img alt="_images/model_project.png" class="align-left" src="_images/model_project.png" style="width: 560.0px; height: 426.29999999999995px;" /></a>
+<div style="clear: both;"></div><p>In order to customise how the UI looks for your model you can add metadata to your model classes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DeepCNN</span><span class="p">(</span><span class="n">MantraModel</span><span class="p">):</span>
+
+    <span class="c1"># The Name of the Model</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;Relativistic GAN&quot;</span>
+
+    <span class="c1"># The Model Image</span>
+    <span class="n">model_image</span> <span class="o">=</span> <span class="s2">&quot;default.jpg&quot;</span>
+
+    <span class="c1"># Link to a Notebook</span>
+    <span class="n">model_notebook</span> <span class="o">=</span> <span class="s1">&#39;notebook.ipynb&#39;</span>
+
+    <span class="c1"># Tags for the Model</span>
+    <span class="n">model_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cnn&#39;</span><span class="p">,</span> <span class="s1">&#39;classification&#39;</span><span class="p">]</span>
+
+    <span class="c1"># ArXiv Link</span>
+    <span class="n">model_arxiv_id</span> <span class="o">=</span> <span class="s1">&#39;1807.00734&#39;</span>
+
+    <span class="c1"># Custom Paper PDF (instead of an ArXiv PDF)</span>
+    <span class="n">model_pdf</span> <span class="o">=</span> <span class="s1">&#39;my_paper.pdf&#39;</span>
+</pre></div>
+</div>
+<p>Then when you share the model with your collaborators, they won&#8217;t just get code - they&#8217;ll get a whole project they can visualize and interact with: including notebooks, the paper the model was based on, and more!</p>
+</div>
+<div class="section" id="magic-hyperparameters">
+<h2>✨ Magic Hyperparameters<a class="headerlink" href="#magic-hyperparameters" title="Permalink to this headline">¶</a></h2>
+<p>Write some custom hyperparameters in your <code class="code docutils literal"><span class="pre">__init__</span></code> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dropout&#39;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;my_optimizer&#39;</span><span class="p">,</span> <span class="s1">&#39;adam&#39;</span><span class="p">)</span>
+
+  <span class="o">...</span>
+</pre></div>
+</div>
+<p>When you train you can automatically reference these hyperparmeters without writing command parser code, i.e. this works out of the box:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra train my_model --dataset my_dat --dropout <span class="m">0</span>.5 --my-optimizer <span class="s1">&#39;adam&#39;</span>
+</pre></div>
+</div>
+<p>Note that there are two core hyperparameters that are supported by default: <code class="code docutils literal"><span class="pre">self.batch_size</span></code> and <code class="code docutils literal"><span class="pre">self.epochs</span></code>. These can be adjusted through the command line:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra train my_model --dataset my_dat --epochs <span class="m">100</span> --batch-size <span class="m">32</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -315,10 +396,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="training.html" class="btn btn-neutral float-right" title="Training" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="datasets.html" class="btn btn-neutral float-right" title="Packaging Datasets with Mantra" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="datasets.html" class="btn btn-neutral" title="Datasets" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Mantra : A Deep Learning Development Kit" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -349,7 +430,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.960',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

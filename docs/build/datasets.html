@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Datasets &mdash; Atlas Documentation 0.1 documentation</title>
+  <title>Packaging Datasets with Mantra &mdash; Mantra 0.960 documentation</title>
   
 
   
@@ -30,9 +30,9 @@
   
 
   
-    <link rel="top" title="Atlas Documentation 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Models" href="models.html"/>
-        <link rel="prev" title="Atlas : A Deep Learning Development Kit" href="index.html"/> 
+    <link rel="top" title="Mantra 0.960 documentation" href="index.html"/>
+        <link rel="next" title="Defining Tasks with Mantra" href="tasks.html"/>
+        <link rel="prev" title="Making Models with Mantra" href="models.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -50,12 +50,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Atlas Documentation
+            <a href="index.html" class="icon icon-home"> Mantra
           
 
           
             
-            <img src="_static/logo-small.png" class="logo" />
+            <img src="_static/logo.png" class="logo" />
           
           </a>
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                3.5
+                0.960
               </div>
             
           
@@ -85,7 +85,8 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Datasets</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Making Models with Mantra</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Packaging Datasets with Mantra</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#make-a-dataset">💾 Make a Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#magic-data-templates">✨ Magic Data Templates</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#images">💁 Images</a></li>
@@ -93,13 +94,12 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#custom-data-processing">📊 Custom Data Processing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-mnist-dataset">🔢 Example: MNIST Dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#meet-the-classes">🙌 Meet the Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualizing-your-data-projects">🖼 Visualizing Your Data Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accessing-datasets-in-models">🤖 Accessing Datasets in Models</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="training.html">Training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sharing.html">Sharing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">Defining Tasks with Mantra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Models with Mantra</a></li>
 </ul>
 
             
@@ -113,7 +113,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">Atlas Documentation</a>
+        <a href="index.html">Mantra</a>
       </nav>
 
 
@@ -130,7 +130,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Datasets</li>
+    <li>Packaging Datasets with Mantra</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -144,55 +144,57 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="datasets">
-<h1>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="packaging-datasets-with-mantra">
+<h1>Packaging Datasets with Mantra<a class="headerlink" href="#packaging-datasets-with-mantra" title="Permalink to this headline">¶</a></h1>
 <a class="reference internal image-reference" href="_images/mnist.png"><img alt="_images/mnist.png" class="align-left" src="_images/mnist.png" style="width: 100px; height: 100px;" /></a>
 <a class="reference internal image-reference" href="_images/celeba.png"><img alt="_images/celeba.png" class="align-left" src="_images/celeba.png" style="width: 200px; height: 100px;" /></a>
 <a class="reference internal image-reference" href="_images/imagenet.png"><img alt="_images/imagenet.png" class="align-left" src="_images/imagenet.png" style="width: 80px; height: 100px;" /></a>
-<div style="clear: both;"></div><p>With <strong>Atlas</strong> it&#8217;s easy to package data for deep learning. In these docs, we are going to see how we make a data package, and how we process it using the powerful <code class="code docutils literal"><span class="pre">Dataset</span></code> class.</p>
+<div style="clear: both;"></div><p>With <strong>Mantra</strong> it&#8217;s easy to package data for deep learning. In these docs, we are going to see how we make a data package, and how we process it using the powerful <code class="code docutils literal"><span class="pre">Dataset</span></code> class.</p>
 <div class="section" id="make-a-dataset">
 <h2>💾 Make a Dataset<a class="headerlink" href="#make-a-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Go to the root of your project. To make a dataset use the <code class="code docutils literal"><span class="pre">makedata</span></code> command. We can make an empty dataset as follows:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata first_dataset
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makedata first_dataset
 </pre></div>
 </div>
 <p>Or if we already have a tar.gz file with some data, we can reference it as follows:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata first_dataset --tar-path tar_path_here
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makedata first_dataset --tar-path tar_path_here
 </pre></div>
 </div>
 <p>Our new data folder will be located at <strong>myproject/data/first_dataset</strong>. Inside:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">raw/</span>
 <span class="go">__init__.py</span>
 <span class="go">data.py</span>
+<span class="go">README.md</span>
 </pre></div>
 </div>
 <ul class="simple">
 <li><code class="code docutils literal"><span class="pre">data.py</span></code> contains the core <code class="code docutils literal"><span class="pre">Dataset</span></code> class that is used to process your data</li>
 <li><code class="code docutils literal"><span class="pre">raw/</span></code> contains the tar.gz file with the raw data</li>
+<li><code class="code docutils literal"><span class="pre">README.md</span></code> is where you can describe the model (useful for sharing the model with others)</li>
 </ul>
 <p>If we don&#8217;t need flat files, but want to import data through an API, we can use the no-tar flag:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata first_dataset --no-tar
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makedata first_dataset --no-tar
 </pre></div>
 </div>
-<p>We now need to extract the input and output vectors <span class="math">\(X, y\)</span> that are used to train models ...</p>
+<p>We now need to extract the input and output vectors X, y that are used to train models ...</p>
 </div>
 <div class="section" id="magic-data-templates">
 <h2>✨ Magic Data Templates<a class="headerlink" href="#magic-data-templates" title="Permalink to this headline">¶</a></h2>
-<p>Many datasets are standardised, such as a folder of images or a csv file with columns of features and labels. Atlas provides magic templates so you don&#8217;t have the write the entire class yourself.</p>
+<p>Many datasets are standardised, such as a folder of images or a csv file with columns of features and labels. Mantra provides magic templates so you don&#8217;t have the write the entire class yourself.</p>
 <div class="section" id="images">
 <h3>💁 Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h3>
 <p>If we have a tar file that contains a folder of images, we can use the <code class="code docutils literal"><span class="pre">images</span></code> template:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata celeba --template <span class="s1">&#39;images&#39;</span> --tar-path celebA.tar.gz --image-dim <span class="m">128</span> <span class="m">128</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra makedata celeba --template <span class="s1">&#39;images&#39;</span> --tar-path celebA.tar.gz --image-dim <span class="m">128</span> <span class="m">128</span>
 </pre></div>
 </div>
-<p>Above we are using the images template. This will create an <code class="code docutils literal"><span class="pre">ImageDataset</span></code> class using the tar file provided. We can also specify additional options for the template:</p>
+<p>Above we are using the images template. This will create an <code class="code docutils literal"><span class="pre">ImageDataset</span></code> class using the tar file provided. We can also specify additional default options for the template:</p>
 <blockquote>
 <div><table border="1" class="docutils">
 <colgroup>
-<col width="20%" />
 <col width="19%" />
-<col width="17%" />
-<col width="44%" />
+<col width="18%" />
+<col width="16%" />
+<col width="47%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
@@ -207,25 +209,36 @@
 <td>64 64</td>
 <td>Desired image dimension (height, output)</td>
 </tr>
+<tr class="row-odd"><td>&#8211;normalize</td>
+<td>bool (flag)</td>
+<td>&#8211;normalize</td>
+<td>Whether to normalize the images for training</td>
+</tr>
 </tbody>
 </table>
 </div></blockquote>
 <p>Once we have executed the command, we can open the <code class="code docutils literal"><span class="pre">data.py</span></code> file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">atlasml.data.Dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
-<span class="kn">from</span> <span class="nn">atlasml.data.ImageDataset</span> <span class="kn">import</span> <span class="n">ImageDataset</span>
-
+<span class="kn">from</span> <span class="nn">mantraml.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">cachedata</span>
+<span class="kn">from</span> <span class="nn">mantraml.data</span> <span class="kn">import</span> <span class="n">ImageDataset</span>
 
 <span class="k">class</span> <span class="nc">MyImageDataset</span><span class="p">(</span><span class="n">ImageDataset</span><span class="p">):</span>
+    <span class="n">data_name</span> <span class="o">=</span> <span class="s1">&#39;My Image Dataset&#39;</span>
+    <span class="n">data_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example&#39;</span><span class="p">,</span> <span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;images&#39;</span><span class="p">]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;celebA.tar.gz&#39;</span><span class="p">]</span>
+    <span class="n">image_dataset</span> <span class="o">=</span> <span class="s1">&#39;celebA.tar.gz&#39;</span> <span class="c1"># referring to the file that contains the images</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;celeba&#39;</span>
-    <span class="n">tar_name</span> <span class="o">=</span> <span class="s1">&#39;celebA&#39;</span>
-    <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;images&#39;</span>
+    <span class="c1"># additional default data</span>
     <span class="n">has_labels</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">image_dim</span> <span class="o">=</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">image_dim</span><span class="o">=</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">image_dim</span><span class="o">=</span><span class="n">image_dim</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="nd">@cachedata</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># return your labels here as an np.ndarray</span>
+        <span class="c1"># if no labels, e.g. generative models, then you can remove this method</span>
+        <span class="k">return</span>
 </pre></div>
 </div>
 <p>We can see that we are inheriting from <code class="code docutils literal"><span class="pre">ImageDataset</span></code>. We can also see our input dimensions have entered as a default argument. We can use <code class="code docutils literal"><span class="pre">sample</span></code> to eyeball the data:</p>
@@ -240,8 +253,8 @@
 </div>
 <div class="section" id="tables">
 <h3>📙 Tables<a class="headerlink" href="#tables" title="Permalink to this headline">¶</a></h3>
-<p>If we have a tar file that contains a flat csv file, we can use the <code class="code docutils literal"><span class="pre">tabular</span></code> template to load and extract the label and features columns.</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata table_data --template <span class="s1">&#39;tabular&#39;</span> --tar-path mydata.tar.gz
+<p>If we have a flat csv file, we can use the <code class="code docutils literal"><span class="pre">tabular</span></code> template to configure it:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantraml makedata table_data --template <span class="s1">&#39;tabular&#39;</span> --tar-path mydata.tar.gz
 <span class="gp">$</span> --file-name <span class="s1">&#39;my_flat_file.csv&#39;</span> --target <span class="s1">&#39;target_column&#39;</span>
 <span class="gp">$</span> --features <span class="s1">&#39;feature_1&#39;</span> <span class="s1">&#39;feature_2&#39;</span>
 </pre></div>
@@ -295,472 +308,88 @@
 <p>Once we have executed the command, we can open the <code class="code docutils literal"><span class="pre">data.py</span></code> file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">atlasml.data.TabularDataset</span> <span class="kn">import</span> <span class="n">TabularDataset</span>
+<span class="kn">from</span> <span class="nn">mantraml.data</span> <span class="kn">import</span> <span class="n">TabularDataset</span>
 
 
-<span class="k">class</span> <span class="nc">MyDataset</span><span class="p">(</span><span class="n">TabularDataset</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MyTabularDataset</span><span class="p">(</span><span class="n">TabularDataset</span><span class="p">):</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;table_data&#39;</span>
-    <span class="n">tar_name</span> <span class="o">=</span> <span class="s1">&#39;mydata&#39;</span>
-    <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
+    <span class="n">data_name</span> <span class="o">=</span> <span class="s1">&#39;Example Table Data&#39;</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mydata.tar.gz&#39;</span><span class="p">]</span>
+    <span class="n">data_file</span> <span class="o">=</span> <span class="s1">&#39;my_flat_file.csv&#39;</span>
+    <span class="n">data_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tabular&#39;</span><span class="p">]</span>
     <span class="n">has_labels</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;my_flat_file.csv&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;target_column&#39;</span><span class="p">,</span>
-    <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;feature_1&#39;</span><span class="p">,</span> <span class="s1">&#39;feature_2&#39;</span><span class="p">],</span> <span class="n">target_index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">features_index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
-        <span class="n">target_index</span><span class="o">=</span><span class="n">target_index</span><span class="p">,</span> <span class="n">features_index</span><span class="o">=</span><span class="n">features_index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;target_column&#39;</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;feature_1&#39;</span><span class="p">,</span> <span class="s1">&#39;feature_2&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>We can see that we are inheriting from <code class="code docutils literal"><span class="pre">TabularDataset</span></code>. We can also see our feature and target options are now default argument options. We can now feed this dataset directly in our deep learning models - no further code needed.</p>
+<p>We can see that we are inheriting from <code class="code docutils literal"><span class="pre">TabularDataset</span></code>. We can also see our feature and target options are now default argument options. This dataset is now Mantra ready. If we want to alter features from the command line:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantraml train my_model --dataset table_data --features feature_1 feature_2 feature_3
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="custom-data-processing">
 <h2>📊 Custom Data Processing<a class="headerlink" href="#custom-data-processing" title="Permalink to this headline">¶</a></h2>
-<p>Open up the <code class="code docutils literal"><span class="pre">data.py</span></code> file:</p>
+<p>If the magic templates aren&#8217;t useful, you can write your own data processing logic. Open up the <code class="code docutils literal"><span class="pre">data.py</span></code> file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">atlasml.data.Dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">mantraml.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">cachedata</span>
 
+<span class="k">class</span> <span class="nc">MyImageDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="n">data_name</span> <span class="o">=</span> <span class="s1">&#39;My Image Dataset&#39;</span>
+    <span class="n">data_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example&#39;</span><span class="p">,</span> <span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;images&#39;</span><span class="p">]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;myfiles.tar.gz&#39;</span><span class="p">]</span>
+    <span class="n">has_labels</span> <span class="o">=</span> <span class="bp">False</span>
 
-<span class="k">class</span> <span class="nc">ExampleDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;my_first_data&#39;</span>
-    <span class="n">tar_name</span> <span class="o">=</span> <span class="s1">&#39;example_images&#39;</span> <span class="c1"># e.g &#39;example_images&#39; for &#39;example_images.tar.gz&#39;</span>
-    <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;images&#39;</span> <span class="c1"># optional labelling of the datatype for free methods</span>
-    <span class="n">has_labels</span> <span class="o">=</span> <span class="bp">True</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">extract_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="nd">@cachedata</span>
+    <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># return your features here as an np.ndarray</span>
         <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">extract_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="nd">@cachedata</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># return your labels here as an np.ndarray</span>
         <span class="k">return</span>
 </pre></div>
 </div>
-<p>The <code class="code docutils literal"><span class="pre">Dataset</span></code> class contains methods for extracting and testing data. Above we have created a new class <code class="code docutils literal"><span class="pre">ExampleDataset(Dataset)</span></code> that inherits from it.</p>
-<p>Next we see some <strong>class variables</strong> which define model metadata, such as the dataset <em>name</em>, the name of the tar file where the raw data is located, a <em>data_type</em> string and a boolean describing whether the dataset has labels.</p>
-<p>Afterwards we see the <code class="code docutils literal"><span class="pre">__init__</span></code> method; inside we call the <code class="code docutils literal"><span class="pre">__init__</span></code> method of <code class="code docutils literal"><span class="pre">Dataset</span></code>. The main function of this method is to extract the data from the tar file to a directory.</p>
-<p>Finally we see some empty functions <code class="code docutils literal"><span class="pre">extract_inputs</span></code> and <code class="code docutils literal"><span class="pre">extract_outputs</span></code>. The role of these functions is to extract input and output vectors <span class="math">\(X, y\)</span> to train the models.</p>
+<p>Simply write your logic for extracting X, y in the above. Your dependency data in <code class="code docutils literal"><span class="pre">files</span></code> will be extracted to a path at <code class="code docutils literal"><span class="pre">self.self.extracted_data_path</span></code>. So if you are extracting data from these files, just open the files from this directory and do what you want with them.</p>
+<p>You might be wondering what the <code class="code docutils literal"><span class="pre">&#64;cachedata</span></code> decorator does. It does two things. First it is a property based decorator so you can access the data at <code class="code docutils literal"><span class="pre">MyImageDataset().X</span></code> and <code class="code docutils literal"><span class="pre">MyImageDataset().y</span></code> respectively. Secondly, it caches the data to RAM upon the first call so the processing logic doesn&#8217;t have to be run twice. If you don&#8217;t want the caching, then just replace this decorator with <code class="code docutils literal"><span class="pre">&#64;property</span></code>.</p>
+<p>For more more Mantra dataset examples, check out the <a class="reference external" href="http://www.github.com/RJT1990/mantra-examples">Mantra examples repository</a>.</p>
 </div>
-<div class="section" id="example-mnist-dataset">
-<h2>🔢 Example: MNIST Dataset<a class="headerlink" href="#example-mnist-dataset" title="Permalink to this headline">¶</a></h2>
-<p>MNIST is a well-known deep learning dataset containing handwritten numbers. We can download the tar.gz file <a class="reference external" href="https://github.com/myleott/mnist_png/blob/master/mnist_png.tar.gz">here</a>.</p>
-<p>Once you have downloaded the dataset, make a new data folder in your atlas project by running the following command, refering the path of the tar file:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas makedata mnist_png --tar-path mnist_png.tar.gz
+<div class="section" id="visualizing-your-data-projects">
+<h2>🖼 Visualizing Your Data Projects<a class="headerlink" href="#visualizing-your-data-projects" title="Permalink to this headline">¶</a></h2>
+<p>Load up the UI and click on a model:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra ui
 </pre></div>
 </div>
-<p>The tar file contains 10 folders for each number, with png images enclosed. We want to extract the paired images and labels. First let&#8217;s quickly example the class variables in <code class="code docutils literal"><span class="pre">data.py</span></code>.</p>
-<ul class="simple">
-<li>We want labels so <code class="code docutils literal"><span class="pre">has_labels</span></code> should be set to True.</li>
-<li><code class="code docutils literal"><span class="pre">data_type</span></code> should be set to &#8216;images&#8217; for some free image processing methods</li>
-</ul>
-<p>At any time we can run the following command to test our new dataset:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas <span class="nb">test</span> mnist_png
+<a class="reference internal image-reference" href="_images/data_project.png"><img alt="_images/data_project.png" class="align-left" src="_images/data_project.png" style="width: 560.0px; height: 426.29999999999995px;" /></a>
+<div style="clear: both;"></div><p>In order to customise how the UI looks for your dataset you can add metadata to your dataset classes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PremierLeagueData</span><span class="p">(</span><span class="n">MantraModel</span><span class="p">):</span>
+
+    <span class="c1"># The Name of the Dataset</span>
+    <span class="n">data_name</span> <span class="o">=</span> <span class="s1">&#39;Premier League Data&#39;</span>
+
+    <span class="c1"># The Dataset Image</span>
+    <span class="n">data_image</span> <span class="o">=</span> <span class="s2">&quot;default.jpeg&quot;</span>
+
+    <span class="c1"># Link to a Notebook</span>
+    <span class="n">data_notebook</span> <span class="o">=</span> <span class="s1">&#39;notebook.ipynb&#39;</span>
+
+    <span class="c1"># Tags for the Model</span>
+    <span class="n">data_tags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;football&#39;</span><span class="p">,</span> <span class="s1">&#39;epl&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>This is optional but it performs some basic checks to see if anything is glaringly wrong. It can also be used to guide your development by telling you what to build next. If we run it on the current class, we are told:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">AssertionError: Your extract_inputs() method returns None.</span>
-
-<span class="go">This probably means you have not written an extract_inputs class method for your Dataset class.</span>
-
-<span class="go">This method should return an np.ndarray containing the input data X.</span>
+</div>
+<div class="section" id="accessing-datasets-in-models">
+<h2>🤖 Accessing Datasets in Models<a class="headerlink" href="#accessing-datasets-in-models" title="Permalink to this headline">¶</a></h2>
+<p>When you define a model you pass in a <code class="code docutils literal"><span class="pre">data</span></code> and <code class="code docutils literal"><span class="pre">task</span></code> parameter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
 </pre></div>
 </div>
-<p>As the test suggests, we need to actually extract some data! So let&#8217;s do that. Below we&#8217;ve filled in the <code class="code docutils literal"><span class="pre">extract_inputs()</span></code> and <code class="code docutils literal"><span class="pre">extract_outputs()</span></code> methods to get the MNIST data. The path where your data is extracted is located at <code class="code docutils literal"><span class="pre">self.data_path</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">scipy.misc</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span><span class="p">,</span><span class="n">OneHotEncoder</span>
-
-<span class="kn">from</span> <span class="nn">atlasml.data.Dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
-
-<span class="k">class</span> <span class="nc">MNIST</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-
-  <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;mnist_png&#39;</span>
-  <span class="n">tar_name</span> <span class="o">=</span> <span class="s1">&#39;mnist_png&#39;</span> <span class="c1"># e.g &#39;example_images&#39; for &#39;example_images.tar.gz&#39;</span>
-  <span class="n">data_type</span> <span class="o">=</span> <span class="s1">&#39;images&#39;</span> <span class="c1"># optional labelling of the datatype for free methods</span>
-  <span class="n">has_labels</span> <span class="o">=</span> <span class="bp">True</span>
-
-  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-  <span class="k">def</span> <span class="nf">extract_folders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-
-    <span class="n">number_folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span> <span class="o">+</span> <span class="n">folder</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
-
-    <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">number_folders</span><span class="p">:</span>
-      <span class="n">folder_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-
-      <span class="n">images</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;*</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_format</span><span class="p">))</span>
-
-      <span class="k">if</span> <span class="n">training</span><span class="p">:</span>
-          <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">training_test_split</span><span class="p">)]</span>
-      <span class="k">else</span><span class="p">:</span>
-          <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">training_test_split</span><span class="p">):]</span>
-
-      <span class="n">image_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">scipy</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span> <span class="o">/</span> <span class="mf">127.5</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
-      <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">folder_number</span>
-
-      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">image_data</span><span class="p">))</span>
-      <span class="k">else</span><span class="p">:</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">image_data</span>
-
-      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">):</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
-      <span class="k">else</span><span class="p">:</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">labels</span>
-
-    <span class="n">enc</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">()</span>
-    <span class="n">enc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">enc</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
-
-  <span class="k">def</span> <span class="nf">extract_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-
-     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">extract_folders</span><span class="p">(</span><span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
-
-     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
-
-  <span class="k">def</span> <span class="nf">extract_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-
-     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">extract_folders</span><span class="p">(</span><span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
-
-     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
-</pre></div>
-</div>
-<p>To test the dataset we can run the test command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> atlas <span class="nb">test</span> mnist_png
-</pre></div>
-</div>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">[+] All tests passed</span>
-</pre></div>
-</div>
-<p>We can also call a built-in <code class="code docutils literal"><span class="pre">sample</span></code> method in a Notebook or Python script, which samples from the <span class="math">\(X\)</span> matrix:</p>
-<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">data.mnist.data</span> <span class="k">import</span> <span class="n">MNIST</span>
-
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mnist_png&#39;</span><span class="p">)</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-</pre></div>
-</div>
-<a class="reference internal image-reference" href="_images/Figure_1.png"><img alt="_images/Figure_1.png" src="_images/Figure_1.png" style="width: 225.0px; height: 168.75px;" /></a>
-<p>We can see that the images coming out of our extraction methods look reasonable!</p>
-</div>
-<div class="section" id="meet-the-classes">
-<h2>🙌 Meet the Classes<a class="headerlink" href="#meet-the-classes" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="Dataset">
-<em class="property">class </em><code class="descname">Dataset</code><span class="sig-paren">(</span><em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <code class="code docutils literal"><span class="pre">Dataset</span></code> class contains methods for extracting, transforming and loading data.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="33%" />
-<col width="46%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>name</td>
-<td>str</td>
-<td>The name of the dataset folder</td>
-</tr>
-<tr class="row-odd"><td>training_test_split</td>
-<td>float (e.g. 0.75)</td>
-<td>Data proportion to use to train (not test)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Attributes</strong></p>
-<dl class="attribute">
-<dt id="Dataset.data_path">
-<code class="descname">data_path</code><a class="headerlink" href="#Dataset.data_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>A str with the path where the data from your tar file is extracted. This is the location from which you&#8217;ll load in your datasets, before processing them into features and labels.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Dataset.X">
-<code class="descname">X</code><a class="headerlink" href="#Dataset.X" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing feature training data. Alternatively, if no train/test split, can represent the entire feature data.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Dataset.y">
-<code class="descname">y</code><a class="headerlink" href="#Dataset.y" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing labelled training data. Alternatively, if no train/test split, can represent the entire labelled data. Some datasets may not have labels, so this may be None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Dataset.X_test">
-<code class="descname">X_test</code><a class="headerlink" href="#Dataset.X_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing feature test data. Alternatively, if no train/test split, can be None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Dataset.y_test">
-<code class="descname">y_test</code><a class="headerlink" href="#Dataset.y_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing labelled test data. Alternatively, if no train/test split, can be None.</p>
-</dd></dl>
-
-<p><strong>Methods</strong></p>
-<dl class="method">
-<dt id="Dataset.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dataset.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a sample from the dataset. If an image dataset, it will plot a random image from <code class="code docutils literal"><span class="pre">self.X</span></code>. For a regular dataset, it will return a random row of data.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Dataset.test">
-<code class="descname">test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dataset.test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs some checks on the class to ensure that data is formatted and calculated correctly.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ImageDataset">
-<em class="property">class </em><code class="descname">ImageDataset</code><span class="sig-paren">(</span><em>name</em>, <em>image_dim</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ImageDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="code docutils literal"><span class="pre">ImageDataset</span></code> contains methods for extracting, transforming and loading image data.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="33%" />
-<col width="46%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>name</td>
-<td>str</td>
-<td>The name of the dataset folder</td>
-</tr>
-<tr class="row-odd"><td>image_dim</td>
-<td>tuple</td>
-<td>The desired image dimension, e.g. (64, 64)</td>
-</tr>
-<tr class="row-even"><td>training_test_split</td>
-<td>float (e.g. 0.75)</td>
-<td>Data proportion to use to train (not test)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Attributes</strong></p>
-<dl class="attribute">
-<dt id="ImageDataset.data_path">
-<code class="descname">data_path</code><a class="headerlink" href="#ImageDataset.data_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>A str with the path where the data from your tar file is extracted. This is the location from which you&#8217;ll load in your datasets, before processing them into features and labels.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.file_format">
-<code class="descname">file_format</code><a class="headerlink" href="#ImageDataset.file_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>A str with the primary image format, e.g. &#8216;.jpg&#8217; or &#8216;.png&#8217;.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.image_dim">
-<code class="descname">image_dim</code><a class="headerlink" href="#ImageDataset.image_dim" title="Permalink to this definition">¶</a></dt>
-<dd><p>A tuple with the dimension of the images, e.g. (64, 64).</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.image_shape">
-<code class="descname">image_shape</code><a class="headerlink" href="#ImageDataset.image_shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>A tuple with the dimension and color dimension of the images, e.g. (64, 64, 4)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.n_color_channels">
-<code class="descname">n_color_channels</code><a class="headerlink" href="#ImageDataset.n_color_channels" title="Permalink to this definition">¶</a></dt>
-<dd><p>A int with the number of image color channels, e.g. 4 for a .png image.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.X">
-<code class="descname">X</code><a class="headerlink" href="#ImageDataset.X" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing feature training data. Alternatively, if no train/test split, can represent the entire feature data.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.y">
-<code class="descname">y</code><a class="headerlink" href="#ImageDataset.y" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing labelled training data. Alternatively, if no train/test split, can represent the entire labelled data. Some datasets may not have labels, so this may be None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.X_test">
-<code class="descname">X_test</code><a class="headerlink" href="#ImageDataset.X_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing feature test data. Alternatively, if no train/test split, can be None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ImageDataset.y_test">
-<code class="descname">y_test</code><a class="headerlink" href="#ImageDataset.y_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing labelled test data. Alternatively, if no train/test split, can be None.</p>
-</dd></dl>
-
-<p><strong>Methods</strong></p>
-<dl class="method">
-<dt id="ImageDataset.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ImageDataset.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a sample from the dataset. If an image dataset, it will plot a random image from <code class="code docutils literal"><span class="pre">self.X</span></code>. For a regular dataset, it will return a random row of data.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ImageDataset.test">
-<code class="descname">test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ImageDataset.test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs some checks on the class to ensure that data is formatted and calculated correctly.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="TabularDataset">
-<em class="property">class </em><code class="descname">TabularDataset</code><span class="sig-paren">(</span><em>name</em>, <em>file_name</em>, <em>target</em>, <em>features</em>, <em>target_index</em>, <em>features_index</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#TabularDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="code docutils literal"><span class="pre">TabularDataset</span></code> contains methods for extracting, transforming and loading image data.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="33%" />
-<col width="46%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>name</td>
-<td>str</td>
-<td>The name of the dataset folder</td>
-</tr>
-<tr class="row-odd"><td>file_name</td>
-<td>str</td>
-<td>The name of the flat file inside the tar</td>
-</tr>
-<tr class="row-even"><td>target</td>
-<td>str</td>
-<td>The column name to extract as the target</td>
-</tr>
-<tr class="row-odd"><td>features</td>
-<td>list of strs</td>
-<td>The columns to extract as the features</td>
-</tr>
-<tr class="row-even"><td>target_index</td>
-<td>int</td>
-<td>The column index of the target</td>
-</tr>
-<tr class="row-odd"><td>features_index</td>
-<td>list of ints</td>
-<td>The column indices to extract as features</td>
-</tr>
-<tr class="row-even"><td>training_test_split</td>
-<td>float (e.g. 0.75)</td>
-<td>Data proportion to use to train (not test)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Attributes</strong></p>
-<dl class="attribute">
-<dt id="TabularDataset.data_path">
-<code class="descname">data_path</code><a class="headerlink" href="#TabularDataset.data_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>A str with the path where the data from your tar file is extracted. This is the location from which you&#8217;ll load in your datasets, before processing them into features and labels.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.file_name">
-<code class="descname">file_name</code><a class="headerlink" href="#TabularDataset.file_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>A str representing name of the flat file inside the tar, e.g. &#8216;mydata.csv&#8217;</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.target">
-<code class="descname">target</code><a class="headerlink" href="#TabularDataset.target" title="Permalink to this definition">¶</a></dt>
-<dd><p>A str representing the column name inside the DataFrame that represents the target (or label)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.features">
-<code class="descname">features</code><a class="headerlink" href="#TabularDataset.features" title="Permalink to this definition">¶</a></dt>
-<dd><p>A list of strs representing the column names inside the DataFrame that represents the features</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.target_index">
-<code class="descname">target_index</code><a class="headerlink" href="#TabularDataset.target_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>A int representing the column index inside the DataFrame that represents the target (or label). May be None if user referred to column names instead of indices.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.features_index">
-<code class="descname">features_index</code><a class="headerlink" href="#TabularDataset.features_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>A list of ints representing the column indices inside the DataFrame that represents the features. May be None if user referred to column names instead of indices.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.df_train">
-<code class="descname">df_train</code><a class="headerlink" href="#TabularDataset.df_train" title="Permalink to this definition">¶</a></dt>
-<dd><p>An pd.DataFrame containing all the training data. Alternatively, if no train/test split, can represent the entire data.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.df_test">
-<code class="descname">df_test</code><a class="headerlink" href="#TabularDataset.df_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>An pd.DataFrame containing all the test data. Alternatively, if no train/test split, can be None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.X">
-<code class="descname">X</code><a class="headerlink" href="#TabularDataset.X" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing feature training data. Alternatively, if no train/test split, can represent the entire feature data.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.y">
-<code class="descname">y</code><a class="headerlink" href="#TabularDataset.y" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing labelled training data. Alternatively, if no train/test split, can represent the entire labelled data. Some datasets may not have labels, so this may be None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.X_test">
-<code class="descname">X_test</code><a class="headerlink" href="#TabularDataset.X_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing feature test data. Alternatively, if no train/test split, can be None.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="TabularDataset.y_test">
-<code class="descname">y_test</code><a class="headerlink" href="#TabularDataset.y_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>An np.ndarray containing labelled test data. Alternatively, if no train/test split, can be None.</p>
-</dd></dl>
-
-<p><strong>Methods</strong></p>
-<dl class="method">
-<dt id="TabularDataset.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TabularDataset.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a sample from the dataset. If an image dataset, it will plot a random image from <code class="code docutils literal"><span class="pre">self.X</span></code>. For a regular dataset, it will return a random row of data.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="TabularDataset.test">
-<code class="descname">test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TabularDataset.test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Performs some checks on the class to ensure that data is formatted and calculated correctly.</p>
-</dd></dl>
-
-</dd></dl>
-
+<p>If you don&#8217;t have a task, then you have no training/test split, and you can simply access the data at <code class="code docutils literal"><span class="pre">self.data.X</span></code> and <code class="code docutils literal"><span class="pre">self.data.y</span></code>.</p>
+<p>If you have a task then you can train your model on the training set explicitly at <code class="code docutils literal"><span class="pre">self.task.X_train</span></code> and <code class="code docutils literal"><span class="pre">self.task.y_train</span></code>.</p>
 </div>
 </div>
 
@@ -771,10 +400,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="models.html" class="btn btn-neutral float-right" title="Models" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="tasks.html" class="btn btn-neutral float-right" title="Defining Tasks with Mantra" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Atlas : A Deep Learning Development Kit" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="models.html" class="btn btn-neutral" title="Making Models with Mantra" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -805,7 +434,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.960',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

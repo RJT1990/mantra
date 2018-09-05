@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Defining Tasks with Mantra &mdash; Mantra 0.960 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Mantra 0.960 documentation" href="index.html"/>
+        <link rel="next" title="Training Models with Mantra" href="training.html"/>
+        <link rel="prev" title="Packaging Datasets with Mantra" href="datasets.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Mantra
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.960
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html">Making Models with Mantra</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Packaging Datasets with Mantra</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Defining Tasks with Mantra</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#make-a-task">🏆 Make a Task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-a-task-and-comparing-models">Using a Task and Comparing Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Models with Mantra</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Mantra</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Defining Tasks with Mantra</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tasks.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="defining-tasks-with-mantra">
+<h1>Defining Tasks with Mantra<a class="headerlink" href="#defining-tasks-with-mantra" title="Permalink to this headline">¶</a></h1>
+<p>In <strong>mantra</strong> a task combines evaluation metrics with definitions of the training/validation/test data. Making a task is like creating your own machine learning competition : here is the training and test set, and here is what your models will be evaluated on.</p>
+<div class="section" id="make-a-task">
+<h2>🏆 Make a Task<a class="headerlink" href="#make-a-task" title="Permalink to this headline">¶</a></h2>
+<p>Go to the root of your project. To make a new model we can use the <code class="code docutils literal"><span class="pre">makemodel</span></code> command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra maketask my_task
+</pre></div>
+</div>
+<p>Our new task folder will be located at <strong>myproject/tasks/my_task</strong>. Inside:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">__init__.py</span>
+<span class="go">  task.py</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="code docutils literal"><span class="pre">task.py</span></code> contains your core task logic</li>
+</ul>
+<p>Let&#8217;s have a look at the <code class="code docutils literal"><span class="pre">task.py</span></code> file and see what the template contains:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mantraml.tasks</span> <span class="kn">import</span> <span class="n">Task</span>
+
+
+<span class="k">class</span> <span class="nc">MyTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s1">&#39;My Example Task&#39;</span>
+    <span class="n">evaluation_name</span> <span class="o">=</span> <span class="s1">&#39;My Evaluation Metric&#39;</span>
+    <span class="n">training_split</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># Return an evaluation metric scalar here. For example, categorical cross entropy on the validation set:</span>
+        <span class="c1"># predictions = model.predict(self.X_val)</span>
+        <span class="c1"># return -np.nansum(self.y_val*np.log(predictions) + (1-self.y_val)*np.log(1-predictions)) / predictions.shape[0]</span>
+        <span class="k">return</span>
+</pre></div>
+</div>
+<p>The <code class="code docutils literal"><span class="pre">training_split</span></code> variable is a tuple that specifies what proportion of the data to use for training, validation and test respectively.</p>
+<p>In the <code class="code docutils literal"><span class="pre">evaluate</span></code> function we take a mantra model as an input and evaluate it according to a logic of our choice. In the commented out notes, we see an example for categorical crossentropy that is referencing the validation set in the task.</p>
+<p>What this code will do is when we run a model for a dataset on a task, at the end of each epoch, we&#8217;ll call the evaluate function to obtain a metric and this will be stored. So whatever you write in this method will be your evaluation metric.</p>
+<p>Let&#8217;s look at a full example for binary crossentropy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="kn">from</span> <span class="nn">mantraml.tasks</span> <span class="kn">import</span> <span class="n">Task</span>
+
+
+<span class="k">class</span> <span class="nc">BinaryCrossEntropy</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class defines a task with binary cross entropy; with a 0.50/0.25/0.25 training/test split</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">task_name</span> <span class="o">=</span> <span class="s1">&#39;Classifier Evaluation&#39;</span>
+    <span class="n">evaluation_name</span> <span class="o">=</span> <span class="s1">&#39;Binary Crossentropy&#39;</span>
+    <span class="n">training_split</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+    <span class="n">secondary_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_val</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y_val</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">predictions</span><span class="p">))</span> <span class="o">/</span> <span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_val</span><span class="p">)</span>
+        <span class="n">predictions</span><span class="p">[</span><span class="n">predictions</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">predictions</span><span class="p">[</span><span class="n">predictions</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_val</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here we have also specified secondary metrics - &#8216;accuracy&#8217; - that will also be recorded during training.</p>
+</div>
+<div class="section" id="using-a-task-and-comparing-models">
+<h2>Using a Task and Comparing Models<a class="headerlink" href="#using-a-task-and-comparing-models" title="Permalink to this headline">¶</a></h2>
+<p>During training, reference the task as follows:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra train my_model --dataset my_data --task my_task
+</pre></div>
+</div>
+<p>Using the UI we can visualize the performance of different models against tasks.</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mantra ui
+</pre></div>
+</div>
+<p>Below we can see a leaderboard for our task:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/tasks.png"><img alt="_images/tasks.png" class="align-left" src="_images/tasks.png" style="width: 560.0px; height: 486.49999999999994px;" /></a>
+</div></blockquote>
+<div style="clear: both;"></div></div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="training.html" class="btn btn-neutral float-right" title="Training Models with Mantra" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="datasets.html" class="btn btn-neutral" title="Packaging Datasets with Mantra" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Robert Stojnic &amp; Ross Taylor.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.960',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

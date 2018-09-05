@@ -404,7 +404,7 @@ class Dataset:
 
         return file_hashes
 
-    def plot_image_sample(sample):
+    def plot_image_sample(self, sample, n):
         """
         Plots an image sample
 
@@ -454,14 +454,14 @@ class Dataset:
         x_sample = self.X[np.random.randint(self.X.shape[0], size=n)]
 
         if self.data_type == 'images':
-            self.plot_image_sample(sample=x_sample)
+            self.plot_image_sample(sample=x_sample, n=n)
         
         elif self.data_type == 'tabular':
             df = pd.DataFrame(x_sample)
 
-            if self.features:
+            if hasattr(self, 'features'):
                 df.columns = self.features
-            if self.features_index:
+            if hasattr(self, 'feature_indices'):
                 df.columns = self.df.columns[self.features_index]
 
             return df

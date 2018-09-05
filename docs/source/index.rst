@@ -6,44 +6,35 @@
 Mantra : A Deep Learning Development Kit
 ##########################################
 
-.. image:: panda.png
-   :width: 280px
-   :align: left
-   :scale: 50 %
+.. image:: demo.gif
+   :width: 600px
+   :scale: 100 %
+   :align: center
 
-**Mantra** is an open-source framework for building deep learning software. We turn your deep learning models into portable objects that can be seamlessly trained, evaluated, deployed, and more in a single step. 
+**Mantra** is a deep learning development kit that manages the various components in an deep learning project, and makes it much easier to do routine tasks like training in the cloud, model monitoring, model benchmarking and more. It works with your favourite deep learning libraries like TensorFlow, PyTorch and Keras.
 
-With Mantra, you can focus your time on creating models rather than annoying engineering tasks. So ... let's get started!
+You might like mantra if:
+
+* You need to structure deep learning projects: versioning, monitoring and storage.
+* You need devops tasks like cloud integration and file syncing taken care for you.
+* You need to evaluate your model against benchmark tasks, e.g. CIFAR-10 accuracy.
 
 
 🌍 Installation
 **********************
 
-Mantra is a Python 3 library. You can install via pip:
+Mantra is a Python that you can install via pip:
 
 .. code-block:: console
 
    $ pip install mantraml
 
-👍 Introducing the ML object
-*******************************
+It is currently tested on Python 3.5-7. 
 
-.. Important::
-   ML object is a key concept introduced in Mantra. An ML object:
-
-   1. Represents a key ML artifacts, such as a dataset or model
-   2. Consists of code, linked data files and metadata
-   3. Takes a single step to track, train, evaluate, monitor, package and share
-
-The goal of ML objects is to cover the whole lifecycle of datasets and models. Mantra is currently in alpha so some parts of the lifecycle might be missing, but will be coming soon!
-
-🚀 Quick start with notebooks
-*******************************
-
-TODO (what could be a good use case here?)
+Additional dependencies you need to install are TensorFlow or PyTorch depending on which framework you want to use. If you want to use the TensorBoard feature of Mantra with PyTorch then you should also install TensorboardX.
 
 
-🚀 Quick start with a Python project
+🚀 Get Started
 ***************************************
 
 Find a directory where you want to create a project and run:
@@ -58,6 +49,8 @@ This will create a **my_project_name** directory with a folder structure like th
 
    data/
    models/
+   tasks/
+   trials/
    __init__.py
    mantra.yml
    README.md
@@ -65,22 +58,29 @@ This will create a **my_project_name** directory with a folder structure like th
 
 - The :code:`data/` folder contains your datasets
 - The :code:`models/` folder contains your models
+- The :code:`tasks/` folder contains your tasks
+- The :code:`trials/` folder contains trial data (data when you train a model)
 - The :code:`mantra.yml` file contains project metadata
 - The :code:`settings.py` file contains project settings
 
-Now we have a project! But what does this mean, I hear you cry? Let's delve in and see what kind of deep learning magic Mantra can do... ✨. 
+Now we have a project! To view the current project through the Mantra UI, execute the following from your project root:
 
+.. code-block:: console
 
-- 💾 `Get started with Mantra datasets <datasets.html>`_ 
+   $ mantra ui
+
+Now that you are ready, it's time to learn how Mantra models and datasets work!
+
 - 🤖 `Get started with Mantra models <models.html>`_
-- 🏃 `Get started with training <training.html>`_
-- 🎁 `Get started with sharing <sharing.html>`_
+- 💾 `Get started with Mantra datasets <datasets.html>`_ 
+- 🏃 `Get started with Mantra tasks <tasks.html>`_
+- 🎁 `Get started with Mantra training <training.html>`_
 
 .. toctree::
    :maxdepth: 2
    :hidden:
 
-   datasets
    models
+   datasets
+   tasks
    training
-   sharing
