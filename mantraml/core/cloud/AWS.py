@@ -322,6 +322,11 @@ class AWS:
 
         os.system(rsync_string)
 
+        if self.existing_instances is False:
+            # sometimes the command below fails due to permissions first round; so we run again to make sure it's synced
+            time.sleep(3)
+            os.system(rsync_string)
+
         print(colored(' \033[1m [+]', 'green') + colored(' Project files moved to instances', 'white'))
 
     def get_training_data_from_s3(self, output, send_weights=False, force=False, execute=True):
@@ -377,10 +382,10 @@ class AWS:
 
             if development_instances:
                 self.instances = self.ec2.instances.filter(InstanceIds=[development_instances[0].id])    
+                self.existing_instances = True
             else:
                 self.create_instance()
-
-            self.existing_instances = True
+                self.existing_instances = False
 
         else: # create new instances
             self.existing_instances = False
