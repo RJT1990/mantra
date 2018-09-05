@@ -185,7 +185,7 @@ class Dataset:
         if args.target_index is not None:
             self.target_index = args.target_index
 
-        if args.image_dim is not None:
+        if args.image_dim is not None and hasattr(self, "n_color_channels"):
             self.image_dim = tuple([int(el) for el in tuple(args.image_dim)])
             self.image_shape = (self.image_dim[0], self.image_dim[1], self.n_color_channels)
 

@@ -519,14 +519,15 @@ def view_trial_tensorboard(request, trial_folder):
     model_trials =  [trial for trial in trials if trial_folder in trial['folder_name']]
 
     if not model_trials:
-        raise Http404("Poll does not exist")
+        raise Http404("Trial does not exist")
     else:
         model_trial = model_trials[0]
         trial_folder_name = model_trials[0]['folder_name']
     
-    subprocess.Popen('pkill -f tensorboard', shell=True, stderr=subprocess.DEVNULL)
+    subprocess.run(['pkill', '-f', 'tensorboard'], stderr=subprocess.DEVNULL)
     path = '%s/trials/%s/logs' % (settings.MANTRA_PROJECT_ROOT, trial_folder_name)
-    subprocess.Popen('tensorboard --logdir=' + path, stdout=open(os.devnull, 'wb'), shell=True)
+    subprocess.Popen(['tensorboard', '--logdir', path], stdout=subprocess.DEVNULL)
+
     time.sleep(2)
 
     return render(request, 'view_trial_tensorboard.html', {})
