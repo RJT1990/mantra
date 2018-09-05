@@ -27,6 +27,8 @@ You might like mantra if:
 
 This is an **very early** alpha release: we'd love your comments on the general concept and whether you find it useful. Issues and pull requests are also welcome. If the project gets enough love, we'll work towards a stable release!
 
+[You can read the docs here](http://mantra.readthedocs.io/en/latest/).
+
 ## Get Started 
 
 🚀 To launch your first Mantra project, execute the following to create a new project directory:
