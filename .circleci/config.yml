@@ -33,14 +33,22 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            pip install torch torchvision
-            pip install tensorflow
-            pip install keras
+            pip install flake8 keras tensorflow torch torchvision
 
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      # Run the units tests from the mantraml library
+      - run:
+          name: run flake8 tests
+          command: |
+            . venv/bin/activate
+            # stop the build if there are Python syntax errors or undefined names
+            flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+            # exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
+            flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
       # Run the units tests from the mantraml library
       - run:
