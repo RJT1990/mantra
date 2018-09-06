@@ -11,7 +11,7 @@ class MyModel(MantraModel):
 
     def __init__(self, data=None, task=None, **kwargs):
 
-        self.data = dask
+        self.data = data
         self.task = task
 
         # Put any configurable hyperparameters here, e.g self.dropout = kwargs.get('dropout', 0.25)
