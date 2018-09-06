@@ -1,36 +1,24 @@
-import tensorflow as tf
-
 from mantraml.models import MantraModel
+from mantraml.models.tensorflow.callbacks import EvaluateTask
 
 
-class MyModel(MantraModel):
-    model_name = "My TensorFlow Model"
-    model_image = "default.jpg"
-    model_notebook = 'notebook.ipynb'
-    model_tags = ['new']
+def test_evaluate_task():
 
-    def __init__(self, data=None, task=None, **kwargs):
+    class MockTask:
 
-        self.data = dask
-        self.task = task
+        def __init__(self):
+            self.evaluation_name = 'Magic Loss'
+            self.secondary_metrics = ['at_a_loss']
 
-        # Put any configurable hyperparameters here, e.g self.dropout = kwargs.get('dropout', 0.25)
-        # Then from command line you can vary, e.g. mantra train my_model --dataset my_data --dropout 0.25
-        # self.batch_size and self.epochs have been configured for you - no need to write these :)
+        def evaluate(self, mantra_model):
+            return 5.0
 
-    def run(self):
-        """
-        Put any code for your model here.
+        def at_a_loss(self, mantra_model):
+            return 10.0
 
-        You will need to use Mantra TensorFlow callbacks to get the results linked with Mantra; see the docs. It's just a few lines
-        of code you need to add - no big changes to what you'd usually write.
-        """
-        
-        return
+    mantra_model = MantraModel()
+    mantra_model.task = MockTask()
 
-    def predict(self, X):
-        """
-        Put code that predicts here (optional - used in conjunction with evaluation scripts)
-        """
-
-        return
+    evaluate_task = EvaluateTask(mantra_model=mantra_model)
+    assert(mantra_model.task.latest_loss == 5.0)
+    assert(mantra_model.task.secondary_metrics_values['at_a_loss'] == 10.0)

@@ -7,19 +7,21 @@ class EvaluateTask:
 
     def __init__(self, mantra_model):
 
-        if mantra_model.task:
-            mantra_model.task.latest_loss = mantra_model.task.evaluate(mantra_model)
+        task = mantra_model.task
 
-            print('%s: %s' % (mantra_model.task.evaluation_name, mantra_model.task.latest_loss))
+        if task:
+            task.latest_loss = task.evaluate(mantra_model)
+
+            print('%s: %s' % (task.evaluation_name, task.latest_loss))
 
             if hasattr(mantra_model.task, 'secondary_metrics'):
 
-                mantra_model.task.secondary_metrics_values = {}
+                task.secondary_metrics_values = {}
 
-                for metric in mantra_model.task.secondary_metrics:
-                    metric_result = getattr(mantra_model.task, metric)(mantra_model)
-                    mantra_model.task.secondary_metrics_values[metric] = float(metric_result)
-                    print('%s: %s' % (metric.capitalize(), metric_result))
+                for met in task.secondary_metrics:
+                    metric_result = getattr(task, met)(mantra_model)
+                    task.secondary_metrics_values[met] = float(metric_result)
+                    print('%s: %s' % (met.capitalize(), metric_result))
 
 
 class ModelCheckpoint:
@@ -49,16 +51,14 @@ class ModelCheckpoint:
             torch.save(torch_model.state_dict(), '%s/trials/%s/checkpoint/model_weights.pt' % (os.getcwd(), mantra_model.trial.trial_folder_name))
 
 
-
 class SavePlot:
 
     def __init__(self, mantra_model, plt, plt_name='default.png'):
+        path = '%s/trials/%s/media' % (os.getcwd(), mantra_model.trial.trial_folder_name)  
 
-        path = '%s/trials/%s/media' % (os.getcwd(), mantra_model.trial.trial_folder_name)
-        
         if not os.path.exists(path):
             os.makedirs(path)
-        
+
         plt.savefig(path + "/%s" % plt_name)
 
 
@@ -66,4 +66,3 @@ class StoreTrial:
 
     def __init__(self, mantra_model, epoch):
         mantra_model.store_trial_data(epoch)
-

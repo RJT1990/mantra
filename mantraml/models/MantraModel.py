@@ -1,12 +1,10 @@
-import os, time, itertools, pickle
+import os
 from termcolor import colored
 
 import lazy_import
 np = lazy_import.lazy_module("numpy")
 yaml = lazy_import.lazy_module("yaml")
 shutil = lazy_import.lazy_module("shutil")
-
-import datetime
 
 from mantraml.core.cloud.AWS import AWS
 
