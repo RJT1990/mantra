@@ -352,6 +352,7 @@ def view_trial_group(request, trial_group_folder):
         if form.is_valid():
 
             trials = Trial.get_trial_contents_as_dicts(settings=settings)
+            trial_contents = Trial.get_trial_contents(settings=settings)
             group_trials =  [group_trial for group_trial in trials if group_trial['trial_group_hash'].startswith(trial_group_folder)]
 
             trial_hash = form.cleaned_data['trial_hash']
