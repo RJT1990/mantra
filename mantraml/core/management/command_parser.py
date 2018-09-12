@@ -10,6 +10,7 @@ from mantraml.core.management.commands.testdata import TestDataCmd
 from mantraml.core.management.commands.train import TrainCmd
 from mantraml.core.management.commands.ui import UICmd
 from mantraml.core.management.commands.launch import LaunchCmd
+from mantraml.core.management.commands.upload import UploadCmd
 
 def cmd_line():
     """
@@ -32,6 +33,7 @@ def cmd_line():
         "testdata": TestDataCmd(),
         "train": TrainCmd(),
         "import": ImportCmd(),
+        "upload": UploadCmd(),
     }
     subparsers = parser.add_subparsers(help='sub-command help')
 
