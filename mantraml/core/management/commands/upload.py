@@ -75,9 +75,24 @@ class UploadCmd(BaseCommand):
         # 3) Send the request to the server to see which files need to be uploaded
         full_url = urljoin(args.remote,  "/api/artefacts_diff")
         json_payload = json.dumps({"all_hashes": all_hashes})
-        diff = requests.post(full_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
+        diff_response = requests.post(full_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
 
-        print(json.loads(diff.text))
+        diff = json.loads(diff_response.json())["diff_hashes"]
+
+        if diff:
+            upload_url_base = urljoin(args.remote, "api/upload_file/")
+            for artefact in diff:
+                for k,v in artefact["file_hashes"].items():
+                    files = {'file': open(v["path"], 'rb')}
+
+                    h = {"Content-Disposition": "attachment; filename=%s" % v["path"]}
+                    r = requests.put(upload_url_base+v["path"], files=files, headers=h,
+                                     auth=(mantrahub_user, mantrahub_pass))
+                    print(r.text)
+
+            commit_url = urljoin(args.remote, "api/artefacts_diff_commit")
+            json_payload = json.dumps({"all_hashes": all_hashes, "diff_hashes": diff})
+            commit_response = requests.post(commit_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
 
 
 
