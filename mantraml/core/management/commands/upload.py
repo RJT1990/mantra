@@ -36,7 +36,10 @@ class UploadCmd(BaseCommand):
             all_models = find_artefacts("", "models", "model.py")
             all_datasets = find_artefacts("", "data", "data.py")
             all_tasks = find_artefacts("", "tasks", "task.py")
-            all_results = [str(p) for p in Path("results").iterdir() if p.is_dir()]
+            if Path("results").exists():
+                all_results = [str(p) for p in Path("results").iterdir() if p.is_dir()]
+            else:
+                all_results = []
             all_artefacts = list(itertools.chain(all_models, all_datasets, all_tasks, all_results))
 
         else:
