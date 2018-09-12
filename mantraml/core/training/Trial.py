@@ -144,6 +144,7 @@ class Trial:
         metadata['data_name'] = self.dataset_name 
         metadata['model_hash'] = self.model_hash
         metadata['data_hash'] = self.data_hash
+        metadata['argument_cmds'] = self.arg_str
 
         if self.task_name is not None:
             metadata['task_name'] = self.task_name
@@ -154,13 +155,13 @@ class Trial:
 
         metadata['hyperparameters'] = self.get_hyperparameter_dict(metadata_dict=metadata)
 
-        metadata['timestamp'] = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
+        metadata['start_timestamp'] = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
         metadata['trial_group_hash'] = MantraHashed.get_256_hash_from_string(metadata['model_hash'] + metadata['data_hash'] + metadata['task_hash'])
-        metadata['trial_hash'] = MantraHashed.get_256_hash_from_string(metadata['model_hash'] + metadata['data_hash'] + metadata['task_hash'] + str(metadata['timestamp']))
+        metadata['trial_hash'] = MantraHashed.get_256_hash_from_string(metadata['model_hash'] + metadata['data_hash'] + metadata['task_hash'] + str(metadata['start_timestamp']))
 
-        self.trial_folder_name = '%s_%s_%s_%s' % (metadata['timestamp'], metadata['model_name'], metadata['data_name'], metadata['trial_hash'][:SHORT_HASH_INT])
+        self.trial_folder_name = '%s_%s_%s_%s' % (metadata['start_timestamp'], metadata['model_name'], metadata['data_name'], metadata['trial_hash'][:SHORT_HASH_INT])
         self.yaml_content = yaml.dump(metadata, default_flow_style=False)
-        self.log_file_contents = '%s %s %s %s %s %s %s %s %s %s\n' % (metadata['timestamp'], self.trial_folder_name, metadata['trial_hash'], 
+        self.log_file_contents = '%s %s %s %s %s %s %s %s %s %s\n' % (metadata['start_timestamp'], self.trial_folder_name, metadata['trial_hash'],
             metadata['trial_group_hash'],
             metadata['model_name'],
             metadata['model_hash'],

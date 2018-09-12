@@ -517,8 +517,8 @@ class AWS:
         self.export_project_files_to_instances()
         self.send_sh_file_to_instances(args=args, arg_str=self.trial.arg_str)
         self.write_metadata()
-        self.s3_to_servers(args)
         self.export_data_to_s3(args)
+        self.s3_to_servers(args)
 
     def setup_aws_credentials(self, execute=True):
         """

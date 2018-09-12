@@ -490,6 +490,25 @@ body {
 }
 
 
+.repo-menu .repo-menu-link .tensorboard {
+    color: #F77C00;
+}
+
+.repo-menu .repo-menu-link .tensorboard a {
+    color: #F77C00;
+    font-weight: bold;
+}
+
+.repo-menu .repo-menu-link .tensorboard ion-icon {
+    color: #F77C00;
+}
+
+.tensorboard ion-icon {
+    color: #F77C00;
+}
+
+
+
 /** Main content for the repository summary */
 
 .content iframe {
@@ -530,10 +549,65 @@ body {
     margin-bottom: 15px;
 }
 
+.content .content-box h2 {
+    font-family: 'Source Sans Pro';
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.content .content-box h3 {
+    font-family: 'Source Sans Pro';
+    font-size: 29px;
+    margin-bottom: 15px;
+}
+
+.content .content-box h4 {
+    font-family: 'Source Sans Pro';
+    font-size: 26px;
+    margin-bottom: 15px;
+}
+
+.content .content-box h5 {
+    font-family: 'Source Sans Pro';
+    font-size: 23px;
+    margin-bottom: 15px;
+}
+
+.content .content-box h6 {
+    font-family: 'Source Sans Pro';
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
 .content .content-box p {
     font-family: 'Source Sans Pro';
     font-size: 20px;
     font-weight: none;
+}
+
+.content .content-box .results-readme img {
+    width: 25%;
+}
+
+.content .content-box .trial-summary p {
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.content .content-box .trial-summary .btn-success {
+    position: relative;
+    float: right;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-color: #ddd;
+    background-color: #5791ff;
+}
+
+.content .content-box .trial-summary .btn-success:hover {
+    background-color: #5791ff;
+    cursor: pointer;
 }
 
 .content .content-box .content-library {
@@ -924,7 +998,6 @@ body {
     margin-bottom: 15px;
 }
 
-
 .content .content-data .content-data-header ion-icon {
     font-size: 16px;
     margin-right: 5px;
@@ -1143,6 +1216,7 @@ body {
   color: #007bff;
   letter-spacing: 1px;
   font-weight: bold;
+    background-color: #FFFFFF;
 }
 
 
@@ -1350,6 +1424,15 @@ body {
 
 /* Trial Formatting */
 
+.trial-content img {
+=    width:100%; height:auto;
+}
+
+.trial-content td .component-name {
+    color: #000000;
+    font-weight: bold;
+}
+
 .trial-content .col-md-4 {
     text-align: center;
 }
@@ -1359,6 +1442,81 @@ body {
     max-width: 100%;
     max-height: 235px;
 }
+
+.trial-content table {
+    margin-bottom: 10px;
+}
+
+.trial-content th {
+    font-family: 'Source Sans Pro';
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.trial-content td {
+    padding: .75rem;
+    vertical-align: center;
+}
+
+.trial-content td img {
+    margin-right: 15px;
+}
+
+
+.trial-content td:hover {
+    cursor: pointer;
+}
+
+.trial-content tr:hover {
+    background-color: #f8f8f8;
+}
+
+.trial-content td img {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+}
+
+.trial-content img {
+    width: 100%;
+}
+
+.trial-content .em {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 3px;
+    margin-bottom: 3px;
+}
+
+.trial-content td {
+    font-family: 'Source Sans Pro';
+    font-size: 16px;
+}
+
+.trial-content td .em {
+    margin-right: 15px;
+}
+
+
+
+.trial-content td .hash {
+    font-size: 14px;
+    width: 70px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    }
+
+.trial-content td .hash:hover{
+    overflow: visible;
+    white-space: normal;
+    width: auto;
+    }
+
 
 
 .trial-header {
@@ -1521,6 +1679,20 @@ body {
     border-radius: 50%;
 }
 
+.trials-hold td .model-name {
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.trials-hold td .model-name a {
+    color: #000000;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.trials-hold td .model-name img {
+    margin-right: 15px;
+}
 
 /* Models Page */
 
@@ -1585,4 +1757,16 @@ body {
     width: 30px;
     height: 30px;
     margin-right: 5px;
+}
+
+.media-preview img {
+    cursor: zoom-in;
+}
+
+.results-form {
+    font-family: 'Source Sans Pro';
+}
+
+.create-results-body {
+    font-family: 'Source Sans Pro';
 }

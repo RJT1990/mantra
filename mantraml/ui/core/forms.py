@@ -14,3 +14,7 @@ class StopInstanceForm(forms.Form):
 
 class TerminateInstanceForm(forms.Form):
     terminate_instance_id = forms.CharField(widget = forms.HiddenInput(), label='terminate_instance_id', required=False)
+
+class CreateResultsForm(forms.Form):
+    results_name = forms.CharField(label='Results Page name', initial="My Deep Learning Project", max_length=64, required=True)
+    folder_name = forms.CharField(label='Folder name', initial="my_project", max_length=64, required=True)

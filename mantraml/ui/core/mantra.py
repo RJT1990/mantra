@@ -48,7 +48,7 @@ class Mantra:
         return cls.config
 
     @staticmethod
-    def find_latest_trial_media(trial_folder):
+    def find_latest_trial_media(trial_folder, result=False):
         """
         For a trial folder, finds the latest trial media (e.g. images)
         """
@@ -56,10 +56,17 @@ class Mantra:
         media_files = []
 
         for ext in ['png', 'jpg', 'jpeg']:
-            media_files = media_files + glob.glob('%s/trials/%s/media/*%s' % (settings.MANTRA_PROJECT_ROOT, trial_folder, ext))
+            if result:
+                directory = 'results'
+            else:
+                directory = 'trials'
+            media_files = media_files + glob.glob('%s/%s/%s/media/*%s' % (settings.MANTRA_PROJECT_ROOT, directory, trial_folder, ext))
 
         try:
-            return max(media_files, key=os.path.getctime).split(settings.MANTRA_PROJECT_ROOT + '/')[1]
+            media_files = sorted(media_files, key=os.path.getctime, reverse=True)
+            return [{'date': datetime.datetime.utcfromtimestamp(int(os.path.getmtime(media_file))),
+                     'file': media_file.split(settings.MANTRA_PROJECT_ROOT + '/')[1],
+                     'name': media_file.split('/')[-1]} for media_file in media_files]
         except IndexError:
             return None
         except ValueError:
@@ -352,6 +359,57 @@ class Mantra:
 
         return metadata
 
+    @classmethod
+    def find_results_metadata(cls, results_name):
+        """
+        Finds results metadata
+        """
+
+        if results_name == 'none':
+            return {'name': None, 'folder_name': results_name}
+
+        try:
+            metadata = yaml.load(open('%s/results/%s/result.yml' % (settings.MANTRA_PROJECT_ROOT, results_name)))
+        except FileNotFoundError:
+            return {'name': None, 'folder_name': results_name}
+
+        metadata['folder_name'] = results_name
+        metadata['trial_metadata'] = yaml.load(open('%s/results/%s/trial_metadata.yml' % (settings.MANTRA_PROJECT_ROOT, results_name)))
+        metadata['model_metadata'] = cls.find_model_metadata(metadata['trial_metadata']['model_name'])
+        metadata['data_metadata'] = cls.find_dataset_metadata(metadata['trial_metadata']['data_name'])
+
+        try:
+            metadata['latest_media'] = cls.find_latest_trial_media(results_name, result=True)[0]
+        except IndexError:
+            metadata['latest_media'] = None
+
+        return metadata
+
+    @classmethod
+    def find_trials_metadata(cls, trial_folder_name):
+        """
+        Finds results metadata
+        """
+
+        if trial_folder_name == 'none':
+            return {'name': None, 'folder_name': trial_folder_name}
+
+        try:
+            metadata = yaml.load(open('%s/trials/%s/trial_metadata.yml' % (settings.MANTRA_PROJECT_ROOT, trial_folder_name)))
+        except FileNotFoundError:
+            return {'name': None, 'folder_name': trial_folder_name}
+
+        metadata['folder_name'] = trial_folder_name
+        metadata['model_metadata'] = cls.find_model_metadata(metadata['model_name'])
+        metadata['data_metadata'] = cls.find_dataset_metadata(metadata['data_name'])
+
+        try:
+            metadata['latest_media'] = cls.find_latest_trial_media(trial_folder_name, result=False)[0]
+        except IndexError:
+            metadata['latest_media'] = None
+
+        return metadata
+
     @staticmethod
     def remove_ignored_files(blobs):
         """
@@ -396,8 +454,6 @@ class Mantra:
     def get_datasets(cls, limit=True):
         """
         List the datasets associated with the current Mantra project
-
-        :return:
         """
         config = cls.get_config()
 
@@ -417,3 +473,53 @@ class Mantra:
 
         return [{
         'last_updated': cls.format_timestamp_data(dataset_time_dict[dataset_name]), **cls.find_dataset_metadata(dataset_name)} for dataset_name in latest_datasets]
+
+    @classmethod
+    def get_results(cls, limit=True):
+        """
+        List the results associated with the current Mantra project (gets the most recent)
+        """
+
+        results_dir = os.path.join(settings.MANTRA_PROJECT_ROOT, 'results')
+
+        if os.path.isdir(results_dir):
+            results_list = [o for o in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, o))]
+        else:
+            results_list = []
+
+        result_time_dict = {results_name: os.path.getmtime('%s/%s' % (results_dir, results_name)) for results_name in results_list}
+
+        if limit:
+            latest_results = sorted(result_time_dict, key=result_time_dict.get, reverse=True)[:NO_OF_ARTEFACTS]
+        else:
+            latest_results = sorted(result_time_dict, key=result_time_dict.get, reverse=True)
+
+        sys.path.append(settings.MANTRA_PROJECT_ROOT)
+
+        return [{
+        'last_updated': cls.format_timestamp_data(result_time_dict[results_name]), **cls.find_results_metadata(results_name)} for results_name in latest_results]
+
+    @classmethod
+    def get_trials(cls, limit=True):
+        """
+        List the results associated with the current Mantra project (gets the most recent)
+        """
+
+        trials_dir = os.path.join(settings.MANTRA_PROJECT_ROOT, 'trials')
+
+        if os.path.isdir(trials_dir):
+            trials_list = [o for o in os.listdir(trials_dir) if os.path.isdir(os.path.join(trials_dir, o))]
+        else:
+            trials_list = []
+
+        trial_time_dict = {trial_folder_name: os.path.getmtime('%s/%s' % (trials_dir, trial_folder_name)) for trial_folder_name in trials_list}
+
+        if limit:
+            latest_trials = sorted(trial_time_dict, key=trial_time_dict.get, reverse=True)[:NO_OF_ARTEFACTS]
+        else:
+            latest_trials = sorted(trial_time_dict, key=trial_time_dict.get, reverse=True)
+
+        sys.path.append(settings.MANTRA_PROJECT_ROOT)
+
+        return [{
+        'last_updated': cls.format_timestamp_data(trial_time_dict[trial_folder_name]), **cls.find_trials_metadata(trial_folder_name)} for trial_folder_name in latest_trials]

@@ -8,6 +8,43 @@
 {% block contents %}
 
 
+      <div class="row title-row">
+        <div style="float: left;" class="col-lg">
+        <h4>Your Results</h4>
+        </div>
+        <div class="col-lg-4">
+
+          <div style="float: right;" class="btn-group btn-group-sm pull-right" role="group" aria-label="Basic example">
+
+          </div>
+        </div>
+      </div>
+
+
+
+<div class="card-deck">
+
+  {% for result in results %}
+  <a href="/result/{{ result.folder_name }}">
+  <div class="card">
+    <div class="artefact-type">
+      Private
+    </div>
+
+    <img class="card-img-top" src="static/{{ result.latest_media.file }}" alt="Card image cap">
+
+    <div class="card-body">
+      <h6 class="card-title">{{ result.name }}</h6>
+      <p class="card-text"><small class="text-muted">{{ result.last_updated }}</small></p>
+    </div>
+  </div>
+</a>
+  {% endfor %}
+
+</div>
+
+<br>
+
 
       <div class="row title-row">
         <div style="float: left;" class="col-lg">

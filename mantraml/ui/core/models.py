@@ -93,7 +93,7 @@ class Cloud:
 
 class Trial:
 
-    column_names = ['timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
+    column_names = ['start_timestamp', 'folder_name', 'trial_hash', 'trial_group_hash', 'model_name', 'model_hash', 'data_name', 'data_hash', 'task_name', 'task_hash']
 
     @classmethod
     def get_trial_contents(cls, settings):
@@ -156,8 +156,11 @@ class Trial:
         new_information = '\n'.join([" ".join(content) for content in new_contents]) + '\n'
 
         for trial_folder in trial_folder_names:
-            shutil.rmtree('%s/%s/%s' % (settings.MANTRA_PROJECT_ROOT, 'trials', trial_folder)) # delete the trial folder
-        
+            try:
+                shutil.rmtree('%s/%s/%s' % (settings.MANTRA_PROJECT_ROOT, 'trials', trial_folder)) # delete the trial folder
+            except FileNotFoundError:
+                continue # if it's not there, it's already deleted, so we can proceed to try to solely remove from TRIALS file
+
         with open("%s/.mantra/TRIALS" % settings.MANTRA_PROJECT_ROOT, "w") as trial_file:
             trial_file.write(new_information)
 
@@ -268,7 +271,7 @@ class Trial:
 
         yaml_content = Trial.get_trial_group_name_dict(settings=settings)
 
-        latest_trial_time = datetime.datetime.utcfromtimestamp(int(str(max([trial['timestamp'] for trial in trial_groups]))))
+        latest_trial_time = datetime.datetime.utcfromtimestamp(int(str(max([trial['start_timestamp'] for trial in trial_groups]))))
 
         trial_group_metadata = {}
 

@@ -1,3 +1,4 @@
+import datetime
 import os
 from termcolor import colored
 
@@ -81,7 +82,7 @@ class MantraModel:
         metadata_location = '%s/%s' % (os.getcwd(), METADATA_FILE_NAME)
         metadata = yaml.load(open(metadata_location, 'r'))
 
-        self.trial.trial_folder_name = '%s_%s_%s_%s' % (metadata['timestamp'], metadata['model_name'], metadata['data_name'], metadata['trial_hash'][:SHORT_HASH_INT])
+        self.trial.trial_folder_name = '%s_%s_%s_%s' % (metadata['start_timestamp'], metadata['model_name'], metadata['data_name'], metadata['trial_hash'][:SHORT_HASH_INT])
         trial_location = os.getcwd() + '/trials/%s' % self.trial.trial_folder_name
 
         if not os.path.isdir('%s/%s' % (os.getcwd(), 'trials')):
@@ -140,10 +141,14 @@ class MantraModel:
 
         if epoch + 1 == self.epochs:
             yaml_content['training_finished'] = True
+            yaml_content['end_timestamp'] = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
         else:
             yaml_content['training_finished'] = False
 
         yaml_content['current_epoch'] = epoch + 1
+
+        if 'validation_loss_history' not in yaml_content:
+            yaml_content['validation_loss_history'] = []
 
         if self.task:
             if self.save_best_only:
@@ -157,6 +162,8 @@ class MantraModel:
         
                 if hasattr(self.task, 'secondary_metrics'):
                     yaml_content['secondary_metrics'] = self.task.secondary_metrics_values
+
+            yaml_content['validation_loss_history'].append(float(self.task.latest_loss))
 
         return yaml.dump(yaml_content, default_flow_style=False)
 

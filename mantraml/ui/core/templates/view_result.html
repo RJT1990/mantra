@@ -9,8 +9,8 @@
   <!-- Repo title and header -->
   <div class="row" style="padding-top:30px;">
     <div class="col-md-10">
-      <div class="main-header">Trial {{ model_trial.trial_hash |slice:':6' }}</div>
-      <div class="section-repo"><i class="em em-rocket"></i> <a href='/trials'>trials</a> / <a href=''>{{ model_trial.trial_hash |slice:':6' }}</a></div>
+      <div class="main-header">My Result</div>
+        &nbsp; A little demo of my work
     </div>
     <div class="col-md-2">
       <div class="repo-summary">
@@ -30,7 +30,7 @@
   <!-- Repo navigation -->
   <ul class="nav nav-tabs repo-menu" id="profileTabs" role="tablist">
     <li class="nav-item repo-menu-link">
-      <a class="nav-link active" id="summary-tab" data-toggle="tab" href="#repository" role="tab" aria-controls="repository" aria-selected="true">
+      <a class="nav-link active" id="readme-tab" data-toggle="tab" href="#readme" role="tab" aria-controls="readme" aria-selected="true">
         <ion-icon name="home"></ion-icon> Summary
       </a>
     </li>
@@ -42,6 +42,13 @@
       </a>
     </li>
       {% endif %}
+
+
+      <li class="nav-item repo-menu-link">
+      <a class="nav-link" id="summary-tab" data-toggle="tab" href="#repository" role="tab" aria-controls="repository" aria-selected="true">
+        <ion-icon name="cog"></ion-icon> Details
+      </a>
+    </li>
 
     <li class="nav-item repo-menu-link">
         <div class="tensorboard">
@@ -57,7 +64,40 @@
 
 
   <div class="tab-content" id="profileTabsContent">
-    <div class="tab-pane show active" id="repository" role="tabpanel" aria-labelledby="summary-tab">
+
+          <div class="tab-pane show active" id="readme" role="tabpanel" aria-labelledby="readme-tab">
+
+      <!-- Repository content -->
+      <div class="row content">
+        <div class="col-md-12">
+          <div class="content-box">
+            <div class="results-readme">
+            <script type="text/javascript" async
+              src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+            </script>
+
+            {% if readme_exists %}
+              {% markdownifyshowcase readme_content result_folder %}
+            {% else %}
+            <div class="no-readme">
+            <p>You have no README <i class="em em-hushed"></i></p>
+
+            <p>Help others understand your machine learning project by adding one</p>
+
+           <button type="button" id="cloneDropdown" class="btn btn-success">
+               <b>Add a README</b>
+            </button>
+
+            </div>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tab-pane" id="repository" role="tabpanel" aria-labelledby="summary-tab">
 
       <!-- Repository content -->
       <div class="row content">
@@ -69,43 +109,6 @@
               src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
             </script>
 
-        <div class="modal fade" id="modalShareResults" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <h5 class="modal-title"><i class="em em-boom"></i> Create a Results Page</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body mx-3 create-results-body">
-                            Showcase your results so that they can be shared with others.<p>
-                              <form action="" method="post">
-                                  {% csrf_token %}
-
-                              {% for field in create_results_form.visible_fields %}
-                                 <div class="md-form mb-5 results-form">
-                                  {{ field.label_tag }}<br>
-                                  {{ field }}
-                                  {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                  {% endif %}
-                                 </div>
-                              {% endfor %}
-
-
-                    </p>
-
-                    </div>
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="submit"  class="btn btn-primary">Create</button>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalShareResults">Share Results</button>
                       {% if form_error_message %} <p>{{ form_error_message}}</p> {% endif %}
             <h1>Summary</h1>
             <br>

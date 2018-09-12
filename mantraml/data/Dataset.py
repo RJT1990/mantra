@@ -1,3 +1,4 @@
+import glob
 import inspect
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,6 +6,7 @@ import pandas as pd
 import os
 import tarfile
 import shutil
+import scipy.misc
 
 from collections import Counter
 
@@ -301,6 +303,10 @@ class Dataset:
             for file in self.files:
                 file_path = '%s/%s' % (self.raw_data_path, file)
                 shutil.copy(file_path, self.extracted_data_path)
+
+            if self.data_type == 'images':
+                self.adjust_color_channels()
+
             return
 
         hash_file = open(self.hash_location, 'r')
@@ -310,13 +316,27 @@ class Dataset:
         # If the hash of dependency files hasn't changed, we are good to go; else we copy the new files over
 
         if old_hash == final_hash:
+            if self.data_type == 'images':
+                self.adjust_color_channels()
             return
-
         else:
-
             for file in self.files:
                 file_path = '%s/%s' % (self.raw_data_path, file)
                 shutil.copy(file_path, self.extracted_data_path)
+
+            if self.data_type == 'images':
+                self.adjust_color_channels()
+
+    def adjust_color_channels(self):
+        """
+        This method adjusts the number of color channels based on extracted images
+        """
+
+        sample_images = glob.glob(os.path.join(self.extracted_data_path, '*%s' % self.file_format))[:100]
+        color_channels = [scipy.misc.imread(image).shape[2] for image in sample_images]
+        color_count = Counter(color_channels)
+        self.n_color_channels = color_count.most_common(1)[0][0]
+        self.image_shape = (self.image_shape[0], self.image_shape[1], self.n_color_channels)
 
     def extract_tar_file(self, file):
         """

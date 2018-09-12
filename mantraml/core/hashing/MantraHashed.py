@@ -283,10 +283,18 @@ class MantraHashed(object):
                 f.write(zlib.compress(bytes(item_value['content'].encode('ascii'))))
                 f.close()
             else:
-                content = zlib.compress(open(item_key, "rb").read())
-                f = open(item_loc, "wb")
-                f.write(content)
-                f.close()
+                try:
+                    content = zlib.compress(open(item_key, "rb").read())
+                    f = open(item_loc, "wb")
+                    f.write(content)
+                    f.close()       
+                except:
+                    # TODO: https://bugs.python.org/issue27130 : need a formal workaround for file size > 2GB
+                    print('Warning: File Too Big to Compress')
+                    content = 'toobigtofail'
+                    f = open(item_loc, "w")
+                    f.write(content)
+                    f.close() 
 
         unix_ts = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
         f = open('%s/%s' % (cwd, '.mantra/%s' % artefact_type), "a")
