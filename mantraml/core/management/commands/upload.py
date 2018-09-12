@@ -3,11 +3,16 @@ import shutil
 import uuid
 import subprocess
 import mantraml
+from mantraml.core.hashing.MantraHashed import MantraHashed
 from mantraml.core.management.commands.BaseCommand import BaseCommand
 import tempfile
 from pathlib import Path
 import sys
 import getpass
+import itertools
+import requests
+from urllib.parse import urljoin
+import json
 
 from mantraml.core.management.commands.importcmd import find_artefacts
 
@@ -15,6 +20,7 @@ from mantraml.core.management.commands.importcmd import find_artefacts
 class UploadCmd(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("artefacts", type=str, nargs="*")
+        parser.add_argument("--remote", type=str, default="https://mantrahub.io")
         return parser
 
     def handle(self, args, unknown):
@@ -31,14 +37,29 @@ class UploadCmd(BaseCommand):
             all_datasets = find_artefacts("", "data", "data.py")
             all_tasks = find_artefacts("", "tasks", "task.py")
             all_results = [str(p) for p in Path("results").iterdir() if p.is_dir()]
+            all_artefacts = list(itertools.chain(all_models, all_datasets, all_tasks, all_results))
 
         else:
-            all_models = [a for a in args.artefacts if a.startswith("models/")]
-            all_datasets = [a for a in args.artefacts if a.startswith("data/")]
-            all_tasks = [a for a in args.artefacts if a.startswith("tasks/")]
-            all_results = [a for a in args.artefacts if a.startswith("results/")]
+            all_artefacts = args.artefacts
+            missing_artefacts = [a for a in all_artefacts if not Path(a).exists()]
+            if len(missing_artefacts) > 0:
+                print("ERROR: The following artefact(s) are missing: `%s`" % missing_artefacts)
+                sys.exit(1)
 
         # TODO: Results will have dependencies, make sure those are taken into account
+
+        # 1) Get the hashes for all the files and dependencies
+
+        all_hashes = []
+        for artefact_dir in all_artefacts:
+            artefact_hash, file_hashes = MantraHashed.get_folder_hash(artefact_dir)
+            all_hashes.append({
+                "artefact_dir": artefact_dir,
+                "artefact_hash": artefact_hash,
+                "file_hashes": file_hashes,
+            })
+
+        # 2) Get the credentials
 
         # prompt for username and password
         mantrahub_user = input("Your mantrahub username: ")
@@ -48,9 +69,15 @@ class UploadCmd(BaseCommand):
 
         mantrahub_pass = getpass.getpass("Your mantrahub password: ")
 
-        # Now upload all the artefacts
+        # 3) Send the request to the server to see which files need to be uploaded
+        full_url = urljoin(args.remote,  "/api/artefacts_diff")
+        json_payload = json.dumps({"all_hashes": all_hashes})
+        diff = requests.post(full_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
 
-        # 1) Get the hashes for all the files and dependencies
+        print(json.loads(diff.text))
+
+
+
 
 
 
