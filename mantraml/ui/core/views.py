@@ -14,13 +14,13 @@ from django.contrib import admin
 from django.conf import settings
 from django.template.context_processors import csrf
 from django.http import Http404, HttpResponse
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 
 # Create your views here.
 from core.mantra import Mantra
 from core.code import CodeBase
 
-from .consts import MANTRA_DEVELOPMENT_TAG_NAME
+from .consts import MANTRA_DEVELOPMENT_TAG_NAME, DEFAULT_RESULT_README
 from .forms import DeleteTrialForm, DeleteTrialGroupForm, StartInstanceForm, StopInstanceForm, TerminateInstanceForm, CreateResultsForm
 from .models import Artefact, Cloud, Task, Trial
 
@@ -491,10 +491,19 @@ def view_result(request, result_folder):
     This view shows a result of a trial, the model, the data etc
     """
 
+    result_metadata = yaml.load(open('%s/results/%s/result.yml' % (settings.MANTRA_PROJECT_ROOT, result_folder)))
+
     readme_content, readme_exists = CodeBase.get_readme('%s/results/%s' % (settings.MANTRA_PROJECT_ROOT, result_folder))
 
     context = {'readme_exists': readme_exists, 'readme_content': readme_content}
     context['latest_media'] = Mantra.find_latest_trial_media(result_folder, result=True)
+
+    context['description'] = result_metadata['description']
+
+    if '.' in context['description']:
+        context['description'] = context['description'].split('.')[0]
+
+    context['name'] = result_metadata['name']
 
     trial_metadata = yaml.load(open('%s/results/%s/trial_metadata.yml' % (settings.MANTRA_PROJECT_ROOT, result_folder)))
 
@@ -570,18 +579,6 @@ def view_trial(request, trial_folder):
         model_trial = model_trials[0]
         trial_folder_name = model_trials[0]['folder_name']
 
-    posted_form = CreateResultsForm(request.POST)
-    form_error_message = None
-
-    if posted_form.is_valid():
-        if posted_form.cleaned_data['folder_name'] in os.listdir('%s/results' % settings.MANTRA_PROJECT_ROOT):
-            form_error_message = 'Folder already exists! Choose another folder name'
-
-        else:
-            trial_location = '%s/trials/%s' % (settings.MANTRA_PROJECT_ROOT, trial_folder_name)
-            results_location = '%s/results/%s' % (settings.MANTRA_PROJECT_ROOT, posted_form.cleaned_data['folder_name'])
-            shutil.copytree(trial_location, results_location, ignore=shutil.ignore_patterns('*.pyc', '__pycache__*'))
-
     context = {}
     context['latest_media'] = Mantra.find_latest_trial_media(trial_folder_name)
 
@@ -594,10 +591,7 @@ def view_trial(request, trial_folder):
     context['data'].update(Mantra.find_dataset_metadata(model_trial['data_name']))
     context['task'] = Mantra.find_task_metadata(model_trial['task_name'])
 
-    context['create_results_form'] = CreateResultsForm()
-    context['form_error_message'] = form_error_message
-
-    # Obtain the hyperparameters
+    # Get model trial metadata
 
     model_trial.update({'start_time': datetime.datetime.utcfromtimestamp(int(str(model_trial['start_timestamp'])))})
 
@@ -613,6 +607,55 @@ def view_trial(request, trial_folder):
 
     except:  # can't load yaml
         model_trial['metadata'] = {}
+
+    # Process get results form
+
+    posted_form = CreateResultsForm(request.POST)
+    form_error_message = None
+
+    if posted_form.is_valid():
+        if posted_form.cleaned_data['folder_name'] in os.listdir('%s/results' % settings.MANTRA_PROJECT_ROOT):
+            form_error_message = 'Folder already exists! Choose another folder name'
+
+        else:
+            trial_location = '%s/trials/%s' % (settings.MANTRA_PROJECT_ROOT, trial_folder_name)
+            results_location = '%s/results/%s' % (settings.MANTRA_PROJECT_ROOT, posted_form.cleaned_data['folder_name'])
+            shutil.copytree(trial_location, results_location, ignore=shutil.ignore_patterns('*.pyc', '__pycache__*'))
+            result_dict = {}
+            result_dict['name'] = posted_form.cleaned_data['results_name']
+            result_dict['description'] = posted_form.cleaned_data['description']
+
+            # write yaml file
+            yaml_content = yaml.dump(result_dict, default_flow_style=False)
+            yaml_file = open('%s/result.yml' % results_location, 'w')
+            yaml_file.write(yaml_content)
+            yaml_file.close()
+
+            # write README file
+
+            if not context['latest_media']:
+                media_content = ''
+            else:
+                imgs = ''.join(['![%s](media/%s)\n' % (media['name'], media['name']) for media in context['latest_media'][:3]])
+                media_content = '## Media\n\n%s' % imgs
+
+            readme = DEFAULT_RESULT_README % (context['model']['name'],
+                                              context['model']['folder_name'],
+                                              context['data']['name'],
+                                              context['data']['folder_name'],
+                                              context['model']['folder_name'],
+                                              context['data']['folder_name'],
+                                              model_trial['metadata']['argument_cmds'],
+                                              media_content)
+
+            readme_file = open('%s/README.md' % results_location, 'w')
+            readme_file.write(readme)
+            readme_file.close()
+
+            return redirect('view_result', result_folder=posted_form.cleaned_data['folder_name'])
+
+    context['create_results_form'] = CreateResultsForm()
+    context['form_error_message'] = form_error_message
 
     hyperparameter_list = []
 

@@ -18,3 +18,4 @@ class TerminateInstanceForm(forms.Form):
 class CreateResultsForm(forms.Form):
     results_name = forms.CharField(label='Results Page name', initial="My Deep Learning Project", max_length=64, required=True)
     folder_name = forms.CharField(label='Folder name', initial="my_project", max_length=64, required=True)
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'cols': 50}), label='Description', initial="Write 2-3 sentences about your project here", required=True)

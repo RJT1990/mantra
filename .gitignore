@@ -14,3 +14,4 @@ __pycache__/
 *.pyc
 *.pyo
 tests/my_project
+/.idea

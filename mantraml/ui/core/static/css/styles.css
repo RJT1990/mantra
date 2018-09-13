@@ -1,3 +1,4 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway);
 @import url(https://fonts.googleapis.com/css?family=Ropa+Sans);
 @import url(https://fonts.googleapis.com/css?family=Roboto:500);
 @import url(https://fonts.googleapis.com/css?family=Roboto);
@@ -13,6 +14,169 @@ html {
 }
 body {
   margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+/*  General Fonts */
+
+h4 {
+  font-family: 'Raleway';
+}
+
+code {
+    font-color: #417cbd;
+}
+
+.result-container {
+
+}
+
+.result-container code {
+
+}
+
+.result-container .em {
+    height: 1.0em;
+    width: 1.0em;
+}
+
+.result-container .col-mp .col-image {
+    width: 100%;
+}
+
+
+.result-container .upper-level {
+    border: 0px;
+    margin: 0px;
+}
+
+.result-container .row {
+    border: 1px solid;
+    border-color: #e0e0e0;
+    border-radius: 5px;
+    min-height: 200px;
+}
+
+.result-container .container {
+    margin-top: 30px;
+}
+
+.result-container .list-container {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.result-container .title-container {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.result-container .col-mp {
+    color: #484848;
+    margin-right: 15px;
+}
+
+.result-container .col {
+    color: #484848;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.result-container .col h5 {
+    color: #333333;
+    font-family: 'Open Sans';
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.btn-primary-results {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    width: 100%;
+}
+
+.btn-success-results {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    width: 100%;
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-showcase-results {
+    margin-bottom: 5px;
+    margin-top: 20px;
+    color: #fff;
+    background-color: #ff0000;
+    border-color: #ff0000;
+    width: 100%;
+}
+
+.btn-primary-results:hover {
+    color: #fff;
+}
+
+.btn-success-results:hover {
+    color: #fff;
+}
+
+.btn-showcase-results:hover {
+    color: #fff;
+}
+
+
+.btn-primary-results .em {
+    margin-bottom: 3px;
+}
+
+.btn-success-results .em {
+    margin-bottom: 3px;
+}
+.btn-showcase-results .em {
+    margin-bottom: 3px;
+}
+
+.code-table table {
+    margin-top: 5px;
+}
+
+.code-table code {
+    color: #417cbd;
+}
+
+.code-table ion-icon {
+    margin-top: 7px;
+    margin-right: 3px;
+}
+
+.framework-img {
+    float: center;
+    text-align: center;
+    margin: 0px;
+}
+
+.framework-img img {
+    width: 85px;
+    padding: 10px;
+    margin: 5px;
+}
+
+.result-container .stars {
+    float: center;
+    text-align: center;
+    padding: 20px;
+    font-family: 'Open Sans';
+    font-weight: bold;
+    font-size: 17px;
+    margin-top: 10px;
+}
+
+.result-container .stars-accumulated {
+    font-size:10px;
+    padding-top:8px;
 }
 
 .add-on .input-group-btn > .btn {
@@ -65,6 +229,11 @@ body {
     max-width: 198px;
     text-align: center;
 }
+
+.card h6 {
+    margin-top: 20px;
+}
+
 
 .card .artefact-type { 
     border-color: #e0e0e0;

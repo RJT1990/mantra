@@ -9,8 +9,8 @@
   <!-- Repo title and header -->
   <div class="row" style="padding-top:30px;">
     <div class="col-md-10">
-      <div class="main-header">My Result</div>
-        &nbsp; A little demo of my work
+      <div class="main-header">{{ name }}</div>
+        &nbsp; {{ description }}
     </div>
     <div class="col-md-2">
       <div class="repo-summary">
@@ -50,12 +50,6 @@
       </a>
     </li>
 
-    <li class="nav-item repo-menu-link">
-        <div class="tensorboard">
-      <a href="./tensorboard" class="nav-link" target="_blank" >
-        <ion-icon name="analytics"></ion-icon> TensorBoard
-      </a></div>
-    </li>
 
   </ul>
 
@@ -97,6 +91,20 @@
 
     </div>
 
+       <div class="modal fade" id="enlargeImageModal" tabindex="-1" role="dialog" aria-labelledby="enlargeImageModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <span id="modal-file-name"></span>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+          <img src="" class="enlargeImageModalSource" style="width: 100%;">
+        </div>
+      </div>
+    </div>
+</div>
+
     <div class="tab-pane" id="repository" role="tabpanel" aria-labelledby="summary-tab">
 
       <!-- Repository content -->
@@ -116,7 +124,7 @@
             <h4><i class="em em-computer"></i> Command</h4>
             <p>
             <code>mantra train {{ model_trial.model_name }} --dataset {{ model_trial.data_name }} 
-            {{ model_trial.metadata.argument_cmds }}
+            {{ model_trial.argument_cmds }}
 
             </code>
           </p>
@@ -302,19 +310,7 @@ options: {
 });
 </script>
 
- <div class="modal fade" id="enlargeImageModal" tabindex="-1" role="dialog" aria-labelledby="enlargeImageModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-            <span id="modal-file-name"></span>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-        </div>
-        <div class="modal-body">
-          <img src="" class="enlargeImageModalSource" style="width: 100%;">
-        </div>
-      </div>
-    </div>
-</div>
+
 
 
 <div class="row">

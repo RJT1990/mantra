@@ -1,13 +1,11 @@
 import datetime
 import glob
 import importlib
-import inspect
 import itertools
 import json
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
-from pandas.plotting import table
 import PIL
 import shutil
 import subprocess
@@ -19,13 +17,8 @@ import lazy_import
 yaml = lazy_import.lazy_module("yaml")
 
 from mantraml.data.finders import find_dataset_class, find_model_class, find_task_class, find_framework
-from mantraml.data.Dataset import Dataset
-from mantraml.data.ImageDataset import ImageDataset
-from mantraml.data.TabularDataset import TabularDataset
-
 
 from .consts import IGNORED_FILES, NO_OF_ARTEFACTS
-
 
 class Mantra:
     config = None

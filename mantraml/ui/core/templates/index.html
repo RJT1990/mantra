@@ -8,79 +8,142 @@
 {% block contents %}
 
 
+{% if results %}
       <div class="row title-row">
-        <div style="float: left;" class="col-lg">
+
         <h4>Your Results</h4>
-        </div>
-        <div class="col-lg-4">
 
-          <div style="float: right;" class="btn-group btn-group-sm pull-right" role="group" aria-label="Basic example">
-
-          </div>
-        </div>
       </div>
-
-
-
-<div class="card-deck">
+      <hr>
 
   {% for result in results %}
-  <a href="/result/{{ result.folder_name }}">
-  <div class="card">
-    <div class="artefact-type">
-      Private
-    </div>
-
-    <img class="card-img-top" src="static/{{ result.latest_media.file }}" alt="Card image cap">
-
-    <div class="card-body">
-      <h6 class="card-title">{{ result.name }}</h6>
-      <p class="card-text"><small class="text-muted">{{ result.last_updated }}</small></p>
-    </div>
-  </div>
-</a>
-  {% endfor %}
-
-</div>
-
-<br>
+<div class="result-container">
+<div class="container list-container">
 
 
-      <div class="row title-row">
-        <div style="float: left;" class="col-lg">
-        <h4>Your Models</h4>
-        </div>
-        <div class="col-lg-4">
 
-          <div style="float: right;" class="btn-group btn-group-sm pull-right" role="group" aria-label="Basic example">
-           
+        <div class="col">
+
+          <div class="row">
+
+            <div class="col-lg-2 col-mp">
+
+              <div class="col-image">
+
+                  {% if result.latest_media %}
+                  <img class="card-img-top" src="static/{{ result.latest_media.file }}" alt="Project Media">
+                    {% else %}
+                  <img class="card-img-top" src="static/img/default_model.jpg" alt="Project Media">
+                  {% endif %}
+
+
+              </div>
+
+
+            </div>
+            <div class="col">
+              <h5>{{ result.name }}</h5>
+              <!-- 37677 -->
+              <small>{{ result.description }}</small>
+              <br>
+              <div class="code-table">
+              <table>
+                <td><ion-icon name="code-working"></ion-icon></td>
+                <td><code>mantra train {{ result.model_metadata.folder_name }} --dataset {{ result.data_metadata.folder_name }} {{ result.trial_metadata.argument_cmds }}</code></td>
+              </table>
+              </div>
+
+            </div>
+
+            <div class="col-lg-2 col-mp" style="padding-bottom:8px;">
+
+
+              <a target="_blank" href="/result/{{ result.folder_name }}" class="btn btn-showcase-results">
+                <i class="em em-movie_camera"></i> &nbsp;Summary
+              </a>
+              <a target="_blank" href="/model/{{ result.model_metadata.folder_name }}" class="btn btn-primary-results">
+                <i class="em em-robot_face"></i> &nbsp;Model
+              </a>
+              <a target="_blank" href="/data/{{ result.data_metadata.folder_name }}" class="btn btn-success-results">
+                 <i class="em em-floppy_disk"></i> &nbsp;Dataset
+              </a>
+
+
+                <div class="framework-img">
+                  <img src="static/img/{{ result.model_metadata.framework }}.png">
+                </div>
+
+
+            </div>
+
           </div>
         </div>
-      </div>
-
-
-
-<div class="card-deck">
-
-  {% for model in models %}
-  <a href="/model/{{ model.folder_name }}">
-  <div class="card">
-    <div class="artefact-type">
-      Private
-    </div>
-
-    <img class="card-img-top" src="static/{{ model.image }}" alt="Card image cap">
-
-    <div class="card-body">
-      <h6 class="card-title">{{ model.name }}</h6>
-      <img style="height: 15px" src="static/img/{{ model.framework }}.png">
-      <p class="card-text"><small class="text-muted">{{ model.last_updated }}</small></p>
     </div>
   </div>
-</a>
   {% endfor %}
 
+
+
+
+
+<br>
+{% endif %}
+
+      <div class="row title-row">
+        <h4>Your Models</h4>
+      </div>
+  <hr>
+
+
+<div class="models-hold">
+<table id="modeltable" class="table text-center">
+  <thead>
+    <tr>
+      <th scope="col">Model</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+
+    </tr>
+  </thead>
+  <tbody>
+
+
+{% for model in models %}
+    <tr>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'"><div class="model-name"><img src="/static/{{ model.image }}"> <a href="/model/{{ model.folder_name }}">{{ model.name }}</a></div></td>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'">
+        {% for tag in model.tags %}
+      <span class="badge badge-primary">{{ tag }}</span>
+       {% endfor %}
+     </td>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'"><div class="framework"><img src="/static/img/{{ model.framework }}.png"></div></td>
+      <td onclick="document.location = '/model/{{ model.folder_name }}'"><div class="date">{{ model.last_updated }}</div></td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+
+
+<script>
+  $(document).ready(function () {
+  $('#modeltable').DataTable( {
+        "order": [[ 2, "desc" ]],
+      searching: false,
+      paging: false,
+      info: false
+    } );
+  $('.dataTables_length').addClass('bs-select');
+});
+
+$(document).on("click", ".open-deleteTrialGroupDialog", function () {
+     var mytrialGroupId = $(this).data('id');
+     $(".modal-content #id_trial_group_hash").val( mytrialGroupId );
+});
+
+</script>
 </div>
+
 
 
 
@@ -89,37 +152,35 @@
 
 
       <div class="row title-row deck-break">
-        <div style="float: left;" class="col-lg">
         <h4>Your Datasets</h4>
-        </div>
-        <div class="col-lg-4">
-
-          <div style="float: right;" class="btn-group btn-group-sm pull-right" role="group" aria-label="Basic example">
-           
-          </div>
-        </div>
       </div>
+<hr>
 
 
 
-<div class="card-deck">
+<div class="models-hold">
+<table id="datatable" class="table text-center">
+  <thead>
+    <tr>
+      <th scope="col">Dataset</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
 
-  {% for dataset in datasets %}
-    <a href="/data/{{ dataset.folder_name }}">
-  <div class="card">
+    </tr>
+  </thead>
+  <tbody>
 
-    <div class="artefact-type">
-      Private
-    </div>
 
-    {% if dataset.data_type == 'images' %}
-    <img class="card-img-top" src="static/{{ dataset.data_image }}" alt="Card image cap">
-    {% elif dataset.data_type == 'tabular' %}
-    <img class="card-img-top" src="static/{{ dataset.data_image }}" alt="Card image cap">
-    {% endif %}
-    <div class="card-body">
-      <h6 class="card-title">{{ dataset.name }}</h6>
-      
+{% for dataset in datasets %}
+    <tr>
+      <td onclick="document.location = '/data/{{ dataset.folder_name }}'"><div class="model-name"><img src="/static/{{ dataset.data_image }}"> <a href="/data/{{ dataset.folder_name }}">{{ dataset.name }}</a></div></td>
+      <td onclick="document.location = '/data/{{ dataset.folder_name }}'">
+        {% for tag in dataset.tags %}
+      <span class="badge badge-primary">{{ tag }}</span>
+       {% endfor %}
+     </td>
+      <td onclick="document.location = '/data/{{ dataset.folder_name }}'"><div class="framework">
       {% if dataset.data_type == 'images' %}
       <i class="em em-frame_with_picture"></i>
       {% elif dataset.data_type == 'music' %}
@@ -127,14 +188,33 @@
       {% else %}
       <i class="em em-floppy_disk"></i>
       {% endif %}
+      </div></td>
+      <td onclick="document.location = '/data/{{ dataset.folder_name }}'"><div class="date">{{ dataset.last_updated }}</div></td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
 
-      <p class="card-text"><small class="text-muted">{{ dataset.last_updated }}</small></p>
-    </div>
-  </div>
-</a>
-  {% endfor %}
 
+<script>
+  $(document).ready(function () {
+  $('#datatable').DataTable( {
+        "order": [[ 2, "desc" ]],
+      searching: false,
+      paging: false,
+      info: false
+    } );
+  $('.dataTables_length').addClass('bs-select');
+});
+
+$(document).on("click", ".open-deleteTrialGroupDialog", function () {
+     var mytrialGroupId = $(this).data('id');
+     $(".modal-content #id_trial_group_hash").val( mytrialGroupId );
+});
+
+</script>
 </div>
+
 
 
 
