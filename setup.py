@@ -19,6 +19,6 @@ setup(
     description=DESCRIPTION,
     long_description=DESCRIPTION,
     url=URL,
-    install_requires=['boto3', 'django', 'numpy', 'paramiko', 'pillow', 'lazy-import', 'scipy', 'matplotlib', 'pandas', 'termcolor', 'pyyaml'],
+    install_requires=['boto3', 'django', 'numpy', 'paramiko', 'pillow', 'lazy-import', 'scipy', 'matplotlib', 'pandas', 'termcolor', 'pyyaml', 'requests'],
     scripts=['mantraml/bin/mantra'],
 )
