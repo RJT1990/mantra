@@ -11,3 +11,6 @@ scipy>=1.1.0
 pytest>=3.7.1
 boto3>=1.7.73
 termcolor==1.1.0
+certifi==2018.8.24
+chardet==3.0.4
+requests==2.19.1

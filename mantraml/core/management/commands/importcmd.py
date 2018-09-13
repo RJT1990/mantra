@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 import sys
 
-def find_artefacts(base_dir, type="models", target_file="model.py"):
+def find_artefacts(base_dir:str, type="models", target_file="model.py"):
     """
     Find a Mantra artefacts directory
 
@@ -31,7 +31,11 @@ def find_artefacts(base_dir, type="models", target_file="model.py"):
 
             # found the target file in this subdir!
             if target_file in [p.name for p in subdir_files]:
-                all_artefacts.append(str(subdir))
+                # second check to see if mantraml is actually used
+                with open(str(Path(base_dir, subdir, target_file)), "r") as f:
+                    file_contents = f.read()
+                if "mantraml" in file_contents:
+                    all_artefacts.append(str(subdir))
             else:
                 # go into further subdirs
                 subdirs.extend([p for p in subdir.iterdir() if p.is_dir()])
