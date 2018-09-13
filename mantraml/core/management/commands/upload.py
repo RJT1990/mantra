@@ -89,17 +89,15 @@ class UploadCmd(BaseCommand):
                     h = {"Content-Disposition": "attachment; filename=%s" % v["path"]}
                     r = requests.put(upload_url_base+v["path"], files=files, headers=h,
                                      auth=(mantrahub_user, mantrahub_pass))
-
+        else:
+            print("No new files to upload...")
 
         # Finally, commit all the results
-        print("Committing uploaded results...")
         commit_url = urljoin(args.remote, "api/artefacts_diff_commit")
         json_payload = json.dumps({"all_hashes": all_hashes, "diff_hashes": diff})
         commit_response = requests.post(commit_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
 
-        if commit_response.status_code == requests.codes.ok:
-            print("SUCCESS: Upload successful.")
-        else:
+        if commit_response.status_code != requests.codes.ok:
             print("ERROR: Commit not successful: %s" % commit_response.text)
 
 
