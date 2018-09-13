@@ -83,16 +83,24 @@ class UploadCmd(BaseCommand):
             upload_url_base = urljoin(args.remote, "api/upload_file/")
             for artefact in diff:
                 for k,v in artefact["file_hashes"].items():
+                    print("Uploading `%s`..." % v["path"])
                     files = {'file': open(v["path"], 'rb')}
 
                     h = {"Content-Disposition": "attachment; filename=%s" % v["path"]}
                     r = requests.put(upload_url_base+v["path"], files=files, headers=h,
                                      auth=(mantrahub_user, mantrahub_pass))
-                    print(r.text)
 
-            commit_url = urljoin(args.remote, "api/artefacts_diff_commit")
-            json_payload = json.dumps({"all_hashes": all_hashes, "diff_hashes": diff})
-            commit_response = requests.post(commit_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
+
+        # Finally, commit all the results
+        print("Committing uploaded results...")
+        commit_url = urljoin(args.remote, "api/artefacts_diff_commit")
+        json_payload = json.dumps({"all_hashes": all_hashes, "diff_hashes": diff})
+        commit_response = requests.post(commit_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
+
+        if commit_response.status_code == requests.codes.ok:
+            print("SUCCESS: Upload successful.")
+        else:
+            print("ERROR: Commit not successful: %s" % commit_response.text)
 
 
 
