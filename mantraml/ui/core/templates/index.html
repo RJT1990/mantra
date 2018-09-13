@@ -12,7 +12,6 @@
       <div class="row title-row">
 
         <h4>Your Results</h4>
-
       </div>
       <hr>
 
@@ -22,11 +21,11 @@
 
 
 
-        <div class="col">
+        <div class="col col-outer">
 
           <div class="row">
 
-            <div class="col-lg-2 col-mp">
+            <div style="cursor: pointer;" onclick="document.location = '/result/{{ result.folder_name }}'" class="col-lg-2 col-mp">
 
               <div class="col-image">
 
@@ -41,15 +40,16 @@
 
 
             </div>
-            <div class="col">
-              <h5>{{ result.name }}</h5>
+            <div style="cursor: pointer;" onclick="document.location = '/result/{{ result.folder_name }}'" class="col">
+                <h5>{{ result.name }}</h5>
               <!-- 37677 -->
               <small>{{ result.description }}</small>
               <br>
+                <hr>
               <div class="code-table">
               <table>
                 <td><ion-icon name="code-working"></ion-icon></td>
-                <td><code>mantra train {{ result.model_metadata.folder_name }} --dataset {{ result.data_metadata.folder_name }} {{ result.trial_metadata.argument_cmds }}</code></td>
+                <td><code>mantra train {{ result.model_metadata.folder_name }} --dataset {{ result.data_metadata.folder_name }}</code></td>
               </table>
               </div>
 
@@ -57,10 +57,6 @@
 
             <div class="col-lg-2 col-mp" style="padding-bottom:8px;">
 
-
-              <a target="_blank" href="/result/{{ result.folder_name }}" class="btn btn-showcase-results">
-                <i class="em em-movie_camera"></i> &nbsp;Summary
-              </a>
               <a target="_blank" href="/model/{{ result.model_metadata.folder_name }}" class="btn btn-primary-results">
                 <i class="em em-robot_face"></i> &nbsp;Model
               </a>
@@ -81,8 +77,9 @@
     </div>
   </div>
   {% endfor %}
-
-
+<div class="row home-link">
+<a href="/results">View All Results</a>
+</div>
 
 
 
@@ -143,7 +140,9 @@ $(document).on("click", ".open-deleteTrialGroupDialog", function () {
 
 </script>
 </div>
-
+<div class="row home-link">
+<a href="/models">View All Models</a>
+</div>
 
 
 
@@ -214,7 +213,9 @@ $(document).on("click", ".open-deleteTrialGroupDialog", function () {
 
 </script>
 </div>
-
+<div class="row home-link">
+<a href="/datasets">View All Datasets</a>
+</div>
 
 
 

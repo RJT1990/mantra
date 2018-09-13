@@ -483,7 +483,7 @@ class Mantra:
         result_time_dict = {results_name: os.path.getmtime('%s/%s' % (results_dir, results_name)) for results_name in results_list}
 
         if limit:
-            latest_results = sorted(result_time_dict, key=result_time_dict.get, reverse=True)[:NO_OF_ARTEFACTS]
+            latest_results = sorted(result_time_dict, key=result_time_dict.get, reverse=True)[:3]
         else:
             latest_results = sorted(result_time_dict, key=result_time_dict.get, reverse=True)
 

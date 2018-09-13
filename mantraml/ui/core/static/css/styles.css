@@ -72,13 +72,17 @@ code {
 
 .result-container .col-mp {
     color: #484848;
-    margin-right: 15px;
+    margin-right: 30px;
 }
 
 .result-container .col {
     color: #484848;
     padding: 20px;
-    margin-top: 10px;
+    margin-top: 0px;
+}
+
+.result-container .col-outer {
+    padding: 5px;
 }
 
 .result-container .col h5 {
@@ -90,7 +94,7 @@ code {
 
 .btn-primary-results {
     margin-bottom: 5px;
-    margin-top: 5px;
+    margin-top: 40px;
     color: #fff;
     background-color: #007bff;
     border-color: #007bff;
@@ -110,8 +114,8 @@ code {
     margin-bottom: 5px;
     margin-top: 20px;
     color: #fff;
-    background-color: #ff0000;
-    border-color: #ff0000;
+    background-color: #ff7800;
+    border-color: #ff7800;
     width: 100%;
 }
 
@@ -260,6 +264,7 @@ code {
     width: auto;
     height: auto;
     text-align: center;
+    margin-top: 10px;
 }
 
 .navbar-light .navbar-nav .nav-link {
@@ -1938,4 +1943,14 @@ code {
 
 .create-results-body {
     font-family: 'Source Sans Pro';
+}
+
+.home-link {
+    text-align: center;
+}
+
+.home-link a {
+    font-size: 13px;
+    float: center;
+    margin: 0 auto;
 }
