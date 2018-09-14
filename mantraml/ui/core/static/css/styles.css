@@ -1842,6 +1842,7 @@ code {
     border-radius: 50%;
     height: 20px;
     width: 20px;
+    margin-right: 5px;
 }
 
 .trials-hold td {
@@ -1851,6 +1852,7 @@ code {
 
 .trials-hold td .em {
     border-radius: 50%;
+    margin-right: 5px;
 }
 
 .trials-hold td .model-name {

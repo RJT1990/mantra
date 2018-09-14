@@ -65,11 +65,11 @@
     <tr>
       <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';">{{ trial_values.time }}</td>
       <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';">{{ trial_values.trial_group_name }}</td>
-      <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';"><img src="/static/{{ trial_values.model_metadata.image }}"> <a href="/model/{{ trial_values.model_metadata.folder_name }}">{{ trial_values.model_metadata.name }}</a></td>
-      <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';"><img src="/static/{{ trial_values.data_image }}"> <a href="/data/{{ trial_values.data_name }}">{{ trial_values.data_full_name }}</a></td>
+      <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';"><img src="/static/{{ trial_values.model_metadata.image }}"> {{ trial_values.model_metadata.name }}</td>
+      <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';"><img src="/static/{{ trial_values.data_image }}"> {{ trial_values.data_full_name }}</td>
       <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';">
         {% if trial_values.task_full_name %}
-        <i class="em em-chart_with_upwards_trend"></i> <a href="/data/{{ trial_values.data_name }}/{{ trial_values.task_name }}">{{ trial_values.task_full_name }}</a>
+        <i class="em em-chart_with_upwards_trend"></i> {{ trial_values.task_full_name }}
         {% else %}
         None
         {% endif %}
