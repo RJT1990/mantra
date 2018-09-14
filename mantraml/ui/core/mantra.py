@@ -396,6 +396,9 @@ class Mantra:
         metadata['model_metadata'] = cls.find_model_metadata(metadata['model_name'])
         metadata['data_metadata'] = cls.find_dataset_metadata(metadata['data_name'])
 
+        if metadata['task_name'] != 'none':
+            metadata['task_metadata'] = cls.find_task_metadata(metadata['task_name'])
+
         try:
             metadata['latest_media'] = cls.find_latest_trial_media(trial_folder_name, result=False)[0]
         except IndexError:

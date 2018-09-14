@@ -32,9 +32,8 @@ def index(request):
 
     context = {
         "project_name": config["project_name"],
-        "models": Mantra.get_models(),
-        "datasets": Mantra.get_datasets(),
         "results": Mantra.get_results(),
+        "trials": Mantra.get_trials(),
     }
 
     return render(request, "index.html", context)

@@ -60,7 +60,8 @@
 
 {% for result in results %}
     <tr>
-      <td onclick="document.location = '/result/{{ result.folder_name }}'"><div class="model-name"><img src="/static/{{ result.latest_media.file }}"> <a href="/result/{{ result.folder_name }}">{{ result.name }}</a></div></td>
+      <td onclick="document.location = '/result/{{ result.folder_name }}'"><div class="model-name">
+      {% if result.latest_media %}<img src="/static/{{ result.latest_media.file }}">{% else %}<img src="/static/img/default_model.jpg">{% endif %}<a href="/result/{{ result.folder_name }}">{{ result.name }}</a></div></td>
       <td onclick="document.location = '/result/{{ result.folder_name }}';"><img src="/static/{{ result.model_metadata.image }}"> <a href="/model/{{ result.model_metadata.folder_name }}">{{ result.model_metadata.name }}</a></td>
       <td onclick="document.location = '/result/{{ result.folder_name }}';"><img src="/static/{{ result.data_metadata.data_image }}"> <a href="/data/{{ result.data_metadata.folder_name }}">{{ result.data_metadata.name }}</a></td>
       <td onclick="document.location = '/result/{{ result.folder_name }}';">{{ result.last_updated }}</td>
