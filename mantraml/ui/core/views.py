@@ -614,6 +614,9 @@ def view_trial(request, trial_folder):
     form_error_message = None
 
     if posted_form.is_valid():
+        if not os.path.exists(os.path.join(settings.MANTRA_PROJECT_ROOT, "results")):
+            os.makedirs(os.path.join(settings.MANTRA_PROJECT_ROOT, "results"))
+
         if posted_form.cleaned_data['folder_name'] in os.listdir('%s/results' % settings.MANTRA_PROJECT_ROOT):
             form_error_message = 'Folder already exists! Choose another folder name'
 
