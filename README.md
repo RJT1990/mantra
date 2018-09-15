@@ -28,7 +28,9 @@ This is an alpha release. Join us on gitter, slack and on github. All contributi
 
 [You can read the docs here](http://mantra.readthedocs.io/en/latest/).
 
-<div align="center" style="margin-top:30px;">
+-----------------------------------------
+
+<div align="center">
 <img src="docs/source/demo.gif">
 </div>
 <br><br>
