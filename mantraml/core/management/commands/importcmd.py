@@ -14,13 +14,14 @@ import requests
 import json
 
 
-def find_artefacts(base_dir:str, type="models", target_file="model.py"):
+def find_artefacts(base_dir:str, type="models", target_file="model.py", target_string="mantraml"):
     """
     Find a Mantra artefacts directory
 
     :param base_dir: Base directory to look at
     :param type: Can be `models`, `data`, `tasks`
     :param target_file: File use to identify the artefact
+    :param target_string: which string should be in the target file
     :return:
     """
 
@@ -40,13 +41,15 @@ def find_artefacts(base_dir:str, type="models", target_file="model.py"):
                 # second check to see if mantraml is actually used
                 with open(str(Path(base_dir, subdir, target_file)), "r") as f:
                     file_contents = f.read()
-                if "mantraml" in file_contents:
+                if target_string in file_contents:
                     all_artefacts.append(str(subdir))
             else:
                 # go into further subdirs
                 subdirs.extend([p for p in subdir.iterdir() if p.is_dir()])
 
     return all_artefacts
+
+
 
 def copy_over(temp_dir, paths, artefact="model", dir="models"):
     """
@@ -119,10 +122,12 @@ class ImportCmd(BaseCommand):
         all_models = find_artefacts(base_dir, "models", "model.py")
         all_datasets = find_artefacts(base_dir, "data", "data.py")
         all_tasks = find_artefacts(base_dir, "tasks", "task.py")
+        all_results = find_artefacts(base_dir, "results", "result.yml", "name:")
 
         copy_over(temp_dir, all_models, "model", "models")
         copy_over(temp_dir, all_datasets, "dataset", "data")
         copy_over(temp_dir, all_tasks, "task", "tasks")
+        copy_over(temp_dir, all_results, "result", "results")
 
 
 
