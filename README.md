@@ -21,7 +21,7 @@ Mantra is a rapid development toolkit for deep learning.
 - Boilerplate classes for common dataset and model types
 - Command-line interface for training with parameter parsing
 - Automatic provisioning of cloud instances for remote training
-- Training tracking with a UI and automatic versioning of all files
+- UI to track training and automatic versioning of all files
 - Encapsulation of datasets and models by design, enabling easy sharing 
 
 This is an alpha release. Join us on gitter, slack and on github. All contributions are welcome! 
