@@ -10,7 +10,7 @@
 [![Documentation Status](https://readthedocs.org/projects/mantra/badge/?version=latest)](http://mantra.readthedocs.io/en/latest/?badge=latest)
 
 
-Mantra is a rapid development toolkit for deep learning. 
+Mantra is a **rapid development toolkit** for deep learning. 
 
 **Problem**: Every ML project project needs a way to train, track and share models. Yet, every projects does it in a different way with a lot of boilerplate code being needlessly reinvented. 
 
@@ -20,7 +20,7 @@ Mantra is a rapid development toolkit for deep learning.
 
 - Boilerplate classes for common dataset and model types
 - Command-line interface for training with parameter parsing
-- Provisions and configures cloud instances for remote training
+- Automatic provisioning of cloud instances for remote training
 - Training tracking with a UI and automatic versioning of all files
 - Encapsulation of datasets and models by design, enabling easy sharing 
 
