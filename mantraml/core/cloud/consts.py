@@ -24,4 +24,4 @@ DEFAULT_SH_TASK_SCRIPT_VERBOSE = '''#!/bin/bash
 
 MANTRA_DEVELOPMENT_TAG_NAME = 'mantra dev'
 
-EXCLUDED_PROJECT_FILES = ["'raw/*'", "'trials/*'", "'.extract*'", "'.mantra*'"]
+EXCLUDED_PROJECT_FILES = ["'raw/*'", "'results/*'", "'trials/*'", "'.extract*'", "'.mantra*'"]

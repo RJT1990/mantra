@@ -77,7 +77,11 @@ class UploadCmd(BaseCommand):
         json_payload = json.dumps({"all_hashes": all_hashes})
         diff_response = requests.post(full_url, json=json_payload, auth=(mantrahub_user, mantrahub_pass))
 
-        diff = json.loads(diff_response.json())["diff_hashes"]
+        if diff_response.status_code == 200:
+            diff = json.loads(diff_response.json())["diff_hashes"]
+        elif diff_response.status_code == 403:
+            print('Invalid username/password')
+            return
 
         if diff:
             upload_url_base = urljoin(args.remote, "api/upload_file/")
