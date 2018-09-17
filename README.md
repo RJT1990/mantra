@@ -1,33 +1,39 @@
 <div align="center">
-    <img width="500" src="docs/source/logo.png">    
+    <img width="200" src="docs/source/logo.png">    
 </div>
 
 -----------------------------------------
 
-
-<div align="center">
-    
 [![CircleCI](https://circleci.com/gh/RJT1990/mantra.svg?style=shield&circle-token=ef9ddee091dd77395273f8d59f6b6b5b091212c7)](https://circleci.com/gh/RJT1990/mantra)
 [![PyPI version](https://badge.fury.io/py/mantraml.svg)](https://badge.fury.io/py/mantraml)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/mantraml/Lobby)
 [![Documentation Status](https://readthedocs.org/projects/mantra/badge/?version=latest)](http://mantra.readthedocs.io/en/latest/?badge=latest)
 
+
+Mantra is a rapid development toolkit for deep learning. 
+
+**Problem**: Every ML project project needs a way to train, track and share models. Yet, every projects does it in a different way with a lot of boilerplate code being needlessly reinvented. 
+
+**Solution**: Mantra is a framework for writing dataset and model classes than enables single line training, has a tracking UI, and makes it easy to encapsulate and share results. 
+
+**Key Features**:
+
+- Boilerplate classes for common dataset and model types
+- Command-line interface for training with parameter parsing
+- Automatic provisioning of cloud instances for remote training
+- UI to track training and automatic versioning of all files
+- Encapsulation of datasets and models by design, enabling easy sharing 
+
+This is an alpha release. Join us on gitter, slack and on github. All contributions are welcome! 
+
+[You can read the docs here](http://mantra.readthedocs.io/en/latest/).
+
+-----------------------------------------
+
+<div align="center">
 <img src="docs/source/demo.gif">
 </div>
 <br><br>
-
-
-**Mantra is a deep learning development kit** that manages the various components in an deep learning project, and makes it much easier to do routine tasks like training in the cloud, model monitoring, model benchmarking and more. It works with your favourite deep learning libraries like TensorFlow, PyTorch and Keras. 
-
-You might like mantra if:
-
-- You need a way to structure your deep learning projects: versioning, monitoring and storage of models and data.
-- You need boring devops tasks like cloud integration and file syncing between cloud/local taken care for you.
-- You need a way to easily compare and evaluate your model against benchmark tasks, e.g. accuracy on CIFAR-10.
-
-This is an **very early** alpha release: we'd love your comments on the general concept and whether you find it useful. Issues and pull requests are also welcome. If the project gets enough love, we'll work towards a stable release!
-
-[You can read the docs here](http://mantra.readthedocs.io/en/latest/).
 
 ## Get Started 
 
@@ -39,7 +45,8 @@ mantra launch my_project
 ☁ Configure your cloud settings and API keys:
 
 ```console
-cd my_project; mantra cloud 
+cd my_project 
+mantra cloud 
 ```
 💾 Get the example datasets and models from [here](https://github.com/RJT1990/mantra-examples):
  
@@ -57,7 +64,7 @@ mantra train relativistic_gan --dataset decks --cloud --dev --image-dim 256 256
 mantra train log_reg --dataset epl_data --target home_win --features feature_1 feature_2 feature_3 
 ```
 
-🚂 During training, you can spin up the Mantra UI:
+🚂 During training, you can spin up the Mantra UI to track the progress:
 
 ```console
 mantra ui

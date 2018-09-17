@@ -1957,3 +1957,8 @@ code {
     margin: 0 auto;
     margin-bottom: 10px;
 }
+
+code {
+    white-space: pre;
+    padding: 0;
+}
