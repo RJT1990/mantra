@@ -20,7 +20,7 @@ from mantraml.core.management.commands.importcmd import find_artefacts
 class UploadCmd(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("artefacts", type=str, nargs="*")
-        parser.add_argument("--remote", type=str, default="https://mantrahub.io")
+        parser.add_argument("--remote", type=str, default="https://api.mantrahub.io")
         return parser
 
     def handle(self, args, unknown):
