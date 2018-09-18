@@ -1,5 +1,5 @@
 <div align="center">
-    <img width="200" src="docs/source/logo.png">    
+    <img width="250" src="docs/source/logo.png">    
 </div>
 
 -----------------------------------------
@@ -10,21 +10,21 @@
 [![Documentation Status](https://readthedocs.org/projects/mantra/badge/?version=latest)](http://mantra.readthedocs.io/en/latest/?badge=latest)
 
 
-Mantra is a rapid development toolkit for deep learning. 
+**mantra** is a rapid development framework for deep learning. 
 
-**Problem**: Every ML project project needs a way to train, track and share models. Yet, every projects does it in a different way with a lot of boilerplate code being needlessly reinvented. 
+**Problem**: Every ML project needs a way to train, track and share models. But every project does it in a different way with a lot of boilerplate code being needlessly reinvented. 
 
-**Solution**: Mantra is a framework for writing dataset and model classes than enables single line training, has a tracking UI, and makes it easy to encapsulate and share results. 
+**Solution**: mantra is a framework for writing dataset and model classes that enables single line training, has a tracking UI, and makes it easy to encapsulate and share results. 
 
 **Key Features**:
 
 - Boilerplate classes for common dataset and model types
 - Command-line interface for training with parameter parsing
 - Automatic provisioning of cloud instances for remote training
-- UI to track training and automatic versioning of all files
+- UI for monitoring training, comparing experiments and storing media
 - Encapsulation of datasets and models by design, enabling easy sharing 
 
-This is an alpha release. Join us on gitter, slack and on github. All contributions are welcome! 
+This is an alpha release. Join us on Gitter, Slack and Github. All contributions are welcome! 
 
 [You can read the docs here](http://mantra.readthedocs.io/en/latest/).
 
@@ -104,6 +104,34 @@ provision cloud instances on your request.
 5. Use *mantra cloud* from your mantra project root to configure your cloud settings.
 
 You should also ensure you are happy with the default instance settings in mantra - you can check this in the *settings.py* file in your project root. 
+
+## Sharing on Mantrahub
+
+Visit [Mantrahub](http://www.mantrahub.io) to share mantra components like models and datasets with our open source community. To import models or datasets:
+
+```console
+mantra import RJT1990/models/wgangp
+```
+
+```console
+mantra import RJT1990/data/decks
+```
+
+To upload models, datasets or results to mantrahub:
+
+```console
+mantra upload data/decks
+```
+
+```console
+mantra upload models/wgangp
+```
+
+```console
+mantra upload results/celebagan
+```
+
+
 
 ### Have Fun
 
