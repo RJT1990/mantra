@@ -74,7 +74,7 @@ def copy_over(temp_dir, paths, artefact="model", dir="models"):
 class ImportCmd(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("repo_or_artefact", type=str, help="Github repository or Mantrahub artefact name", nargs="+")
-        parser.add_argument("--remote", type=str, default="https://mantrahub.io")
+        parser.add_argument("--remote", type=str, default="https://api.mantrahub.io")
         return parser
 
     def handle(self, args, unknown):
