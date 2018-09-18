@@ -123,10 +123,7 @@
 
             <h4><i class="em em-computer"></i> Command</h4>
             <p>
-            <code>mantra train {{ model_trial.model_name }} --dataset {{ model_trial.data_name }} 
-            {{ model_trial.argument_cmds }}
-
-            </code>
+            <code>mantra train {{ model_trial.model_name }} --dataset {{ model_trial.data_name }} {{ model_trial.argument_cmds }}</code>
           </p>
             <hr>
             <h4><i class="em em-factory"></i> Components</h4>
@@ -188,7 +185,7 @@
             <tr>
             <td><div class="component-name">Status</div></td>
                 <td>
-                {% if not model_trial.metadata.training_finished %}
+                {% if not model_trial.training_finished %}
                     <img width=15 src="/static/img/live.gif"> Learning
                 {% else %}
                     <i class="em em-white_check_mark"></i> Complete
@@ -197,7 +194,7 @@
                 </td>
             </tr>
             <tr>
-            <td><div class="component-name">Progress</div></td><td>{{ model_trial.metadata.current_epoch }} / {{ model_trial.metadata.hyperparameters.epochs }}<td>
+            <td><div class="component-name">Progress</div></td><td>{{ model_trial.current_epoch }} / {{ model_trial.hyperparameters.epochs }}<td>
             </tr>
             <tr>
             <td><div class="component-name"> Started</div></td><td>{{ model_trial.start_time }}</td>

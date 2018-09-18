@@ -333,6 +333,11 @@ class Dataset:
         """
 
         sample_images = glob.glob(os.path.join(self.extracted_data_path, '*%s' % self.file_format))[:100]
+
+        # try subdirectories if not images at top level
+        if not sample_images:
+            sample_images = glob.glob(os.path.join(self.extracted_data_path + '/**/', '*%s' % self.file_format), recursive=True)
+
         color_channels = [scipy.misc.imread(image).shape[2] for image in sample_images]
         color_count = Counter(color_channels)
         self.n_color_channels = color_count.most_common(1)[0][0]
