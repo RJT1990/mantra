@@ -134,8 +134,3 @@ mantra upload results/celebagan
 ### Have Fun
 
 > Arise! Awake! Approach the great and learn.
-
-> Like the sharp edge of a razor is that path,
-
-> so the wise say−hard to tread and difficult to cross.
-
