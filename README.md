@@ -131,8 +131,6 @@ mantra upload models/wgangp
 mantra upload results/celebagan
 ```
 
-
-
 ### Have Fun
 
-Please train responsibly.
+> Arise! Awake! Approach the great and learn.
