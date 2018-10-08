@@ -24,7 +24,7 @@
 - UI for monitoring training, comparing experiments and storing media
 - Encapsulation of datasets and models by design, enabling easy sharing 
 
-This is an alpha release. Join us on Gitter, Slack and Github. All contributions are welcome! 
+This is an alpha release. Join us on Gitter, Slack and Github. All contributions are welcome - see [here](https://github.com/RJT1990/mantra/blob/master/CONTRIBUTING.MD) for guidelines on how to contribute.
 
 [You can read the docs here](http://mantra.readthedocs.io/en/latest/).
 
