@@ -56,7 +56,7 @@ Let's have a look at the :code:`model.py` file and see what the template contain
       model_tags = ['new']
 
       def __init__(self, data=None, task=None, **kwargs):
-          self.data = dask
+          self.data = data
           self.task = task
 
       def run(self):
