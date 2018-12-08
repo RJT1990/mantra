@@ -7,7 +7,7 @@
 <div class="container content">
 
   <!-- Repo title and header -->
-  <div class="row" style="padding-top:30px;">
+  <div class="row">
     <div class="col-md-10">
       <div class="main-header">Trial {{ model_trial.trial_hash |slice:':6' }}</div>
       <div class="section-repo"><i class="em em-rocket"></i> <a href='/trials'>trials</a> / <a href=''>{{ model_trial.trial_hash |slice:':6' }}</a></div>
@@ -69,53 +69,12 @@
               src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
             </script>
 
-        <div class="modal fade" id="modalShareResults" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <h5 class="modal-title"><i class="em em-boom"></i> Create a Results Page</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body mx-3 create-results-body">
-                            Showcase your results so that they can be shared with others.<p>
-                              <form action="" method="post">
-                                  {% csrf_token %}
-
-                              {% for field in create_results_form.visible_fields %}
-                                 <div class="md-form mb-5 results-form">
-                                  {{ field.label_tag }}<br>
-                                  {{ field }}
-                                  {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                  {% endif %}
-                                 </div>
-                              {% endfor %}
-
-
-                    </p>
-
-                    </div>
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="submit"  class="btn btn-primary">Create</button>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalShareResults">Share Results</button>
-                      {% if form_error_message %} <p>{{ form_error_message}}</p> {% endif %}
             <h1>Summary</h1>
             <br>
 
             <h4><i class="em em-computer"></i> Command</h4>
             <p>
-            <code>mantra train {{ model_trial.model_name }} --dataset {{ model_trial.data_name }} 
-            {{ model_trial.metadata.argument_cmds }}
-
-            </code>
+            <code>mantra train {{ model_trial.model_name }} --dataset {{ model_trial.data_name }}{{ model_trial.metadata.argument_cmds }}</code>
           </p>
             <hr>
             <h4><i class="em em-factory"></i> Components</h4>
@@ -289,16 +248,6 @@ options: {
 <div class="trial-content">
 <div class="row">
 
-
-<script>
-  $(function() {
-      $('img').on('click', function() {
-      $('.enlargeImageModalSource').attr('src', $(this).attr('src'));
-      $('#enlargeImageModal').modal('show');
-    });
-});
-</script>
-
  <div class="modal fade" id="enlargeImageModal" tabindex="-1" role="dialog" aria-labelledby="enlargeImageModal" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -317,7 +266,7 @@ options: {
 <div class="row">
 
 {% for media in latest_media|slice:":4" %}
-        <div class="col-sm-3"><div class="media-preview"><img id="trialmediaimage" src="/static/{{ media.file }}"></div></div>
+        <div class="col-sm-3"><div class="media-preview"><img onclick='latestmediaclick(this, "{{ media.name }}")' id="trialmediaimage" src="/static/{{ media.file }}"></div></div>
 {% endfor %}
 
 </div>
@@ -331,13 +280,18 @@ options: {
 <hr>
 <h4><i class="em em-art"></i> All Media</h4>
 
-                  <table id="mediatable" class="table text-center">
+                  <table id="mediatable" class="table text-center" style="width: 100%;">
                        <thead>
-                      <tr><th scope="col">File</th><th scope="col">Last Modified</th></tr>
+                      <tr>
+                        <th scope="col">File</th>
+                        <th hidden scope="col">Timestamp</th>
+                        <th scope="col">Last Modified</th>
+                      </tr>
                        </thead>
                       {% for media in latest_media %}
-                      <tr id="/static/{{ media.file }}" onclick='mediaclick(this.id)'>
+                      <tr id="/static/{{ media.file }}" onclick='mediaclick(this.id, "{{ media.name }}")'>
                           <td>{{ media.name }}</td>
+                          <td hidden>{{ media.timestamp }}</td>
                           <td>{{ media.date }}</td>
                       </tr>
                       {% endfor %}
@@ -345,18 +299,35 @@ options: {
                   </table>
 
 <script>
+
   $(document).ready(function () {
-  $('#mediatable').DataTable();
+  $('#mediatable').DataTable( {
+        "order": [[ 1, "desc" ]]
+    } );
   $('.dataTables_length').addClass('bs-select');
 });
+
 </script>
 
 <script>
 
-    function mediaclick(clicked_media_file) {
+    function mediaclick(clicked_media_file, clicked_media_name) {
       $('.enlargeImageModalSource').attr('src', clicked_media_file);
       $('#enlargeImageModal').modal('show');
+      $(".trial-content #modal-file-name").text(clicked_media_name);
     }
+
+</script>
+
+
+<script>
+
+    function latestmediaclick(clicked_media_file, clicked_media_name) {
+      $('.enlargeImageModalSource').attr('src', $(this).attr('src'));
+      $('#enlargeImageModal').modal('show');
+      $(".trial-content #modal-file-name").text(clicked_media_name);
+    }
+
 </script>
 
 </div>

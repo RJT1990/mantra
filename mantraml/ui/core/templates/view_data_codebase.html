@@ -7,25 +7,15 @@
 <div class="container content">
 
   <!-- Repo title and header -->
-  <div class="row" style="padding-top:30px;">
+  <div class="row">
     <div class="col-md-10">
+
+      <div class="main-header">{{ name }}</div>
       <div class="section-header">
       {% for tag in tags %}
       <span class="badge badge-primary">{{ tag }}</span>
       {% endfor %}
     </div>
-      <div class="main-header">{{ name }}</div>
-      <div class="section-repo">
-
-      {% if data_type == 'images' %}
-      <i class="em em-frame_with_picture"></i>
-      {% elif data_type == 'music' %}
-      <i class="em em-musical_score"></i>
-      {% else %}
-      <i class="em em-floppy_disk"></i>
-      {% endif %}
-
-       <a href='/datasets'>data</a> / <a href='/data/{{ folder_name }}'>{{ folder_name }}</a></div>
     </div>
     <div class="col-md-2">
       <div class="repo-summary">
@@ -34,6 +24,7 @@
       </div>
     </div>
   </div>
+
 
 
   <!-- Repo navigation -->

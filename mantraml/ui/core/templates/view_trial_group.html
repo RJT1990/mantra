@@ -6,7 +6,7 @@
 <div class="container content">
 
   <!-- Repo title and header -->
-  <div class="row" style="padding-top:30px;">
+  <div class="row">
 
     <div class="col-md-2">
       <div class="data-trial-summary">
@@ -30,16 +30,11 @@
     </div>
   </div>
 
-      <div class="row content">
-        <div class="col-md-12">
-          <div class="content-box">
-            
-          <div class="content-code-full">
-
-            <div class="content-code-header"><ion-icon name="rocket"></ion-icon> Latest Trials</div>
 
 
-<div class="trial-group-contents">
+
+<div class="trials-hold">
+
 
 <div class="modal fade" id="deleteTrialModal" tabindex="-1" role="dialog" aria-labelledby="deleteTrialModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -67,12 +62,13 @@
   </div>
 </div>
 
-<table id="trialtable" class="table text-center">
+<table id="trialgrouptable" class="table text-center">
   <thead>
     <tr>
       <th scope="col"></th>
       <th scope="col">Epochs</th>
-      <th scope="col">Trial</th>
+      <th scope="col">Trial ID</th>
+      <th hidden scope="col">Timestamp</th>
       <th scope="col">Time</th>
       {% for hyperparm in hyperparms %}
       <th scope="col">{{ hyperparm | capfirst }}</th>
@@ -85,8 +81,12 @@
       {% endif %}
       <th scope="col"></th>
     </tr>
+
+
+
   </thead>
   <tbody>
+
 
 
 {% for trial_values in trials %}
@@ -101,7 +101,9 @@
         {% endif %}</td>
 
       <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.metadata.current_epoch }} / {{ trial_values.metadata.hyperparameters.epochs }}</td>
-      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.trial_hash |slice:':6' }}</td>
+      <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">
+      <a href="/trial/{{ trial_values.trial_hash |slice:':6' }}">{{ trial_values.trial_hash |slice:':6' }}</a></td>
+      <td hidden onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.start_timestamp }}</td>
       <td onclick="document.location = '/trial/{{ trial_values.trial_hash |slice:':6' }}';">{{ trial_values.time }}</td>
       {% for hv in trial_values.hyperparm_values %}
       
@@ -140,11 +142,10 @@
   </tbody>
 </table>
 
-
 <script>
   $(document).ready(function () {
-  $('#trialtable').DataTable( {
-        "order": [[ 3, "desc" ]]
+  $('#trialgrouptable').DataTable( {
+        "order": [[ 4, "desc" ]]
     } );
   $('.dataTables_length').addClass('bs-select');
 });
@@ -161,13 +162,7 @@ $(document).ready(function(){
 </script>
 
 </div>
-</div>
 
 
-
-          </div>
-        </div>
-      </div>
-</div>
 
 {% endblock %}

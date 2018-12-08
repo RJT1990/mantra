@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="{% static 'img/mantra-blue.png' %}">
+  <link rel="icon" href="{% static 'img/rocket.png' %}">
 
-  <title>Mantra</title>
+  <title>mantra</title>
 
   <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
   <script src="https://unpkg.com/ionicons@4.3.0/dist/ionicons.js"></script>
@@ -24,10 +24,10 @@
 <body>
 
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white header">
+<nav class="navbar navbar-expand-lg navbar-light header">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <img src="{% static 'img/mantra.png' %}"> mantra
+          <ion-icon name="rocket"></ion-icon> mantra
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -36,25 +36,45 @@
     <div class="collapse navbar-collapse" id="navbarsExample07">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/trials"><i class="em em-rocket"></i> Trials</a>
+          <a class="nav-link" href="/trials">Trials</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/results"><i class="em em-boom"></i> Results</a>
+          <a class="nav-link" href="/models">Models</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/models"><i class="em em-robot_face"></i> Models</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/datasets"><i class="em em-floppy_disk"></i> Data</a>
+          <a class="nav-link" href="/datasets">Data</a>
         </li>
          <li class="nav-item">
-        <a class="nav-link" href="/cloud"><i class="em em-cloud"></i> Cloud</a>
+        <a class="nav-link" href="/cloud">Instances</a>
         </li>
       </ul>
       <div class="search-field">
 
     </div>
     </div>
+
+<div class="collapse navbar-collapse order-2">
+      
+          <div class="navbar-float-right">
+        <ul class="navbar-nav">
+
+          <li class="nav-item nav-link-header-github">
+            <a target="_blank" href="https://github.com/RJT1990/mantra"><ion-icon name="logo-github"></ion-icon></a>
+          </li>
+
+          <li class="nav-item nav-link-header-github">
+            <a target="_blank" href="https://www.mantraml.org/docs"><ion-icon name="document"></ion-icon></a>
+          </li>
+
+
+        </ul>
+      </div>
+
+</div>
+
+
+
+
   </div>
 
 
@@ -74,7 +94,14 @@
 
 
 <footer class="footer">
-<img width=50 src="{% static 'img/logo.png' %}">
+<div class="container-fluid">
+
+<div class="row">
+<div class="col-md-6"><div class="project-name">mantra</div></div>
+<div class="col-md-6"><a target="_blank" href="https://github.com/RJT1990/mantra/issues"><ion-icon name="alert"></ion-icon> Report Issue</a> 
+  <a target="_blank" href="https://github.com/RJT1990/mantra"><ion-icon name="git-network"></ion-icon> Fork this project</a></div>
+</div>
+</div>
 </footer>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

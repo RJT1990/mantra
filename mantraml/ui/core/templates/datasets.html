@@ -5,18 +5,11 @@
 
 
 
-      <div class="row title-row">
-        <div style="float: left;" class="col-lg">
-        <h4>Your Datasets</h4>
-        </div>
-        <div class="col-lg-4">
 
-          <div style="float: right;" class="btn-group btn-group-sm pull-right" role="group" aria-label="Basic example">
-           
-
-          </div>
-        </div>
-      </div>
+<div class="row title-row deck-break">
+  <div style="float: left;" class="col-lg">
+  <h1>Your Data</h1>
+</div></div>
 
 <div class="models-hold">
 <table id="modeltable" class="table text-center">
@@ -59,7 +52,7 @@
 <script>
   $(document).ready(function () {
   $('#modeltable').DataTable( {
-        "order": [[ 2, "desc" ]]
+        "order": [[ 0, "asc" ]]
     } );
   $('.dataTables_length').addClass('bs-select');
 });

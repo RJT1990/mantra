@@ -58,6 +58,7 @@ class Mantra:
         try:
             media_files = sorted(media_files, key=os.path.getctime, reverse=True)
             return [{'date': datetime.datetime.utcfromtimestamp(int(os.path.getmtime(media_file))),
+                     'timestamp': int(os.path.getmtime(media_file)),
                      'file': media_file.split(settings.MANTRA_PROJECT_ROOT + '/')[1],
                      'name': media_file.split('/')[-1]} for media_file in media_files]
         except IndexError:
@@ -517,5 +518,10 @@ class Mantra:
 
         sys.path.append(settings.MANTRA_PROJECT_ROOT)
 
-        return [{
+        trial_data = [{'timestamp': trial_time_dict[trial_folder_name], 
         'last_updated': cls.format_timestamp_data(trial_time_dict[trial_folder_name]), **cls.find_trials_metadata(trial_folder_name)} for trial_folder_name in latest_trials]
+
+        # only return those trials where we've progressed beyond the first 
+        trial_data = [trial for trial in trial_data if not ('current_epoch' not in trial and (datetime.datetime.utcnow() - datetime.datetime.fromtimestamp(trial_time_dict[trial['folder_name']])).days > 1)]
+
+        return trial_data

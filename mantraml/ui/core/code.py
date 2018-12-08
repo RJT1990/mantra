@@ -187,6 +187,9 @@ class CodeBase:
         if any([img_type in path for img_type in ['.png', 'jpg', '.jpeg']]):
             return '', False, 'image'
         elif '.md' in path:
+            import pdb
+            pdb.set_trace()
+
             output = subprocess.Popen(["cat", path], stdout=subprocess.PIPE).stdout.read().decode('utf-8')
             return output, False, 'markdown'
         elif '.ipynb' in path:

@@ -246,7 +246,7 @@ class Trial:
         try:
             return trial_group_name_dict[trial_group_hash]
         except KeyError:
-            return 'Trial Group ' + trial_group_hash[:6]
+            return trial_group_hash[:6]
 
     @classmethod
     def get_trial_group_metadata(cls, settings, hash, trial_groups):
@@ -283,10 +283,15 @@ class Trial:
         for metadata_name in ['trial_group_hash', 'folder_name', 'model_name', 'model_hash', 'data_name', 'task_name', 'task_hash', 'data_hash']:
             trial_group_metadata[metadata_name] = example_trial[metadata_name]
 
-        dataset_metadata = Mantra.find_dataset_metadata(example_trial['data_name'])
+        try:
+            dataset_metadata = Mantra.find_dataset_metadata(example_trial['data_name'])
+        except ImportError:
+            return {}
+
         task_metadata = Mantra.find_task_metadata(example_trial['task_name'])
 
         trial_group_metadata['time'] = latest_trial_time
+        trial_group_metadata['timestamp'] = latest_trial_time.timestamp()
         trial_group_metadata['model_metadata'] = Mantra.find_model_metadata(trial_group_metadata['model_name'])
         trial_group_metadata['trial_group_name'] = Trial.get_trial_group_name(yaml_content, example_trial['trial_group_hash'])
         trial_group_metadata['latest_media'] = Mantra.find_latest_trial_media(trial_group_metadata['folder_name'])
@@ -315,11 +320,12 @@ class Trial:
         list of dicts - each containing metadata on the trial group
         """
 
-        return [cls.get_trial_group_metadata(
+        trial_group_metadata = [cls.get_trial_group_metadata(
             settings=settings, 
             hash=trial_group_hash, 
             trial_groups=trial_groups) for trial_group_hash, trial_groups in trial_group_members.items()]
 
+        return [group for group in trial_group_metadata if group]
 
 class Artefact:
 

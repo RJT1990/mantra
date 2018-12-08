@@ -7,7 +7,7 @@
 
       <div class="row title-row">
         <div style="float: left;" class="col-lg">
-        <h4>Your Trials</h4>
+        <h1>Your Trials</h1>
         </div>
         <div class="col-lg-4">
 
@@ -50,6 +50,7 @@
   <thead>
     <tr>
       <th scope="col">Time</th>
+      <th hidden scope="col">Timestamp</th>
       <th scope="col">Trial Group</th>
       <th scope="col">Model</th>
       <th scope="col">Data</th>
@@ -64,7 +65,8 @@
 {% for trial_values in trial_groups %}
     <tr>
       <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';">{{ trial_values.time }}</td>
-      <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';">{{ trial_values.trial_group_name }}</td>
+      <td hidden onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';">{{ trial_values.timestamp }}</td>
+      <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';"><a href="/trials/{{ trial_values.trial_group_hash |slice:':6' }}">{{ trial_values.trial_group_name }}</a></td>
       <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';"><img src="/static/{{ trial_values.model_metadata.image }}"> {{ trial_values.model_metadata.name }}</td>
       <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';"><img src="/static/{{ trial_values.data_image }}"> {{ trial_values.data_full_name }}</td>
       <td onclick="document.location = '/trials/{{ trial_values.trial_group_hash |slice:':6' }}';">
@@ -87,7 +89,7 @@
 <script>
   $(document).ready(function () {
   $('#trialgrouptable').DataTable( {
-        "order": [[ 0, "desc" ]]
+        "order": [[ 1, "desc" ]]
     } );
   $('.dataTables_length').addClass('bs-select');
 });

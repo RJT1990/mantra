@@ -7,52 +7,49 @@
 {% load static %}
 {% block contents %}
 
+{% if not trials %}
+      <div class="row title-row deck-break">
+        <h1>Welcome to Mission Control</h1>
+      </div>
 
+<div class="mission-control-hold">
+<h2>
+Your First Mantra Project
+</h2>
+
+<p>Congratulations on launching your first Mantra project! This UI acts as your mission control center to:</p>
+
+<ul>
+<li><i class="em em-rocket"></i> Monitor your training jobs</li>
+<li><i class="em em-bar_chart"></i> Evaluate your performance on datasets</li>
+<li><i class="em em-chart_with_upwards_trend"></i> Track your progress</li>
+</ul>
+
+<p>To get started you should try running your first trial, either locally or via the cloud. <a href="" target="_blank">Click here for a tutorial on how to do this</a>.
+
+</div>
+
+{% endif %}
 
 
       <div class="row title-row deck-break">
-        <h4>Latest Trials</h4>
+  <div style="float: left;" class="col-lg">
+        <h1>Latest Trials</h1></div>
       </div>
-<hr>
 
 
 <div class="trials-hold">
-
-<div class="modal fade" id="deleteTrialGroupModal" tabindex="-1" role="dialog" aria-labelledby="deleteTrialGroupModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteTrialGroupModalLabel">Are you sure you want to delete this trial group?</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="" method="post">
-
-
-    {% csrf_token %}
-    {{ form }}
-
-      <div class="modal-footer text-center">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Delete</button>
-      </div>
-
-</form>
-
-    </div>
-  </div>
-</div>
-
+  
 <table id="trialgrouptable" class="table text-center">
   <thead>
     <tr>
-        <th scope="col"></th>
-        <th scope="col">Epochs</th>
+      <th scope="col"></th>
+      <th hidden scope="col">Timestamp</th>
+      <th scope="col">Epochs</th>
+      <th scope="col">Trial ID</th>
       <th scope="col">Time</th>
-      <th scope="col">Trial</th>
       <th scope="col">Model</th>
-      <th scope="col">Data</th>
+      <th scope="col">Dataset</th>
       <th scope="col">Task</th>
 
     </tr>
@@ -69,9 +66,11 @@
        <i class="em em-white_check_mark"></i>
         {% endif %}</td>
 
-        <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';">{{ trial.current_epoch }} / {{ trial.hyperparameters.epochs }}</td>
+      <td hidden onclick="document.location = '/trials/{{ trial.trial_hash |slice:':6' }}';">{{ trial.timestamp }}</td>
+
+        <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';">{% if trial.current_epoch %}{{ trial.current_epoch }}{% else %}0{% endif %} / {{ trial.hyperparameters.epochs }}</td>
+              <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';"><a href="/trial/{{ trial.trial_hash |slice:':6' }}">{{ trial.trial_hash |slice:':6' }}</a></td>
       <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';">{{ trial.last_updated }}</td>
-      <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';">{{ trial.trial_hash |slice:':6' }}</td>
       <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';"><img src="/static/{{ trial.model_metadata.image }}"> {{ trial.model_metadata.name }}</td>
       <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';"><img src="/static/{{ trial.data_metadata.data_image }}"> {{ trial.data_metadata.name }}</td>
       <td onclick="document.location = '/trial/{{ trial.trial_hash |slice:':6' }}';">
@@ -107,95 +106,8 @@ $(document).on("click", ".open-deleteTrialGroupDialog", function () {
 </script>
 
 </div>
-<div class="row home-link">
-<a href="/trials">View All Trials</a>
-</div>
-
 
 <br>
-
-
-
-{% if results %}
-      <div class="row title-row">
-
-        <h4>Your Results</h4>
-      </div>
-      <hr>
-
-  {% for result in results %}
-<div class="result-container">
-<div class="container list-container">
-
-
-
-        <div class="col col-outer">
-
-          <div class="row">
-
-            <div style="cursor: pointer;" onclick="document.location = '/result/{{ result.folder_name }}'" class="col-lg-2 col-mp">
-
-              <div class="col-image">
-
-                  {% if result.latest_media %}
-                  <img class="card-img-top" src="static/{{ result.latest_media.file }}" alt="Project Media">
-                    {% else %}
-                  <img class="card-img-top" src="static/img/default_model.jpg" alt="Project Media">
-                  {% endif %}
-
-
-              </div>
-
-
-            </div>
-            <div style="cursor: pointer;" onclick="document.location = '/result/{{ result.folder_name }}'" class="col">
-                <h5>{{ result.name }}</h5>
-              <!-- 37677 -->
-              <small>{{ result.description }}</small>
-              <br>
-                <hr>
-              <div class="code-table">
-              <table>
-                <td><ion-icon name="code-working"></ion-icon></td>
-                <td><code>mantra train {{ result.model_metadata.folder_name }} --dataset {{ result.data_metadata.folder_name }}</code></td>
-              </table>
-              </div>
-
-            </div>
-
-            <div class="col-lg-2 col-mp" style="padding-bottom:8px;">
-
-              <a target="_blank" href="/model/{{ result.model_metadata.folder_name }}" class="btn btn-primary-results">
-                <i class="em em-robot_face"></i> &nbsp;Model
-              </a>
-              <a target="_blank" href="/data/{{ result.data_metadata.folder_name }}" class="btn btn-success-results">
-                 <i class="em em-floppy_disk"></i> &nbsp;Dataset
-              </a>
-
-
-                <div class="framework-img">
-                  <img src="static/img/{{ result.model_metadata.framework }}.png">
-                </div>
-
-
-            </div>
-
-          </div>
-        </div>
-    </div>
-  </div>
-  {% endfor %}
-<div class="row home-link">
-<a href="/results">View All Results</a>
-</div>
-
-
-
-<br>
-{% endif %}
-
-
-
 
 
 

@@ -18,6 +18,19 @@ body {
 
 /*  General Fonts */
 
+h1 {
+    font-family: 'Raleway';
+    font-size: 35px;
+    color: rgb(100,100,100);
+}
+
+h2 {
+    font-family: 'Raleway';
+    font-size: 27px;
+    color: rgb(50,50,50);
+    margin-bottom: 20px;
+}
+
 h4 {
   font-family: 'Raleway';
 }
@@ -208,12 +221,12 @@ code {
 
 .header {
     vertical-align: middle;
-    border-bottom: 1px solid;
-    border-bottom-color: #e0e0e0;
     padding: 2px 40px;
-    background: linear-gradient(rgba(255,255,255,.2), rgba(255,255,255,.2)), url("https://image.ibb.co/cEW98z/northernlights.jpg");
-    background-size: cover;
+    background-color: rgb(0, 150, 136);
     height: 50px;
+    transition: background-color 0.25s, color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+    margin-bottom: 55px;
 }
 
 .header .header-logo {
@@ -225,7 +238,34 @@ code {
 }
 
 .navbar-light {
-    height: 55px;
+    height: 50px;
+}
+
+.navbar-float-right {
+    font-size: 30px;
+    color: #FFFFFF;
+    float: right;
+    width: 100%;
+}
+
+.navbar-float-right li {
+    margin-right: 10px;
+}
+
+.navbar-float-right a {
+    color: #FFFFFF;
+}
+
+.navbar-float-right ion-icon {
+    margin-top: 12px; 
+    }
+
+.navbar-float-right a:active {
+    color: #FFFFFF;
+}
+
+.navbar-float-right a:hover {
+    color: #FFFFFF;
 }
 
 .card {
@@ -269,25 +309,25 @@ code {
 
 .navbar-light .navbar-nav .nav-link {
     color: #FFFFFF;
-    padding-left: 20px;
-    padding-right: 20px;
-    font-family: 'Ropa Sans';
-    letter-spacing: 0.5px;
-    background: rgba(255,255,255,.1);
+    font-size: 15px;
+    font-family: 'Roboto';
+    margin-right: 15px;
 }
 
 .navbar-light .navbar-nav .nav-link:hover {
-    color: #FFFFFF;
-    background: rgba(255,255,255,.2);
+    color: rgb(220, 220, 220);
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
 }
 
-.navbar-light .navbar-nav .nav-link .em {
-    height: 0.8em;
-    width: 0.8em;
-    vertical-align: top;
-    margin-right: 7px;
-    margin-top: 5px;
+.navbar-light .navbar-nav .nav-link:active {
+    color: #FFFFFF;
 }
+
+
 
 
 .navbar-light .navbar-brand {
@@ -300,6 +340,25 @@ code {
 
 .navbar-light .navbar-brand img {
     height: 20px;
+}
+
+.navbar-light .navbar-brand ion-icon {
+    padding-top: 3px;
+    float: left;
+    margin-right: 7px;
+}
+
+.navbar-light .navbar-brand ion-icon:hover {
+    padding-top: 3px;
+    float: left;
+    margin-right: 7px;
+    color: rgb(220, 220, 220);
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+
 }
 
 
@@ -366,6 +425,10 @@ code {
 
 .navbar-subscribe {
 
+}
+
+.navbar-expand-lg .navbar-nav {
+    float: right;
 }
 
 @media only screen and (max-width: 992px) {
@@ -527,8 +590,9 @@ code {
 }
 
 .content .main-header {
-    font-size: 50px;
-    font-family: 'Source Sans Pro';
+    font-size: 35px;
+    font-family: 'Raleway';
+    color: rgb(100,100,100);
     width: 99.5%;
     padding-bottom: 5px;
     margin-bottom: 5px;
@@ -1382,17 +1446,52 @@ code {
   z-index: 1000;
   border-top: 1px solid;
   border-color: #e0e0e0;
-  font-family: 'Source Sans Pro';
+  font-family: 'Raleway';
   text-align: center;
   font-size: 12px;
   margin-top: 2px;
-  margin-bottom: 2px;
-  color: #007bff;
+  color: #ffffff;
   letter-spacing: 1px;
   font-weight: bold;
-    background-color: #FFFFFF;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  height: 2.3rem;
 }
 
+.footer .project-name {
+    font-family: 'Orbitron';
+}
+
+.footer .container-fluid {
+    margin-top: 10px;
+}
+
+.footer ion-icon {
+    margin-left: 30px;
+}
+
+
+.footer a {
+  color: #ffffff;
+}
+
+.footer a:hover {
+    color: rgb(220, 220, 220);
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+    text-decoration: none;
+}
+
+.footer a:active {
+  color: #ffffff;
+}
+
+.footer a:visited {
+  color: #ffffff;
+}
 
 .termDiv {
     width: 100%;
@@ -1742,6 +1841,9 @@ code {
 .dataTables_wrapper .dataTables_length label {
     text-align: left;
     display: block;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 
@@ -1752,22 +1854,47 @@ code {
 .dataTables_wrapper .dataTables_filter label {
     text-align: right;
     display: block;
+    margin-top: 10px;
 }
 
 .dataTables_wrapper .dataTables_info {
     font-size: 12px;
+    margin-top: 15px;
+    margin-left: 10px;
 }
 
 .dataTables_wrapper .dataTables_paginate {
     font-size: 12px;
+    margin-top: 15px;
 }
 
 /* Models Page */
 
+.models-hold {
+    margin-top: 35px;
+    transition: background-color 0.25s, color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+    padding: 5px;
+}
+
+.models-hold table {
+    margin-bottom: 0rem;
+}
+
+.models-hold .table thead th {
+    border-bottom: 0;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
 .models-hold th {
-    font-family: 'Source Sans Pro';
-    font-size: 16px;
+    font-family: 'Raleway';
+    font-size: 13px;
+    font-weight: bold;
+    color: rgb(120, 120, 120);
     margin-right: 5px;
+    border: 0;
+    background-color: rgba(0, 0, 0, 0.00);
     text-align: left;
 }
 
@@ -1823,12 +1950,45 @@ code {
     margin-right: 5px;
 }
 
+.mission-control-hold {
+    margin-top: 35px;
+    font-family: 'Roboto';
+    font-size: 17.5px;
+    margin-bottom: 50px;
+}
 
+.mission-control-hold .em {
+    margin-right: 10px;
+}
+
+
+/* Trials Page */
+
+.trials-hold {
+    margin-top: 35px;
+    transition: background-color 0.25s, color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+    padding: 5px;
+}
+
+.trials-hold table {
+    margin-bottom: 0rem;
+}
+
+.trials-hold .table thead th {
+    border-bottom: 0;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
 
 .trials-hold th {
-    font-family: 'Source Sans Pro';
-    font-size: 16px;
+    font-family: 'Raleway';
+    font-size: 13px;
+    font-weight: bold;
+    color: rgb(120, 120, 120);
     margin-right: 5px;
+    border: 0;
+    background-color: rgba(0, 0, 0, 0.00);
 }
 
 .trials-hold td:hover {
@@ -1846,8 +2006,9 @@ code {
 }
 
 .trials-hold td {
-    font-family: 'Source Sans Pro';
-    font-size: 14px;
+    font-family: 'Roboto';
+    font-size: 13px;
+    color: rgb(85, 85, 85);
 }
 
 .trials-hold td .em {
@@ -1870,17 +2031,37 @@ code {
     margin-right: 15px;
 }
 
-/* Models Page */
+/* Cloud Page */
+
+
+.cloud-hold {
+    margin-top: 35px;
+    transition: background-color 0.25s, color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.2);
+    padding: 5px;
+}
+
+.cloud-hold .table thead th {
+    border-bottom: 0;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+.cloud-hold table {
+    margin-bottom: 0rem;
+}
 
 .cloud-hold th {
-    font-family: 'Source Sans Pro';
-    font-size: 16px;
+    font-family: 'Raleway';
+    font-size: 13px;
+    font-weight: bold;
+    color: rgb(120, 120, 120);
     margin-right: 5px;
-    text-align: left;
+    border: 0;
+    background-color: rgba(0, 0, 0, 0.00);
 }
 
 .cloud-hold td {
-    text-align: left;
+    text-align: center;
     vertical-align: middle;
     font-family: 'Source Sans Pro';
     font-size: 14px;
@@ -1961,4 +2142,21 @@ code {
 code {
     white-space: pre;
     padding: 0;
+}
+
+/*  Badges */
+
+.badge-primary {
+    color: #fff;
+    background-color: #f9f9f9;
+    border: 1px solid;
+    border-color: #e0e0e0;
+    padding: 10px;
+    padding-top: 12px;
+    border-radius: 5px;
+    color: #888888;
+    font-weight: none;
+    font-family: 'Raleway';
+    font-size: 11px;
+    height: 35px;
 }

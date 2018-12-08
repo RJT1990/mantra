@@ -20,8 +20,8 @@ from django.shortcuts import render, render_to_response, redirect
 from core.mantra import Mantra
 from core.code import CodeBase
 
-from .consts import MANTRA_DEVELOPMENT_TAG_NAME, DEFAULT_RESULT_README
-from .forms import DeleteTrialForm, DeleteTrialGroupForm, StartInstanceForm, StopInstanceForm, TerminateInstanceForm, CreateResultsForm
+from .consts import MANTRA_DEVELOPMENT_TAG_NAME
+from .forms import DeleteTrialForm, DeleteTrialGroupForm, StartInstanceForm, StopInstanceForm, TerminateInstanceForm
 from .models import Artefact, Cloud, Task, Trial
 
 def index(request):
@@ -32,7 +32,6 @@ def index(request):
 
     context = {
         "project_name": config["project_name"],
-        "results": Mantra.get_results(),
         "trials": Mantra.get_trials(),
     }
 
@@ -111,22 +110,8 @@ def trials(request):
     context['trial_groups'] = Trial.get_all_trial_group_metadata(settings=settings, trial_group_members=trial_group_members)
     context['trial_groups'].sort(key=lambda item: item['time'], reverse=True)
     context['form'] = form
-    
+
     return render(request, "trials.html", context)
-
-def results(request):
-    """
-    Lists the trials that the user has run in their project
-    """
-
-    config = Mantra.get_config()
-
-    context = {"project_name": config["project_name"]}
-    context["results"] = Mantra.get_results(limit=False)
-
-    sys.path.append(settings.MANTRA_PROJECT_ROOT)
-
-    return render(request, "results.html", context)
 
 def view_model(request, model_name):
     """
@@ -485,85 +470,6 @@ def view_trial_group(request, trial_group_folder):
 
     return render(request, 'view_trial_group.html', context)
 
-def view_result(request, result_folder):
-    """
-    This view shows a result of a trial, the model, the data etc
-    """
-
-    result_metadata = yaml.load(open('%s/results/%s/result.yml' % (settings.MANTRA_PROJECT_ROOT, result_folder)))
-
-    readme_content, readme_exists = CodeBase.get_readme('%s/results/%s' % (settings.MANTRA_PROJECT_ROOT, result_folder))
-
-    context = {'readme_exists': readme_exists, 'readme_content': readme_content}
-    context['latest_media'] = Mantra.find_latest_trial_media(result_folder, result=True)
-
-    context['description'] = result_metadata['description']
-
-    if '.' in context['description']:
-        context['description'] = context['description'].split('.')[0]
-
-    context['name'] = result_metadata['name']
-
-    trial_metadata = yaml.load(open('%s/results/%s/trial_metadata.yml' % (settings.MANTRA_PROJECT_ROOT, result_folder)))
-
-    sys.path.append(settings.MANTRA_PROJECT_ROOT)
-
-    context['model'] = {}
-    context['data'] = {}
-    context['result_folder'] = result_folder
-
-    context['model'].update(Mantra.find_model_metadata(trial_metadata['model_name']))
-    context['data'].update(Mantra.find_dataset_metadata(trial_metadata['data_name']))
-    context['task'] = Mantra.find_task_metadata(trial_metadata['task_name'])
-
-    # Obtain the hyperparameters
-
-    if 'start_timestamp' in trial_metadata:
-        trial_metadata.update({'start_time': datetime.datetime.utcfromtimestamp(int(str(trial_metadata['start_timestamp'])))})
-
-    if 'end_timestamp' in trial_metadata:
-        trial_metadata.update({'end_time': datetime.datetime.utcfromtimestamp(int(str(trial_metadata['end_timestamp'])))})
-
-    hyperparameter_list = []
-
-    if 'hyperparameters' in trial_metadata:
-        hyperparameter_list = hyperparameter_list + list(trial_metadata['hyperparameters'].keys())
-
-    occur = Counter([hyperparm for hyperparm in hyperparameter_list])
-    context['hyperparms'] = [i[0] for i in occur.most_common(5)]
-
-    if 'hyperparameters' in trial_metadata:
-        hyperparm_list = []
-        for hyperparm_no, hyperparm in enumerate(context['hyperparms']):
-            if hyperparm in trial_metadata['hyperparameters']:
-
-                hyperparameter_value = trial_metadata['hyperparameters'][hyperparm]
-
-                if context['hyperparms'][hyperparm_no] == 'image_dim':
-                    hyperparameter_value = '%s x %s' % (hyperparameter_value[0], hyperparameter_value[1])
-
-                if isinstance(hyperparameter_value, list):
-                    hyperparameter_value_type = 'list'
-                elif isinstance(hyperparameter_value, float):
-                    hyperparameter_value_type = 'float'
-                else:
-                    hyperparameter_value_type = 'str'
-
-                hyperparm_list.append({'value': hyperparameter_value, 'type': hyperparameter_value_type})
-            else:
-                hyperparm_list.append({})
-
-        trial_metadata.update({'hyperparm_values': hyperparm_list})
-    else:
-        trial_metadata.update({'hyperparm_values': [None] * len(context['hyperparms'])})
-
-    context['hyperparms'] = [hp.replace("_"," ").title() for hp in context['hyperparms']]
-    context['model_trial'] = trial_metadata
-
-    context['hyperparameter_dict'] = sorted(dict(zip(context['hyperparms'], context['model_trial']['hyperparm_values'])).items())
-
-    return render(request, 'view_result.html', context)
-
 def view_trial(request, trial_folder):
     """
     This view shows an individual trial
@@ -607,58 +513,6 @@ def view_trial(request, trial_folder):
     except:  # can't load yaml
         model_trial['metadata'] = {}
 
-    # Process get results form
-
-    posted_form = CreateResultsForm(request.POST)
-    form_error_message = None
-
-    if posted_form.is_valid():
-        if not os.path.exists(os.path.join(settings.MANTRA_PROJECT_ROOT, "results")):
-            os.makedirs(os.path.join(settings.MANTRA_PROJECT_ROOT, "results"))
-
-        if posted_form.cleaned_data['folder_name'] in os.listdir('%s/results' % settings.MANTRA_PROJECT_ROOT):
-            form_error_message = 'Folder already exists! Choose another folder name'
-
-        else:
-            trial_location = '%s/trials/%s' % (settings.MANTRA_PROJECT_ROOT, trial_folder_name)
-            results_location = '%s/results/%s' % (settings.MANTRA_PROJECT_ROOT, posted_form.cleaned_data['folder_name'])
-            shutil.copytree(trial_location, results_location, ignore=shutil.ignore_patterns('*.pyc', '__pycache__*'))
-            result_dict = {}
-            result_dict['name'] = posted_form.cleaned_data['results_name']
-            result_dict['description'] = posted_form.cleaned_data['description']
-
-            # write yaml file
-            yaml_content = yaml.dump(result_dict, default_flow_style=False)
-            yaml_file = open('%s/result.yml' % results_location, 'w')
-            yaml_file.write(yaml_content)
-            yaml_file.close()
-
-            # write README file
-
-            if not context['latest_media']:
-                media_content = ''
-            else:
-                imgs = ''.join(['![%s](media/%s)\n' % (media['name'], media['name']) for media in context['latest_media'][:3]])
-                media_content = '## Media\n\n%s' % imgs
-
-            readme = DEFAULT_RESULT_README % (context['model']['name'],
-                                              context['model']['folder_name'],
-                                              context['data']['name'],
-                                              context['data']['folder_name'],
-                                              context['model']['folder_name'],
-                                              context['data']['folder_name'],
-                                              model_trial['metadata']['argument_cmds'],
-                                              media_content)
-
-            readme_file = open('%s/README.md' % results_location, 'w')
-            readme_file.write(readme)
-            readme_file.close()
-
-            return redirect('view_result', result_folder=posted_form.cleaned_data['folder_name'])
-
-    context['create_results_form'] = CreateResultsForm()
-    context['form_error_message'] = form_error_message
-
     hyperparameter_list = []
 
     if 'hyperparameters' in model_trial['metadata']:
@@ -698,19 +552,6 @@ def view_trial(request, trial_folder):
     context['hyperparameter_dict'] = sorted(dict(zip(context['hyperparms'], context['model_trial']['hyperparm_values'])).items())
 
     return render(request, 'view_trial.html', context)
-
-def view_result_tensorboard(request, result_folder):
-    """
-    This view shows an individual trial with tensorboard
-    """
-
-    subprocess.run(['pkill', '-f', 'tensorboard'], stderr=subprocess.DEVNULL)
-    path = '%s/results/%s/logs' % (settings.MANTRA_PROJECT_ROOT, result_folder)
-    subprocess.Popen(['tensorboard', '--logdir', path], stdout=subprocess.DEVNULL)
-
-    time.sleep(4)
-
-    return render(request, 'view_trial_tensorboard.html', {})
 
 def view_trial_tensorboard(request, trial_folder):
     """

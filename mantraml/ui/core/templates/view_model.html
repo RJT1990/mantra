@@ -7,15 +7,16 @@
 <div class="container content">
 
   <!-- Repo title and header -->
-  <div class="row" style="padding-top:30px;">
+  <div class="row">
     <div class="col-md-10">
+
+      <div class="main-header">{{ name }}</div>
       <div class="section-header">
       {% for tag in tags %}
       <span class="badge badge-primary">{{ tag }}</span>
       {% endfor %}
     </div>
-      <div class="main-header">{{ name }}</div>
-      <div class="section-repo"><i class="em em-robot_face"></i> <a href='/models'>models</a> / <a href='/model/{{ folder_name }}'>{{ folder_name }}</a></div>
+  
     </div>
     <div class="col-md-2">
       <div class="repo-summary">
