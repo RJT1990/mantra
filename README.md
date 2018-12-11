@@ -27,7 +27,7 @@ This is an alpha release. All contributions are welcome - see [here](https://git
 -----------------------------------------
 
 <div align="center">
-<img src="docs/source/demo.gif">
+<img src="docs/source/ui.png">
 </div>
 <br><br>
 
