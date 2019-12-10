@@ -3,7 +3,7 @@ from setuptools import setup
 PACKAGE_NAME = "mantraml"
 LICENSE = "Apache 2.0"
 AUTHOR = "Ross Taylor and Robert Stojnic"
-EMAIL = "rj-taylor@live.co.uk"
+EMAIL = "hello@atlasml.io"
 URL = "https://www.atlas.ml"
 DESCRIPTION = "A high-level, rapid development framework for ML projects."
 
