@@ -13,5 +13,5 @@ boto3>=1.9.22
 termcolor==1.1.0
 certifi==2018.8.24
 chardet==3.0.4
-requests==2.19.1
+requests==2.20.0
 tensorboardX>=1.4
