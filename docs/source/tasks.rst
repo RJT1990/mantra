@@ -7,7 +7,7 @@ In **mantra** a task combines evaluation metrics with definitions of the trainin
 🏆 Make a Task
 **********************
 
-Go to the root of your project. To make a new model we can use the :code:`makemodel` command:
+Go to the root of your project. To make a new task we can use the :code:`maketask` command:
 
 .. code-block:: console
 
